@@ -1,0 +1,2 @@
+# ES_Front_2024.1
+Repositório Front-End do Observatório de Projetos criado para disciplina de Engenharia de Software, do curso Engenharia da Computação POLI-UPE.
