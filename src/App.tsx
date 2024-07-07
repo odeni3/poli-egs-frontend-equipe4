@@ -9,8 +9,6 @@ import SAUDE from './images/saude.png';
 import GESTAO from './images/gestao.png';
 import { Button, Form } from "react-bootstrap";
 
-
-
 function App() {
   return (
     <>

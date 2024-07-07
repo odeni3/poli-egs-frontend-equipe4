@@ -17,6 +17,10 @@
   color: var(--light-color);
 }
 
+.text-primary-color {
+  color: var(--primary-color);
+}
+
 .border-dark-color {
   border-color: var(--dark-color);
 }
