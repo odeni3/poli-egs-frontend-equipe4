@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import Projects from './pages/Projects'
 import { Route, Routes, BrowserRouter} from 'react-router-dom'
+import Project from './pages/Project.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -11,6 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
           <Route path='/' element={<App />} />
           <Route path='/projects' element={<Projects />} />
+          <Route path='/projects/:slug' element={<Project />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
