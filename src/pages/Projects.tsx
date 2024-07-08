@@ -1,26 +1,23 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Header from '../components/Header';
-import { useState } from 'react'
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
+import { useState } from 'react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
+import axios from 'axios';
 
-//provisorio-apenas para visualização
-const project = [
-    {
-      key: "1",
-      titulo: "Tracy-TD",
-      descricao: "Sistema de gerenciamento de dívidas técnicas."
-    },
-    {
-      key: "2",
-      titulo: "2545",
-      descricao: "Sistema de gerenciamento de dívidas técnicas."
-    }
-]
 export interface Project {
-  key: string;
+  //key: string;
   titulo?: string;
   descricao?: string;
+  equipe?: string;
+  cliente?: string;
+  pitch?: string;
+  tema?: string;
+  semestre?: string;
+  video_tecnico?: string;
+  tecnologias_utilizadas?: string;
+  palavras_chave?: string;
+  link_repositorio?: string;
 }
 
 const themes = ['a', 'b', 'c']
@@ -36,7 +33,9 @@ function Projects() {
 
   const [Card, setCard] = useState<Project[]>([]);
   useEffect(() => {
-    setCard(project);
+    axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
+      setCard(response.data)
+    })
   }, []);
 
   return (
@@ -134,7 +133,6 @@ function Projects() {
           {Card.map((project) => (
               <div
                 className="flex flex-col w-[22vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
-                key={project.key}
               >
                 <section className="flex flex-row gap-2">
                   <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"></div>
