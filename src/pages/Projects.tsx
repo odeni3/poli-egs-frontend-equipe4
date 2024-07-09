@@ -5,7 +5,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headless
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 
-export interface Project {
+export interface ProjectInt {
   //key: string;
   titulo?: string;
   descricao?: string;
@@ -17,6 +17,7 @@ export interface Project {
   video_tecnico?: string;
   tecnologias_utilizadas?: string;
   palavras_chave?: string;
+  slug?: string,
   link_repositorio?: string;
 }
 
@@ -30,12 +31,37 @@ function Projects() {
 
   const [Themes, setThemes] = useState()
   const [Semester, setSemester] = useState()
-  const [Card, setCard] = useState<Project[]>([]);
+  const [Card, setCard] = useState<ProjectInt[]>([]);
+
+  const project = [
+    {
+      key: "1",
+      titulo: "Tracy-TD",
+      descricao: "Sistema de gerenciamento de dívidas técnicas.",
+      cliente: "Prof. Rodrigo - UFPB",
+      pitch: "PVKX6MnruBI?si=3VKzOwaxmSynC84z",
+      tema: "Dividas Tecnicas",
+      slug: "tracytd",
+      semestre: "2023.1"
+    },
+    {
+      key: "2",
+      titulo: "SAD LGPD",
+      descricao: "Website para divulgação e transparência sobre o uso dos dados de servidores do estado de Pernambuco, de acordo com a Lei Geral de Proteção de Dados.",
+      cliente: "Secretaria de Administração do Estado de Pernmabuco",
+      pitch: "5tqi8f88koI?si=y7uz-RyBpzxqDBep",
+      tema: "LGPD",
+      slug: "sadlgpd",
+      semestre: "2023.2"
+
+    }
+  ]
   
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
       setCard(response.data)
     })
+    setCard(project);
   }, []);
 
   return (
@@ -141,7 +167,7 @@ function Projects() {
                     <h1 className='text-sm '>{project.descricao}</h1>
                   </div>
                 </section>
-                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white">Ver mais</button>
+                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`projects/` + project.slug}>Ver mais</a></button>
               </div>
             ))}
           
