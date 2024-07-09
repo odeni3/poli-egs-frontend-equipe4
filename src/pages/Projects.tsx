@@ -30,8 +30,8 @@ function Projects() {
 
   const [Themes, setThemes] = useState()
   const [Semester, setSemester] = useState()
-
   const [Card, setCard] = useState<Project[]>([]);
+  
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
       setCard(response.data)
