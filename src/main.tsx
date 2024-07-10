@@ -12,8 +12,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
           <Route path='/' element={<App />} />
-          <Route path='/projects' element={<Projects />} />
-          <Route path='/projects/:slug' element={<Project />} />
+          <Route path='/projects/:slug?' element={<Projects />} />
+          <Route path='/projects/selected/:slug' element={<Project />} />
           <Route path='/admin-projects' element={<ProjectsAdmin />} />
       </Routes>
     </BrowserRouter>

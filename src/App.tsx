@@ -7,8 +7,23 @@ import LGPD from './images/lgpd.png';
 import EDUCACAO from './images/educacao.png';
 import SAUDE from './images/saude.png';
 import GESTAO from './images/gestao.png';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function App() {
+  const navigate = useNavigate();
+  const [input, setInput] = useState<string>("");
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      navigate(`/projects/${input}`);
+    }
+  };
+
   return (
     <>
       <Header/>
@@ -21,6 +36,9 @@ function App() {
               id="searchbar" 
               className="rounded-full w-[74%] h-[5vh] border border-light-color indent-2 mt-8"
               placeholder="Pesquise por nome, tema, palavra-chave"
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
         </div>
         <div className="h-[20vh]">

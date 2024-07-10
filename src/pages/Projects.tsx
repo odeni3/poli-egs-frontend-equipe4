@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 export interface ProjectInt {
   //key: string;
@@ -21,16 +22,18 @@ export interface ProjectInt {
   link_repositorio?: string;
 }
 
-const themes = ['a', 'b', 'c']
-const semester = ['a', 'b', 'c']
+const themes = ['Divida Tecnica', 'LGPD', 'Inteligência Artificial']
+const semester = ['2023.1', '2023.2', '2024.1']
 
 //TODO(Ana: Ajustar os listBox para fechar ao selecionar uma opção)
 //TODO(Ana: Tornar a altura dos cards flexivel)
 
 function Projects() {
-
-  const [Themes, setThemes] = useState()
-  const [Semester, setSemester] = useState()
+  const { slug } = useParams();
+  const [Input, setInput] = useState(slug || '')
+  const [InputMembers, setInputMembers] = useState('')
+  const [Themes, setThemes] = useState('')
+  const [Semester, setSemester] = useState('')
   const [Card, setCard] = useState<ProjectInt[]>([]);
 
   const project = [
@@ -42,7 +45,8 @@ function Projects() {
       pitch: "PVKX6MnruBI?si=3VKzOwaxmSynC84z",
       tema: "Dividas Tecnicas",
       slug: "tracytd",
-      semestre: "2023.1"
+      semestre: "2023.1",
+      equipe: "ana, arthur"
     },
     {
       key: "2",
@@ -52,8 +56,8 @@ function Projects() {
       pitch: "5tqi8f88koI?si=y7uz-RyBpzxqDBep",
       tema: "LGPD",
       slug: "sadlgpd",
-      semestre: "2023.2"
-
+      semestre: "2023.2",
+      equipe: "aba, abe"
     }
   ]
   
@@ -63,6 +67,34 @@ function Projects() {
     })
     setCard(project);
   }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
+
+  const handleInputMembersChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputMembers(event.target.value);
+  };
+
+  const filteredCards = Card.filter((project) => {    
+    const input = Input.toLowerCase();
+    const inputMembers = InputMembers.toLowerCase();
+    const inputThemes = Themes.toLowerCase();
+    const inputSemester = Semester.toLowerCase();
+    return (
+      (
+        project.titulo?.toLowerCase().includes(input) ||
+        project.palavras_chave?.toLowerCase().includes(input) ||
+        project.tema?.toLowerCase().includes(input)
+      ) && (
+        project.equipe?.toLowerCase().includes(inputMembers)
+      ) && (
+        project.tema?.toLowerCase().includes(inputThemes)
+      ) && (
+        project.semestre?.toLowerCase().includes(inputSemester)
+      )
+    );
+  });
 
   return (
     <>
@@ -140,6 +172,7 @@ function Projects() {
                 id="pesquisa" 
                 className="w-full h-[6vh] border-b border-light-color indent-2 focus:outline-none focus:border-b-2 focus:border-sky-700"
                 placeholder="Ex: Tracy-TD/Inteligência artificial..."
+                onChange={handleInputChange}
               />
             </div>
             <div className="grid grid-rows-2 py-1">
@@ -149,6 +182,7 @@ function Projects() {
                 id="integrantes" 
                 className="w-full h-[6vh] border-b border-light-color indent-2 focus:outline-none focus:border-b-2 focus:border-sky-700"
                 placeholder="Ex: Ana Karla/Arthur Xavier..."
+                onChange={handleInputMembersChange}
               />
             </div>
             <div className="py-2">
@@ -156,7 +190,7 @@ function Projects() {
             </div>          
           </form> 
         <section className='flex flex-wrap gap-[1vw]'>
-          {Card.map((project) => (
+          {filteredCards.map((project) => (
               <div
                 className="flex flex-col w-[22vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
               >
@@ -167,7 +201,7 @@ function Projects() {
                     <h1 className='text-sm '>{project.descricao}</h1>
                   </div>
                 </section>
-                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`projects/` + project.slug}>Ver mais</a></button>
+                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`/projects/selected/` + project.slug}>Ver mais</a></button>
               </div>
             ))}
           
