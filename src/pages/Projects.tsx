@@ -18,7 +18,7 @@ export interface ProjectInt {
   video_tecnico?: string;
   tecnologias_utilizadas?: string;
   palavras_chave?: string;
-  slug?: string,
+  id?: string,
   link_repositorio?: string;
 }
 
@@ -36,36 +36,35 @@ function Projects() {
   const [Semester, setSemester] = useState('')
   const [Card, setCard] = useState<ProjectInt[]>([]);
 
-  const project = [
-    {
-      key: "1",
-      titulo: "Tracy-TD",
-      descricao: "Sistema de gerenciamento de dívidas técnicas.",
-      cliente: "Prof. Rodrigo - UFPB",
-      pitch: "PVKX6MnruBI?si=3VKzOwaxmSynC84z",
-      tema: "Dividas Tecnicas",
-      slug: "tracytd",
-      semestre: "2023.1",
-      equipe: "ana, arthur"
-    },
-    {
-      key: "2",
-      titulo: "SAD LGPD",
-      descricao: "Website para divulgação e transparência sobre o uso dos dados de servidores do estado de Pernambuco, de acordo com a Lei Geral de Proteção de Dados.",
-      cliente: "Secretaria de Administração do Estado de Pernmabuco",
-      pitch: "5tqi8f88koI?si=y7uz-RyBpzxqDBep",
-      tema: "LGPD",
-      slug: "sadlgpd",
-      semestre: "2023.2",
-      equipe: "aba, abe"
-    }
-  ]
+  // const project = [
+  //   {
+  //     key: "1",
+  //     titulo: "Tracy-TD",
+  //     descricao: "Sistema de gerenciamento de dívidas técnicas.",
+  //     cliente: "Prof. Rodrigo - UFPB",
+  //     pitch: "PVKX6MnruBI?si=3VKzOwaxmSynC84z",
+  //     tema: "Dividas Tecnicas",
+  //     slug: "tracytd",
+  //     semestre: "2023.1",
+  //     equipe: "ana, arthur"
+  //   },
+  //   {
+  //     key: "2",
+  //     titulo: "SAD LGPD",
+  //     descricao: "Website para divulgação e transparência sobre o uso dos dados de servidores do estado de Pernambuco, de acordo com a Lei Geral de Proteção de Dados.",
+  //     cliente: "Secretaria de Administração do Estado de Pernmabuco",
+  //     pitch: "5tqi8f88koI?si=y7uz-RyBpzxqDBep",
+  //     tema: "LGPD",
+  //     slug: "sadlgpd",
+  //     semestre: "2023.2",
+  //     equipe: "aba, abe"
+  //   }
+  // ]
   
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
       setCard(response.data)
     })
-    setCard(project);
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,10 +197,10 @@ function Projects() {
                   <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"></div>
                   <div className='flex flex-col items-start w-full gap-2'>
                     <h1 className="text-2xl text-primary-color font-normal">{project.titulo}</h1>
-                    <h1 className='text-sm '>{project.descricao}</h1>
+                    <p className='text-sm line-clamp-3'>{project.descricao}</p>
                   </div>
                 </section>
-                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`/projects/selected/` + project.slug}>Ver mais</a></button>
+                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`/projects/selected/` + project.id}>Ver mais</a></button>
               </div>
             ))}
           

@@ -4,6 +4,7 @@ import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import ModalButton from "../../components/ModalDelete";
+import { ProjectInt } from "../Projects";
 
 const columns = [
   { key: "titulo", label: "Titulo" },
@@ -11,53 +12,15 @@ const columns = [
   { key: "excluir", label: "Excluir" },
 ];
 
-export interface Project {
-  titulo?: string;
-  descricao?: string;
-  equipe?: string;
-  cliente?: string;
-  pitch?: string;
-  tema?: string;
-  semestre?: string;
-  video_tecnico?: string;
-  tecnologias_utilizadas?: string;
-  palavras_chave?: string;
-  link_repositorio?: string;
-}
 
 function ProjectsAdmin () {
 
-  const [Project, setProject] = useState<Project[]>([]);
-  
-  const project = [
-    {
-      key: "1",
-      titulo: "Tracy-TD",
-      descricao: "Sistema de gerenciamento de dívidas técnicas.",
-      cliente: "Prof. Rodrigo - UFPB",
-      pitch: "PVKX6MnruBI?si=3VKzOwaxmSynC84z",
-      tema: "Dividas Tecnicas",
-      slug: "tracytd",
-      semestre: "2023.1"
-    },
-    {
-      key: "2",
-      titulo: "SAD LGPD",
-      descricao: "Website para divulgação e transparência sobre o uso dos dados de servidores do estado de Pernambuco, de acordo com a Lei Geral de Proteção de Dados.",
-      cliente: "Secretaria de Administração do Estado de Pernmabuco",
-      pitch: "5tqi8f88koI?si=y7uz-RyBpzxqDBep",
-      tema: "LGPD",
-      slug: "sadlgpd",
-      semestre: "2023.2"
-
-    }
-  ]
+  const [Project, setProject] = useState<ProjectInt[]>([]);
   
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
       setProject(response.data)
     })
-    setProject(project);
   }, []);
 
   return (
@@ -85,7 +48,7 @@ function ProjectsAdmin () {
           </thead>    
           <tbody >
             {Project.map((project) => (
-              <tr /*key={project.id}*/ className="border border-light-color">
+              <tr key={project.id} className="border border-light-color">
                 {columns.map((column) => (
                   <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
                     {column.key == "editar" ? (

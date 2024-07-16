@@ -22,7 +22,7 @@ export default {
           left: 0,
           backgroundColor: '#24464D',
           opacity: 0.70,
-        },
+        }
       });
     },
   ],
