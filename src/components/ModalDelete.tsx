@@ -6,20 +6,21 @@ import axios from 'axios';
 
 interface ModalProps {
   title?: string;
+  id?: string;
 }
 
-function handleOptionDelete(title: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) {
-  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${title}`);
+function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) {
+  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`);
   setOpen(false);
 }
 
-export default function ModalButton({ title }: ModalProps) {
+export default function ModalButton({ title, id }: ModalProps) {
 
   const [open, setOpen] = useState(false)
   const handleShow = () => setOpen(true);
 
   const handleDelete = () => {
-    handleOptionDelete(title, setOpen);
+    handleOptionDelete(id, setOpen);
   };
 
   return (
