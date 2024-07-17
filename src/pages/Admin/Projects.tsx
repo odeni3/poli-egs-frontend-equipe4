@@ -6,6 +6,7 @@ import axios from 'axios';
 import ModalButton from "../../components/ModalDelete";
 import { ProjectInt } from "../Projects";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import ModalUpdate from "../../components/ModalUpdate";
 
 const columns = [
   { key: "titulo", label: "Titulo" },
@@ -73,9 +74,20 @@ function ProjectsAdmin () {
                 {columns.map((column) => (
                   <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
                     {column.key == "editar" ? (
-                      <button className="text-dark-color h-full w-5">
-                        <PencilSquareIcon className="h-5 w-5"/>
-                      </button>
+                      <ModalUpdate
+                        titulo={project.titulo}
+                        descricao={project.descricao}
+                        equipe={project.equipe} 
+                        cliente={project.cliente}
+                        pitch={project.titulo} 
+                        tema={project.titulo}
+                        semestre={project.titulo}
+                        video_tecnico={project.titulo} 
+                        tecnologias_utilizadas={project.titulo}
+                        palavras_chave={project.titulo} 
+                        id={project.id}
+                        link_repositorio={project.titulo}
+                      />
                     ) : column.key == "excluir" ? (
                       <ModalButton
                         title={project.titulo}

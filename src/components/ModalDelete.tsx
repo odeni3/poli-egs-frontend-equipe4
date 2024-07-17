@@ -1,5 +1,5 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { ExclamationTriangleIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import { SetStateAction, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
@@ -26,7 +26,7 @@ export default function ModalButton({ title, id }: ModalProps) {
   return (
     <>
       <Button onClick={handleShow} className="text-dark-color h-full w-5">
-        <TrashIcon className="h-5 w-5"/>
+        <PencilSquareIcon className="h-5 w-5"/>
       </Button>
 
       <Dialog open={open} onClose={setOpen} className="relative z-10">
