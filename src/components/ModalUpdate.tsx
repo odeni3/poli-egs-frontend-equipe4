@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
-import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import axios from "axios";
 import { SetStateAction, useState } from "react";
 import { ProjectInt } from "../pages/Projects";
@@ -32,7 +32,7 @@ export default function ModalUpdate({ titulo, descricao, equipe, cliente, pitch,
     return(
         <>
         <Button onClick={handleShow} className="text-dark-color h-full w-5">
-            <TrashIcon className="h-5 w-5"/>
+            <PencilSquareIcon className="h-5 w-5"/>
         </Button>
 
         <Dialog open={open} onClose={setOpen} className="relative z-10">

@@ -1,9 +1,8 @@
 import { Table } from "react-bootstrap";
 import HeaderAdmin from "../../components/HeaderAdmin";
-import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import { SetStateAction, useEffect, useState } from "react";
 import axios from 'axios';
-import ModalButton from "../../components/ModalDelete";
+import ModalDelete from "../../components/ModalDelete";
 import { ProjectInt } from "../Projects";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalUpdate from "../../components/ModalUpdate";
@@ -16,6 +15,11 @@ const columns = [
 
 
 function ProjectsAdmin () {
+
+  const [Input, setInput] = useState<string>("");
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
 
   const handlePost = ( setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
     axios.post(`https://ecomp-egs.onrender.com/projeto_add`, NewProject)
@@ -45,6 +49,17 @@ function ProjectsAdmin () {
     })
   }, []);
 
+  const filteredProject = Project.filter((project) => {    
+    const input = Input.toLowerCase();
+    return (
+      (
+        project.titulo?.toLowerCase().includes(input) ||
+        project.palavras_chave?.toLowerCase().includes(input) ||
+        project.tema?.toLowerCase().includes(input)
+      ) 
+    );
+  });
+
   return (
     <>
       <HeaderAdmin />
@@ -59,6 +74,8 @@ function ProjectsAdmin () {
           id="searchbar" 
           className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2] "
           placeholder="Pesquise por nome, tema, palavra-chave"
+          value={Input}
+          onChange={handleInputChange}
         />
       </div>  
       <div className="px-[13vw] pt-10">
@@ -69,7 +86,7 @@ function ProjectsAdmin () {
             ))}
           </thead>    
           <tbody >
-            {Project.map((project) => (
+            {filteredProject.map((project) => (
               <tr key={project.id} className="border border-light-color">
                 {columns.map((column) => (
                   <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
@@ -79,17 +96,17 @@ function ProjectsAdmin () {
                         descricao={project.descricao}
                         equipe={project.equipe} 
                         cliente={project.cliente}
-                        pitch={project.titulo} 
-                        tema={project.titulo}
-                        semestre={project.titulo}
-                        video_tecnico={project.titulo} 
-                        tecnologias_utilizadas={project.titulo}
-                        palavras_chave={project.titulo} 
+                        pitch={project.pitch} 
+                        tema={project.tema}
+                        semestre={project.semestre}
+                        video_tecnico={project.video_tecnico} 
+                        tecnologias_utilizadas={project.tecnologias_utilizadas}
+                        palavras_chave={project.palavras_chave} 
                         id={project.id}
-                        link_repositorio={project.titulo}
+                        link_repositorio={project.link_repositorio}
                       />
                     ) : column.key == "excluir" ? (
-                      <ModalButton
+                      <ModalDelete
                         title={project.titulo}
                         id={project.id}
                       />

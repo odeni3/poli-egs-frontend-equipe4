@@ -10,11 +10,11 @@ interface ModalProps {
 }
 
 function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) {
-  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`);
+  //axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`);
   setOpen(false);
 }
 
-export default function ModalDelete({ title, id }: ModalProps) {
+export default function ModalDeleteArticle({ title, id }: ModalProps) {
 
   const [open, setOpen] = useState(false)
   const handleShow = () => setOpen(true);
