@@ -10,8 +10,8 @@ function HeaderAdmin() {
           <ArrowLeftStartOnRectangleIcon className="h-full"/>
         </Nav.Link>
         <div className="flex-1 flex justify-center space-x-8">
-          <Nav.Link href="/admin-projects">Início</Nav.Link>
-          <Nav.Link href="#/">Artigos</Nav.Link>
+          <Nav.Link href="/admin-projects">Projetos</Nav.Link>
+          <Nav.Link href="/admin-articles">Artigos</Nav.Link>
         </div>
       </Nav>
   </header>

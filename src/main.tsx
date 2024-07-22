@@ -6,6 +6,8 @@ import Projects from './pages/Projects'
 import { Route, Routes, BrowserRouter} from 'react-router-dom'
 import Project from './pages/Project.tsx'
 import ProjectsAdmin from './pages/Admin/Projects.tsx'
+import ArticlesAdmin from './pages/Admin/Artigos.tsx'
+import Articles from './pages/Artigos.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -14,7 +16,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path='/' element={<App />} />
           <Route path='/projects/:slug?' element={<Projects />} />
           <Route path='/projects/selected/:slug' element={<Project />} />
+          <Route path='/articles' element={<Articles />} />
           <Route path='/admin-projects' element={<ProjectsAdmin />} />
+          <Route path='/admin-articles' element={<ArticlesAdmin />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
