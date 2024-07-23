@@ -6,7 +6,7 @@ function HeaderAdmin() {
     
     <header className="bg-primary-color shadow text-light-color h-[10vh] w-full flex justify-between items-center px-4">     
       <Nav className="flex flex-1">
-        <Nav.Link href="/" className="mr-auto ml-10 w-[1vw] h-[2.5vh]">
+        <Nav.Link href="/logout" className="mr-auto ml-10 w-[1vw] h-[2.5vh]">
           <ArrowLeftStartOnRectangleIcon className="h-full"/>
         </Nav.Link>
         <div className="flex-1 flex justify-center space-x-8">
