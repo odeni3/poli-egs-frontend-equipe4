@@ -24,6 +24,15 @@ function App() {
     }
   };
 
+  const handleNavigation = (input: string) => {
+    navigate(`/projects/${input}`);
+  };
+
+  const handleButtonClick = (theme: string) => {
+    setInput(theme);
+    handleNavigation(theme);
+  };
+
   return (
     <>
       <Header/>
@@ -50,13 +59,13 @@ function App() {
 
       <section className="grid grid-rows-3 gap-[2vw] px-[13vw] text-light-color font-semibold pb-20 text-xl w-full">
         <section className="grid grid-cols-2 gap-[2vw]">
-          <button className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{ backgroundImage: `url(${IA})` }}>
+          <button onClick={() => handleButtonClick('Inteligência Artificial')} className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{ backgroundImage: `url(${IA})` }}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
             <div className="relative z-10 flex justify-center">
               <h5 className='text-light-color fontbold text-2xl '>Inteligência Artificial</h5>
             </div>         
           </button>
-          <button className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${CD})`}}>
+          <button onClick={() => handleButtonClick('Ciência de Dados')} className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${CD})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
             <div className="relative z-10 flex justify-center">
               <h5 className='text-light-color fontbold text-2xl '>Ciência de Dados</h5>
@@ -64,25 +73,25 @@ function App() {
           </button>
         </section>        
         <section className="grid grid-cols-4 gap-[2vw]">
-          <button className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${FIN})`}}>
+          <button onClick={() => handleButtonClick('Finanças')} className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${FIN})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
                 <h5 className='text-light-color fontbold text-2xl '>Finanças</h5>
             </div>
           </button>        
-          <button className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${DT})`}}>
+          <button onClick={() => handleButtonClick('Divida Tecnica')} className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${DT})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
-                <h5 className='text-light-color fontbold text-2xl '>Divida Tecnica</h5>
+                <h5 className='text-light-color fontbold text-2xl '>Dívida Tecnica</h5>
             </div>             
           </button>
-          <button className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${GESTAO})`}}>
+          <button onClick={() => handleButtonClick('Gestão')} className="bg-cover bg-center h-[40vh] w-[17vw] relative flex items-center justify-center" style={{backgroundImage:`url(${GESTAO})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
                 <h5 className='text-light-color fontbold text-2xl '>Gestão</h5>
             </div>
           </button>
-          <button className="bg-cover bg-center h-[40vh] relative w-[17vw] flex items-center justify-center" style={{backgroundImage:`url(${LGPD})`}}>
+          <button onClick={() => handleButtonClick('LGPD')} className="bg-cover bg-center h-[40vh] relative w-[17vw] flex items-center justify-center" style={{backgroundImage:`url(${LGPD})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
                 <h5 className='text-light-color fontbold text-2xl '>LGPD</h5>
@@ -90,13 +99,13 @@ function App() {
           </button>          
         </section>
         <section className="grid grid-cols-2 gap-[2vw]">
-          <button className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${SAUDE})`}}>
+          <button onClick={() => handleButtonClick('Saude')} className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${SAUDE})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
-                <h5 className='text-light-color fontbold text-2xl '>Saude</h5>
+                <h5 className='text-light-color fontbold text-2xl '>Saúde</h5>
             </div>
           </button>
-          <button className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${EDUCACAO})`}}>
+          <button onClick={() => handleButtonClick('Educação')} className="bg-cover bg-center h-[40vh] w-[36vw] relative flex items-center justify-center" style={{backgroundImage:`url(${EDUCACAO})`}}>
             <div className="absolute inset-0 bg-primary-color opacity-50"></div>
               <div className="relative z-10 flex justify-center">
                 <h5 className='text-light-color fontbold text-2xl '>Educação</h5>
@@ -149,7 +158,7 @@ function App() {
         <div className="h-[13vh] relative overflow-hidden">
           <svg className="absolute bottom-0 w-full" viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(31, 122, 140, 1)" offset="0%"></stop><stop stop-color="rgba(31, 122, 140, 1)" offset="100%"></stop></linearGradient></defs><path fill="url(#sw-gradient-0)" d="M0,20L120,26.7C240,33,480,47,720,53.3C960,60,1200,60,1440,63.3C1680,67,1920,73,2160,73.3C2400,73,2640,67,2880,63.3C3120,60,3360,60,3600,56.7C3840,53,4080,47,4320,40C4560,33,4800,27,5040,28.3C5280,30,5520,40,5760,45C6000,50,6240,50,6480,55C6720,60,6960,70,7200,75C7440,80,7680,80,7920,76.7C8160,73,8400,67,8640,53.3C8880,40,9120,20,9360,18.3C9600,17,9840,33,10080,40C10320,47,10560,43,10800,45C11040,47,11280,53,11520,50C11760,47,12000,33,12240,28.3C12480,23,12720,27,12960,35C13200,43,13440,57,13680,60C13920,63,14160,57,14400,55C14640,53,14880,57,15120,61.7C15360,67,15600,73,15840,75C16080,77,16320,73,16560,66.7C16800,60,17040,50,17160,45L17280,40L17280,100L17160,100C17040,100,16800,100,16560,100C16320,100,16080,100,15840,100C15600,100,15360,100,15120,100C14880,100,14640,100,14400,100C14160,100,13920,100,13680,100C13440,100,13200,100,12960,100C12720,100,12480,100,12240,100C12000,100,11760,100,11520,100C11280,100,11040,100,10800,100C10560,100,10320,100,10080,100C9840,100,9600,100,9360,100C9120,100,8880,100,8640,100C8400,100,8160,100,7920,100C7680,100,7440,100,7200,100C6960,100,6720,100,6480,100C6240,100,6000,100,5760,100C5520,100,5280,100,5040,100C4800,100,4560,100,4320,100C4080,100,3840,100,3600,100C3360,100,3120,100,2880,100C2640,100,2400,100,2160,100C1920,100,1680,100,1440,100C1200,100,960,100,720,100C480,100,240,100,120,100L0,100Z"></path></svg>
         </div>  
-        <div className="h-[25vh] bg-primary-color bottom-0 flex flex-row relative">                  
+        <div className="h-[25vh] w-full bg-primary-color bottom-0 flex flex-row gap-36 relative justify-center items-center">        
         </div>
         <div className="h-[10vh] relative overflow-hidden">
           <svg className="absolute bottom-0 w-full" style={{ transform: 'rotate(180deg)' }} viewBox="0 0 1440 100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(31, 122, 140, 1)" offset="0%"></stop><stop stop-color="rgba(31, 122, 140, 1)" offset="100%"></stop></linearGradient></defs><path fill="url(#sw-gradient-0)" d="M0,20L120,26.7C240,33,480,47,720,53.3C960,60,1200,60,1440,63.3C1680,67,1920,73,2160,73.3C2400,73,2640,67,2880,63.3C3120,60,3360,60,3600,56.7C3840,53,4080,47,4320,40C4560,33,4800,27,5040,28.3C5280,30,5520,40,5760,45C6000,50,6240,50,6480,55C6720,60,6960,70,7200,75C7440,80,7680,80,7920,76.7C8160,73,8400,67,8640,53.3C8880,40,9120,20,9360,18.3C9600,17,9840,33,10080,40C10320,47,10560,43,10800,45C11040,47,11280,53,11520,50C11760,47,12000,33,12240,28.3C12480,23,12720,27,12960,35C13200,43,13440,57,13680,60C13920,63,14160,57,14400,55C14640,53,14880,57,15120,61.7C15360,67,15600,73,15840,75C16080,77,16320,73,16560,66.7C16800,60,17040,50,17160,45L17280,40L17280,100L17160,100C17040,100,16800,100,16560,100C16320,100,16080,100,15840,100C15600,100,15360,100,15120,100C14880,100,14640,100,14400,100C14160,100,13920,100,13680,100C13440,100,13200,100,12960,100C12720,100,12480,100,12240,100C12000,100,11760,100,11520,100C11280,100,11040,100,10800,100C10560,100,10320,100,10080,100C9840,100,9600,100,9360,100C9120,100,8880,100,8640,100C8400,100,8160,100,7920,100C7680,100,7440,100,7200,100C6960,100,6720,100,6480,100C6240,100,6000,100,5760,100C5520,100,5280,100,5040,100C4800,100,4560,100,4320,100C4080,100,3840,100,3600,100C3360,100,3120,100,2880,100C2640,100,2400,100,2160,100C1920,100,1680,100,1440,100C1200,100,960,100,720,100C480,100,240,100,120,100L0,100Z"></path></svg>
