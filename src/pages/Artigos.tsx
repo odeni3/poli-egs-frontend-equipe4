@@ -78,7 +78,7 @@ function Articles() {
           onChange={handleInputChange}
         />
       </div>  
-      <section className='flex flex-wrap flex-row px-[13vw] gap-[2vw] pt-10'>
+      <section className='grid grid-cols-2 px-[13vw] gap-[2vw] pt-10'>
         {filteredCards.map((article) => (
             <div
               className="flex flex-col w-[35vw] border-solid border-2 border-light-color p-4 gap-3"
