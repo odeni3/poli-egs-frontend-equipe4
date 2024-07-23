@@ -1,34 +1,30 @@
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import axios from "axios";
-import { SetStateAction, useState } from "react";
 import { ProjectInt } from "../pages/Projects";
+import { useState } from "react";
 
 
-export default function ModalUpdate({ titulo, descricao, equipe, cliente, pitch, tema, semestre, video_tecnico, tecnologias_utilizadas, palavras_chave, id, link_repositorio }: ProjectInt){
+export default function ModalUpdate({ project, handleUpdate }: { project: ProjectInt, handleUpdate: () => void }){
 
     const [open, setOpen] = useState(false)
     const handleShow = () => setOpen(true);
 
-    const handleUpdate = ( setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-        axios.put(`https://ecomp-egs.onrender.com/projeto_update/`, UpdatedProject)
-        setOpen(false);
-    }
-
     const [UpdatedProject, setUpdatedProject] = useState({
-        titulo: titulo,
-        descricao: descricao,
-        equipe: equipe,
-        cliente: cliente,
-        pitch: pitch,
-        tema: tema,
-        semestre: semestre,
-        video_tecnico: video_tecnico,
-        tecnologias_utilizadas: tecnologias_utilizadas,
-        palavras_chave: palavras_chave,
-        id: id,
-        link_repositorio: link_repositorio
-    })
+      ...project
+    });
+
+    const handleUpdateProject = () => {
+      axios.put(`https://ecomp-egs.onrender.com/projeto_update/`, UpdatedProject)
+        .then(() => {
+          handleUpdate();
+          setOpen(false);
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar projeto:', error);
+        });
+    };
+
     return(
         <>
         <Button onClick={handleShow} className="text-dark-color h-full w-5">
@@ -47,7 +43,7 @@ export default function ModalUpdate({ titulo, descricao, equipe, cliente, pitch,
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <DialogTitle as="h2" className="text-base font-semibold leading-6 text-gray-900">
-                    Atualizar {titulo}
+                    Atualizar {project.titulo}
                   </DialogTitle>
                 </div>
               </div>
@@ -104,7 +100,7 @@ export default function ModalUpdate({ titulo, descricao, equipe, cliente, pitch,
               <button
                 type="button"
                 className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
-                onClick={() => handleUpdate(setOpen)}
+                onClick={handleUpdateProject}
               >
                 Enviar
               </button>

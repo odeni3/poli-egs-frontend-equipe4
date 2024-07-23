@@ -22,12 +22,6 @@ export interface ProjectInt {
   link_repositorio?: string;
 }
 
-const themes = ['Divida Tecnica', 'LGPD', 'Inteligência Artificial']
-const semester = ['2023.1', '2023.2', '2024.1']
-
-//TODO(Ana: Ajustar os listBox para fechar ao selecionar uma opção)
-//TODO(Ana: Tornar a altura dos cards flexivel)
-
 function Projects() {
   const { slug } = useParams();
   const [Input, setInput] = useState(slug || '')
@@ -35,10 +29,18 @@ function Projects() {
   const [Themes, setThemes] = useState('')
   const [Semester, setSemester] = useState('')
   const [Card, setCard] = useState<ProjectInt[]>([]);
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [selectedSemester, setselectedSemester] = useState<string[]>([]);
   
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
       setCard(response.data)
+    })
+    axios.get('https://ecomp-egs.onrender.com/temasProjeto').then(function (response) {
+      setSelectedThemes(response.data.temas)
+    })
+    axios.get('https://ecomp-egs.onrender.com/semestreProjetos').then(function (response) {
+      setselectedSemester(response.data.semestres)
     })
   }, []);
 
@@ -75,7 +77,8 @@ function Projects() {
       <Header />
       <h1 className="px-[13vw] pt-10 text-2xl font-bold text-start text-dark-color">Projetos</h1>     
       <section className="flex flex-row gap-[2vw] px-[13vw] pt-10 w-full">        
-          <form action="/" method="post" className="border-solid border-2 border-light-color w-[25vw] px-4 py-2">
+        <section className="w-[23vw]">        
+          <form action="/" method="post" className="border-solid border-2 border-light-color w-full px-4 py-2">
             <div className='flex justify-center w-full pb-2'>
               <h1 className="text-dark-color font-medium text-base">Filtro de pesquisa</h1>
             </div>            
@@ -83,7 +86,7 @@ function Projects() {
               <label>Área do projeto:</label>
               <Listbox value={Themes} onChange={setThemes}>
                 <div className="relative">
-                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color focus:outline-none focus:border-b-2 focus:border-sky-700">
+                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color cursor-default focus:outline-none focus:border-b-2 focus:border-sky-700">
                     <h1>{Themes}</h1>
                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-2 flex items-center pr-2">
                       <ChevronDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
@@ -91,13 +94,13 @@ function Projects() {
                   </ListboxButton>
                   <ListboxOptions
                     transition
-                    className="absolute max-h-25 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg"
+                    className="absolute max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg z-50  focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in " 
                   >
-                    {themes.map((theme) => (
+                    {selectedThemes.map((theme) => (
                       <ListboxOption
                         key={theme}
                         value={theme}
-                        className="group relative select-none py-1 pl-2 text-gray-900 data-[focus]:bg-sky-700 data-[focus]:text-white"
+                        className="group relative cursor-default select-none py-1 pl-2 text-gray-900 data-[focus]:bg-sky-700 data-[focus]:text-white"
                       >
                         <h1>{theme}</h1>
                         <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-data-[focus]:text-white [.group:not([data-selected])_&]:hidden">
@@ -121,9 +124,9 @@ function Projects() {
                   </ListboxButton>
                   <ListboxOptions
                     transition
-                    className="absolute max-h-25 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg"
+                    className="absolute max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg z-10"
                   >
-                    {semester.map((semester) => (
+                    {selectedSemester.map((semester) => (
                       <ListboxOption
                         key={semester}
                         value={semester}
@@ -163,10 +166,11 @@ function Projects() {
               <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white">Enviar</button>
             </div>          
           </form> 
-        <section className='flex flex-wrap gap-[1vw]'>
+        </section>
+        <section className='grid grid-cols-2 gap-[1vw]'>
           {filteredCards.map((project) => (
               <div
-                className="flex flex-col w-[22vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
+                className="flex flex-col w-[23vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
               >
                 <section className="flex flex-row gap-2">
                   <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"></div>
