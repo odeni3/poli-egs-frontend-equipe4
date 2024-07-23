@@ -19,7 +19,7 @@ function Articles() {
         equipe: "Ana Karla ; Arthur Carvalho ",
         data: "18/07/2024",
         palavras_chave: "Palavra 1; Palavra2; Palavra3",
-        arquivo: "tracytd"
+        arquivo: "google.com/"
       },
       {
         key: "1",
@@ -86,7 +86,7 @@ function Articles() {
               <h1 className="text-3xl text-primary-color font-normal">{article.titulo}</h1>
               <div>
                 <h3 className="font-semibold">Autor(es):</h3>
-                <ul className='mb-1 grid grid-cols-2 gap-2'>
+                <ul className='mb-1 flex flex-col'>
                   {article.equipe?.split(";").map((pessoa) => (
                     <li>{pessoa}</li>
                   ))}
@@ -98,9 +98,11 @@ function Articles() {
               </div>
               <div>
                 <h3 className="font-semibold">Palavras-chave:</h3>
-                <ul className='mb-1 grid grid-cols-5 gap-4 '>
+                <ul className='mb-1 flex flex-row flex-wrap gap-2 '>
                   {article.palavras_chave?.split(";").map((palavras) => (
-                    <li className="text-light-color font-normal bg-primary-color rounded-md">{palavras}</li>
+                    <div className="flex justify-center bg-primary-color rounded-md px-2">
+                      <h5 className='text-light-color font-normal'>{palavras}</h5>
+                    </div>
                   ))}
                 </ul>
               </div>
@@ -109,7 +111,7 @@ function Articles() {
                 <h3>{article.data}</h3>
               </div>
               <div>
-                <button className='flex flex-row gap-2 text-primary-color'> <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
+                <button className='flex flex-row gap-2 text-primary-color' onClick={() => {article.arquivo != "" ? window.open("http://" + article.arquivo, "_blank") : "";}}> <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
               </div>
             </div>
           ))}          
