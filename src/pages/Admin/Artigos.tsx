@@ -1,7 +1,6 @@
 import { Table } from "react-bootstrap";
 import HeaderAdmin from "../../components/HeaderAdmin";
-import { SetStateAction, useEffect, useState } from "react";
-import axios from 'axios';
+import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalDeleteArticle from "../../components/ModalDeleteArticle";
 import ModalUpdateArticle from "../../components/ModalUpdateArticle";
@@ -32,19 +31,19 @@ function ArticlesAdmin () {
     setInput(event.target.value);
   };
 
-  const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    /*axios.post(`https://ecomp-egs.onrender.com/artigos`, NewArticle)
-      .then(() => {
-        return axios.get('https://ecomp-egs.onrender.com/artigos');
-      })
-      .then(response => {
-        setArticle(response.data);
-        setOpen(false);
-      })
-      .catch(error => {
-        console.error('Erro ao adicionar artigo:', error);
-      });*/
-  };
+  // const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+  //   /*axios.post(`https://ecomp-egs.onrender.com/artigos`, NewArticle)
+  //     .then(() => {
+  //       return axios.get('https://ecomp-egs.onrender.com/artigos');
+  //     })
+  //     .then(response => {
+  //       setArticle(response.data);
+  //       setOpen(false);
+  //     })
+  //     .catch(error => {
+  //       console.error('Erro ao adicionar artigo:', error);
+  //     });*/
+  // };
 
   const handleUpdate = () => {
     /*axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
@@ -54,7 +53,7 @@ function ArticlesAdmin () {
     });*/
   };
 
-  const [Article, setArticle] = useState<ArticleInt[]>([]);
+  const [Article/*, setArticle*/] = useState<ArticleInt[]>([]);
   const [open, setOpen] = useState(false)
   const [NewArticle, setNewArticle] = useState({
     titulo: '',
@@ -73,7 +72,7 @@ function ArticlesAdmin () {
     })*/
   }, []);
 
-  const filteredArticle = Article.filter((article) => {    
+  const filteredArticle = Article.filter((article:any) => {    
     const input = Input.toLowerCase();
     return (
       (
@@ -189,7 +188,7 @@ function ArticlesAdmin () {
                 <button
                   type="button"
                   className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
-                  onClick={() => handlePost(setOpen)}
+                  // onClick={() => handlePost(setOpen)}
                 >
                   Enviar
                 </button>

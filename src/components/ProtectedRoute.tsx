@@ -1,8 +1,7 @@
-import React,{ Component }  from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { Outlet, Navigate } from 'react-router-dom';
 
-function ProtectedRoute({component, ...rest}:any) {
+function ProtectedRoute() {
     const { currentUser, loading }:any = useAuth();
 
     if (loading) {

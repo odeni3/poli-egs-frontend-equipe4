@@ -1,5 +1,5 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, getAuth, User, getIdToken, signInWithCredential, signInWithCustomToken } from 'firebase/auth';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../assets/firebaseConfig'; 
 
 interface AuthContextType {

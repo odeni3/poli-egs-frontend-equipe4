@@ -1,11 +1,10 @@
   import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
   import { PencilSquareIcon } from '@heroicons/react/20/solid';
-  import axios from "axios";
-  import { SetStateAction, useState } from "react";
+  import { useState } from "react";
   import { ArticleInt } from "../pages/Admin/Artigos";
 
 
-  export default function ModalUpdateArticle({ article, handleUpdate }: { article: ArticleInt, handleUpdate: () => void }){
+  export default function ModalUpdateArticle({ article, /*handleUpdate*/ }: { article: ArticleInt, handleUpdate: () => void }){
 
     const [open, setOpen] = useState(false)
     const handleShow = () => setOpen(true);

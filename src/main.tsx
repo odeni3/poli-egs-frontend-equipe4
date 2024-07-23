@@ -12,7 +12,6 @@ import Login from './pages/Admin/Login.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 import Logout from './components/Logout.tsx'
-import HeaderAdmin from './components/HeaderAdmin.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

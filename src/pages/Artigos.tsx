@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid';
 import Header from '../components/Header';
 import { useState } from 'react';
-import axios from 'axios';
 import { ArticleInt } from './Admin/Artigos';
 
 

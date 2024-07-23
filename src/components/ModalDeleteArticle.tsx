@@ -1,8 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import axios from 'axios';
 
 interface ModalProps {
   title?: string;
@@ -10,24 +9,24 @@ interface ModalProps {
   handleUpdate: () => void;
 }
 
-function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
-  /*axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
-    .then(() => {
-      handleUpdate();
-      setOpen(false);
-    })
-    .catch(error => {
-      console.error('Erro ao deletar artigo:', error);
-  });*/
-}
+// function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
+//   /*axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
+//     .then(() => {
+//       handleUpdate();
+//       setOpen(false);
+//     })
+//     .catch(error => {
+//       console.error('Erro ao deletar artigo:', error);
+//   });*/
+// }
 
-export default function ModalDeleteArticle({ title, id, handleUpdate }: ModalProps) {
+export default function ModalDeleteArticle({ title/*, id, handleUpdate*/ }: ModalProps) {
 
   const [open, setOpen] = useState(false)
   const handleShow = () => setOpen(true);
 
   const handleDelete = () => {
-    handleOptionDelete(id, setOpen, handleUpdate);
+    // handleOptionDelete(id, setOpen, handleUpdate);
   };
 
   return (
