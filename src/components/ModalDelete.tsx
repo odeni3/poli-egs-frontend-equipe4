@@ -7,20 +7,27 @@ import axios from 'axios';
 interface ModalProps {
   title?: string;
   id?: string;
+  handleUpdate: () => void;
 }
 
-function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) {
-  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`);
-  setOpen(false);
+function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
+  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`)
+    .then(() => {
+      handleUpdate();
+      setOpen(false);
+    })
+    .catch(error => {
+      console.error('Erro ao deletar projeto:', error);
+  });
 }
 
-export default function ModalDelete({ title, id }: ModalProps) {
+export default function ModalDelete({ title, id, handleUpdate }: ModalProps) {
 
   const [open, setOpen] = useState(false)
   const handleShow = () => setOpen(true);
 
   const handleDelete = () => {
-    handleOptionDelete(id, setOpen);
+    handleOptionDelete(id, setOpen, handleUpdate);
   };
 
   return (

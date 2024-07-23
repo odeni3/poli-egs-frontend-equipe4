@@ -32,10 +32,27 @@ function ArticlesAdmin () {
     setInput(event.target.value);
   };
 
-  const handlePost = ( setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    //axios.post(`https://ecomp-egs.onrender.com/projeto_add`, NewArticle)
-    setOpen(false);
-  }
+  const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+    /*axios.post(`https://ecomp-egs.onrender.com/artigos`, NewArticle)
+      .then(() => {
+        return axios.get('https://ecomp-egs.onrender.com/artigos');
+      })
+      .then(response => {
+        setArticle(response.data);
+        setOpen(false);
+      })
+      .catch(error => {
+        console.error('Erro ao adicionar artigo:', error);
+      });*/
+  };
+
+  const handleUpdate = () => {
+    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
+      setArticle(response.data);
+    }).catch(error => {
+      console.error('Erro ao atualizar artigo', error);
+    });*/
+  };
 
   const [Article, setArticle] = useState<ArticleInt[]>([]);
   const [open, setOpen] = useState(false)
@@ -51,7 +68,7 @@ function ArticlesAdmin () {
   })
   
   useEffect(() => {
-    /*axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
+    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
       setArticle(response.data)
     })*/
   }, []);
@@ -99,18 +116,14 @@ function ArticlesAdmin () {
                   <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
                     {column.key == "editar" ? (
                       <ModalUpdateArticle
-                        titulo={article.titulo}
-                        descricao={article.descricao}
-                        equipe={article.equipe} 
-                        tema={article.tema} 
-                        data={article.data}
-                        palavras_chave={article.palavras_chave}
-                        arquivo={article.arquivo}
+                        article={article}
+                        handleUpdate={handleUpdate}
                       />
                     ) : column.key == "excluir" ? (
                       <ModalDeleteArticle
                         title={article.titulo}
                         id={article.id}
+                        handleUpdate={handleUpdate}
                       />
                     ) : (
                       article.titulo

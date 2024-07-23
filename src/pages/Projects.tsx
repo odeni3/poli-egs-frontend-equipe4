@@ -22,11 +22,6 @@ export interface ProjectInt {
   link_repositorio?: string;
 }
 
-
-
-//TODO(Ana: Ajustar os listBox para fechar ao selecionar uma opção)
-//TODO(Ana: Tornar a altura dos cards flexivel)
-
 function Projects() {
   const { slug } = useParams();
   const [Input, setInput] = useState(slug || '')

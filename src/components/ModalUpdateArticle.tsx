@@ -5,26 +5,26 @@
   import { ArticleInt } from "../pages/Admin/Artigos";
 
 
-  export default function ModalUpdateArticle({ titulo, descricao, equipe, tema, data, palavras_chave, arquivo }: ArticleInt){
+  export default function ModalUpdateArticle({ article, handleUpdate }: { article: ArticleInt, handleUpdate: () => void }){
 
     const [open, setOpen] = useState(false)
     const handleShow = () => setOpen(true);
 
-    const handleUpdate = ( setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-        //axios.put(`https://ecomp-egs.onrender.com/projeto_update/`, UpdatedArticle)
-        setOpen(false);
-    }
-
     const [UpdatedArticle, setUpdatedArticle] = useState({
-      titulo: titulo,
-      descricao: descricao,
-      equipe: equipe,
-      tema: tema,
-      data: data,
-      palavras_chave: palavras_chave,
-      arquivo: arquivo
-        
-    })
+      ...article
+    });
+
+    const handleUpdateArticle = () => {
+      /*axios.put(`https://ecomp-egs.onrender.com/artigos/`, UpdatedArticle)
+        .then(() => {
+          handleUpdate();
+          setOpen(false);
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar artigo:', error);
+        });*/
+    };
+
     return(
         <>
           <Button onClick={handleShow} className="text-dark-color h-full w-5">
@@ -43,7 +43,7 @@
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                     <DialogTitle as="h2" className="text-base font-semibold leading-6 text-gray-900">
-                      Atualizar {titulo}
+                      Atualizar {article.titulo}
                     </DialogTitle>
                   </div>
                 </div>
@@ -84,7 +84,7 @@
                 <button
                   type="button"
                   className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
-                  onClick={() => handleUpdate(setOpen)}
+                  onClick={handleUpdateArticle}
                 >
                   Enviar
                 </button>
