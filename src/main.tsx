@@ -23,10 +23,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path='/projects/:slug?' element={<Projects />} />
           <Route path='/projects/selected/:slug' element={<Project />} />
           <Route path='/articles' element={<Articles />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/admin-articles' element={<ArticlesAdmin />} />
+          <Route path='/login' element={<Login />} />          
           <Route element={<ProtectedRoute/>}>
             <Route path='/admin-projects' element={<ProjectsAdmin/>}/>
+            <Route path='/admin-articles' element={<ArticlesAdmin />} />
             <Route path='/logout' element={<Logout/>}/>
           </Route>
         </Routes>

@@ -9,6 +9,7 @@ import { ArticleInt } from './Admin/Artigos';
 function Articles() {
   const [Input, setInput] = useState<string>("");
   const [Card, setCard] = useState<ArticleInt[]>([]);
+  const [file, setFile] = useState<File | undefined>();
 
   const article = [
       {
@@ -44,12 +45,29 @@ function Articles() {
     ]
   
   useEffect(() => {
-    //axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {})
+    //axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {})
       setCard(article);    
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
+  };
+
+  const handleDownload = async (id: string) => {
+    /*try {
+      const response = await axios.get(`https://ecomp-egs.onrender.com/artigo_download/${id}`, {
+        responseType: 'blob', 
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `artigo_${id}.pdf`); 
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erro ao obter o PDF:', error);
+    }*/
   };
 
   const filteredCards = Card.filter((article) => {    
@@ -111,7 +129,14 @@ function Articles() {
                 <h3>{article.data}</h3>
               </div>
               <div>
-                <button className='flex flex-row gap-2 text-primary-color' onClick={() => {article.arquivo != "" ? window.open("http://" + article.arquivo, "_blank") : "";}}> <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
+                <button className='flex flex-row gap-2 text-primary-color'
+                onClick={() => {
+                  if (article.id) {handleDownload(article.id);
+
+                  } else {
+                    console.error('URL do arquivo não está disponível');
+                  }}}> 
+                  <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
               </div>
             </div>
           ))}          

@@ -14,7 +14,7 @@ function Login() {
 
     const handleLogin = async () => {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);            
             navigate('/admin-projects')
         } catch (error:any) {
             setError(error.message);
