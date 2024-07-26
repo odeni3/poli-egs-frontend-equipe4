@@ -33,36 +33,6 @@ function ArticlesAdmin () {
     setInput(event.target.value);
   };
 
-  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    /*try {
-      await axios.post(`https://ecomp-egs.onrender.com/artigos`, NewArticle);
-      const newArticleId = response.data.id;
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('id', newArticleId);
-        await axios.post('https://ecomp-egs.onrender.com/artigo_upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-      }
-      const response = await axios.get('https://ecomp-egs.onrender.com/artigos');
-      setArticle(response.data);
-      setOpen(false);
-    } catch (error) {
-      console.error('Erro ao adicionar artigo ou enviar arquivo:', error);
-    }*/
-  }
-
-  const handleUpdate = () => {
-    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
-      setArticle(response.data);
-    }).catch(error => {
-      console.error('Erro ao atualizar artigo', error);
-    });*/
-  };
-
   const [Article, setArticle] = useState<ArticleInt[]>([]);
   const [open, setOpen] = useState(false)
   const [NewArticle, setNewArticle] = useState({
@@ -83,11 +53,44 @@ function ArticlesAdmin () {
     };
     setFile(target.files[0]);
   }
+
+  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+    try {
+      const postResponse = await axios.post('https://ecomp-egs.onrender.com/artigos', NewArticle);
+      const newArticleId = postResponse.data.id; 
+      if (!newArticleId) {
+        throw new Error('ID do novo artigo não retornado.');
+      }  
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+  
+        await axios.post(`https://ecomp-egs.onrender.com/artigo_upload/${newArticleId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+      const response = await axios.get('https://ecomp-egs.onrender.com/artigos');
+      setArticle(response.data);  
+      setOpen(false);
+    } catch (error) {
+      console.error('Erro ao adicionar artigo ou enviar arquivo:', error);
+    }
+  };
+
+  const handleUpdate = () => {
+    axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
+      setArticle(response.data);
+    }).catch(error => {
+      console.error('Erro ao atualizar artigo', error);
+    });
+  }; 
   
   useEffect(() => {
-    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
+    axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
       setArticle(response.data)
-    })*/
+    })
   }, []);
 
   const filteredArticle = Article.filter((article) => {    

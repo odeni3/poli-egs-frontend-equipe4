@@ -3,6 +3,7 @@
   import axios from "axios";
   import { SetStateAction, useState } from "react";
   import { ArticleInt } from "../pages/Admin/Artigos";
+import { FaFileUpload } from "react-icons/fa";
 
 
   export default function ModalUpdateArticle({ article, handleUpdate }: { article: ArticleInt, handleUpdate: () => void }){
@@ -14,6 +15,14 @@
       ...article
     });
 
+    const [file, setFile] = useState<File | undefined>();
+    async function uploadPdf(e: React.FormEvent<HTMLInputElement>) {
+      const target = e.target as HTMLInputElement & {
+        files: FileList;
+      };
+      setFile(target.files[0]);
+    }
+    
     const handleUpdateArticle = () => {
       /*axios.put(`https://ecomp-egs.onrender.com/artigos/`, UpdatedArticle)
         .then(() => {
@@ -43,7 +52,7 @@
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                     <DialogTitle as="h2" className="text-lg font-semibold leading-6 text-dark-color">
-                      Atualizar {article.titulo}
+                      Atualizar: {article.titulo}
                     </DialogTitle>
                   </div>
                 </div>
@@ -55,29 +64,51 @@
                     <input type="text" name="titulo" id="titulo" placeholder="Titulo" value={UpdatedArticle.titulo} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, titulo:e.target.value}))}/>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">Equipe</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedArticle.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, equipe:e.target.value}))}/>
-                  </div>
-                  <div>
                     <h3 className="text-lg font-semibold">Área de pesquisa</h3>
                     <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" value={UpdatedArticle.tema} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, tema:e.target.value}))}/>
-                  </div>
+                  </div>               
                   <div>
                     <h3 className="text-lg font-semibold">Palavras-chave</h3>
                     <input type="text" name="titulo" id="titulo" placeholder="Ex: Engenharia de Software" value={UpdatedArticle.palavras_chave} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, palavras_chave:e.target.value}))}/>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Data</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" value={UpdatedArticle.data} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, data:e.target.value}))}/>
-                  </div>
+                  </div>                  
                   <div>
                     <h3 className="text-lg font-semibold">Descrição</h3>
                     <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1;Tecnologia2;Tecnologia3" value={UpdatedArticle.descricao} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, descricao:e.target.value}))}/>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">Arquivo</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Pitch" value={UpdatedArticle.arquivo} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, arquivo:e.target.value}))}/>
-                  </div>                
+                    <h3 className="text-lg font-semibold">Data de publicação</h3>
+                    <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" value={UpdatedArticle.data} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, data:e.target.value}))}/>
+                  </div>
+                  <div className="w-[15vw] relative">
+                    <input
+                      type="file"
+                      id="file-upload"
+                      className="hidden"
+                      onChange={uploadPdf}
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
+                        !file ? "bg-green-500" : "bg-[#D8DBE2]"
+                      } hover:opacity-60 select-none whitespace-nowrap`}
+                      style={{ 
+                        textOverflow: 'ellipsis', 
+                        overflow: 'hidden', 
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {file ? (
+                        <span>{file.name}</span>
+                      ) : (
+                        <span>Atualizar PDF</span>
+                      )}
+                      <FaFileUpload className="ml-2" />
+                    </label>
+                  </div>   
+                  <div>
+                    <h3 className="text-lg font-semibold">Equipe</h3>
+                    <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedArticle.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, equipe:e.target.value}))}/>
+                  </div>   
                 </div>
               </form>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
