@@ -11,14 +11,14 @@ interface ModalProps {
 }
 
 function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
-  /*axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
+  axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
     .then(() => {
       handleUpdate();
       setOpen(false);
     })
     .catch(error => {
       console.error('Erro ao deletar artigo:', error);
-  });*/
+  });
 }
 
 export default function ModalDeleteArticle({ title, id, handleUpdate }: ModalProps) {

@@ -22,17 +22,14 @@ function Articles() {
 
   const handleDownload = async (id: string) => {
     try {
-      const response = await axios.get(`https://ecomp-egs.onrender.com/artigo_download/"${id}"`, {
-        responseType: 'blob',
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const response = await axios.get(`https://ecomp-egs.onrender.com/view_pdf_artigo/${id}`);
+      const url = response.data.url;
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${id}.pdf`); 
+      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Erro ao obter o PDF:', error);
     }

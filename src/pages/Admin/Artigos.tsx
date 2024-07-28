@@ -58,14 +58,15 @@ function ArticlesAdmin () {
     try {
       const postResponse = await axios.post('https://ecomp-egs.onrender.com/artigos', NewArticle);
       const newArticleId = postResponse.data.id; 
+      console.log(newArticleId)
       if (!newArticleId) {
         throw new Error('ID do novo artigo não retornado.');
       }  
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-  
-        await axios.post(`https://ecomp-egs.onrender.com/artigo_upload/${newArticleId}`, formData, {
+        console.log("FormData:", formData.get('file'));
+        await axios.post(`https://ecomp-egs.onrender.com/upload_pdf_artigo/?id_projeto=${newArticleId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

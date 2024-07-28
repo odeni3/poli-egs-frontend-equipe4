@@ -35,20 +35,6 @@ function ProjectsAdmin () {
       });
   };
 
-  /*const handlePut = (data:any, setOpenEdit: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    // axios.put(`https://ecomp-egs.onrender.com/projeto_update`, data);
-    console.log(data);
-    setOpenEdit(false);
-  }*/
-
-  /*const handleOpenPut = (id:any) => {
-    axios.get(`https://ecomp-egs.onrender.com/projetos/${id}`).then(function (response) {
-      setEditProject(response.data[0])
-    });
-    console.log(EditProject)
-    setOpenEdit(true);
-  }*/
-
   const handleUpdate = () => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(response => {
       setProject(response.data);
@@ -59,7 +45,6 @@ function ProjectsAdmin () {
 
   const [Project, setProject] = useState<ProjectInt[]>([]);
   const [open, setOpen] = useState(false)
-  //const [openEdit, setOpenEdit] = useState(false)
   const [NewProject, setNewProject] = useState({
     titulo: "",
     descricao: "",
