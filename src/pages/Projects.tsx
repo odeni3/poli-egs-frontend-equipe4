@@ -5,6 +5,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headless
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 export interface ProjectInt {
   //key: string;
@@ -95,7 +96,7 @@ function Projects() {
     <>
       <Header />
       <h1 className="px-[13vw] pt-10 text-2xl font-bold text-start text-dark-color">Projetos</h1>     
-      <section className="flex flex-row gap-[2vw] px-[13vw] pt-10 w-full">        
+      <section className="flex flex-row gap-[2vw] px-[13vw] pt-10 pb-20 w-full">        
         <section className="w-[23vw]">        
           <form action="/" method="post" className="border-solid border-2 border-light-color w-full px-4 py-2">
             <div className='flex justify-center w-full pb-2'>
@@ -204,7 +205,8 @@ function Projects() {
             ))}
           
         </section>
-      </section>         
+      </section> 
+      <Footer/>
     </>    
   )
 }

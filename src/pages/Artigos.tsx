@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { useState } from 'react';
 import { ArticleInt } from './Admin/Artigos';
 import axios from 'axios';
+import Footer from '../components/Footer';
 
 
 function Articles() {
@@ -61,7 +62,7 @@ function Articles() {
           onChange={handleInputChange}
         />
       </div>  
-      <section className='grid grid-cols-2 px-[13vw] gap-[2vw] pt-10'>
+      <section className='grid grid-cols-2 px-[13vw] gap-[2vw] pt-10 pb-20'>
         {filteredCards.map((article) => (
             <div
               className="flex flex-col w-[35vw] border-solid border-2 border-light-color p-4 gap-3"
@@ -106,7 +107,8 @@ function Articles() {
               </div>
             </div>
           ))}          
-      </section>       
+      </section> 
+      <Footer/>
     </>    
   )
 }
