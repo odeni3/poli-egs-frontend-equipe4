@@ -3,17 +3,20 @@ import { ArrowLeftIcon, CalendarIcon, Cog8ToothIcon, FolderIcon, UserGroupIcon, 
 import axios from 'axios';
 
 import { useNavigate, useParams } from 'react-router-dom';
-import { ProjectInt } from './Projects';
 
 
 function Project() {
   const { slug } = useParams()
-    const [Data, setData] = useState<ProjectInt>({});
+    const [Data, setData] = useState<{[key: string]: string | undefined}>({});
+    const [images, setImg] = useState();
 
     useEffect(() => {
       axios.get(`https://ecomp-egs.onrender.com/projetos/${slug}`).then(function (response) {
-        setData(response.data[0])
+        setData(response.data[0]);
       })
+      axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${slug}`).then((response) => {
+        setImg(response.data["url"]);
+      });
     }, []);
 
     const navigate = useNavigate();
@@ -36,7 +39,7 @@ function Project() {
         <iframe width="560" height="315" src={"https://www.youtube.com/embed/"+Data.pitch} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
       </section>
       <section className='flex flex-row gap-5 items-center w-full'>
-        <div className='h-[30vh] w-[30vw] rounded-full bg-[#D8DBE2] flex items-center justify-center'><p>logo</p></div>
+        <div className='h-[30vh] w-[15vw] rounded-full flex items-center justify-center'><img className='shadow-lg rounded-full' src={images} alt="" /></div>
         <p className=' text-gray-600'>{Data.descricao}</p>
       </section>
 
@@ -80,9 +83,10 @@ function Project() {
         <div className='w-full flex flex-col  rounded-t-lg border-solid border-2 border-light-color gap-3 pb-8'>
             <div className=" w-full flex flex-row items-center space-x-1  bg-[#D8DBE2] rounded-t-lg px-4 py-1">
               <FolderIcon className="h-5 w-5 me-2"/>
-              <h2 className='text-lg font-semibold text-dark-color '>Repositório</h2>
+              <h2 className='text-lg font-semibold text-dark-color '>Links Úteis</h2>
             </div> 
           <p className=' text-blue-400 text-decoration: underline px-4'><a href={Data.link_repositorio} target='_blank'>Link para Repositório no GitHub</a></p>
+          <p className=' text-blue-400 text-decoration: underline px-4'><a href={Data.video_tecnico} target='_blank'>Link para Vídeo Técnico</a></p>
         </div>
       </div>
     </main>

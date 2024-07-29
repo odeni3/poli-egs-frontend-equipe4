@@ -28,6 +28,15 @@ function ProjectsAdmin () {
       })
       .then(response => {
         setProject(response.data);
+        var c = 0;
+        while(c != -1) {
+          if(response.data[c].titulo === NewProject.titulo) {
+            handleSubmitFile(response.data[c].id);
+            c = -1
+          } else {
+            c++
+          }
+        }
         setOpen(false);
       })
       .catch(error => {
@@ -59,6 +68,27 @@ function ProjectsAdmin () {
     id: "",
     link_repositorio: ""
   })
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleSubmitFile = async (id: string) => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const response = await axios.post(`https://ecomp-egs.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(response);
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    } else {
+      console.log('Nenhum arquivo selecionado');
+    }
+  };
   //const [EditProject, setEditProject] = useState<ProjectInt>({})
   
   useEffect(() => {
@@ -192,6 +222,10 @@ function ProjectsAdmin () {
                 <div className="mb-10">
                   <h3 className="text-lg font-semibold">Descrição</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, descricao:e.target.value}))}/>
+                </div>
+                <div className="mb-10">
+                  <h3 className="text-lg font-semibold">Logo</h3>
+                  <input type="file" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
                 </div>
               </div>
             </form>

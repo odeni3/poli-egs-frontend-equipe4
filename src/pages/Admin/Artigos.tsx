@@ -1,10 +1,11 @@
 import { Table } from "react-bootstrap";
 import HeaderAdmin from "../../components/HeaderAdmin";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalDeleteArticle from "../../components/ModalDeleteArticle";
 import ModalUpdateArticle from "../../components/ModalUpdateArticle";
 import { FaFileUpload } from "react-icons/fa";
+import axios from "axios";
 
 export interface ArticleInt {
   //key: string;

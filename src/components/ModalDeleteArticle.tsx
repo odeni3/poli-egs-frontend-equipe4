@@ -1,6 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { useState } from 'react';
+import axios from 'axios';
+import { SetStateAction, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
 interface ModalProps {

@@ -18,7 +18,7 @@ export interface ProjectInt {
   video_tecnico?: string;
   tecnologias_utilizadas?: string;
   palavras_chave?: string;
-  id?: string,
+  id: string,
   link_repositorio?: string;
 }
 
@@ -31,6 +31,7 @@ function Projects() {
   const [Card, setCard] = useState<ProjectInt[]>([]);
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
   const [selectedSemester, setselectedSemester] = useState<string[]>([]);
+  const [images, setImg] = useState<{[key: string]: string | undefined}>({});
   
   useEffect(() => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
@@ -42,6 +43,11 @@ function Projects() {
     axios.get('https://ecomp-egs.onrender.com/semestreProjetos').then(function (response) {
       setselectedSemester(response.data.semestres)
     })
+    filteredCards.forEach((project) => {
+      if (project.id) {
+        
+      }
+    });
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,11 +58,24 @@ function Projects() {
     setInputMembers(event.target.value);
   };
 
+  const handleGetImg = async (id: any) => {
+    try {
+      const response = await axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${id}`);
+      setImg((prevImages) => ({
+        ...prevImages,
+        [id]: response.data["url"],
+      }));
+    } catch (error) {
+      console.log('Error fetching images: ', error);
+    }
+  };
+
   const filteredCards = Card.filter((project) => {    
     const input = Input.toLowerCase();
     const inputMembers = InputMembers.toLowerCase();
     const inputThemes = Themes.toLowerCase();
     const inputSemester = Semester.toLowerCase();
+    handleGetImg(project.id);
     return (
       (
         project.titulo?.toLowerCase().includes(input) ||
@@ -71,7 +90,7 @@ function Projects() {
       )
     );
   });
-
+  
   return (
     <>
       <Header />
@@ -170,10 +189,11 @@ function Projects() {
         <section className='grid grid-cols-2 gap-[1vw]'>
           {filteredCards.map((project) => (
               <div
+                key={project.id}
                 className="flex flex-col w-[23vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
               >
                 <section className="flex flex-row gap-2">
-                  <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"></div>
+                  <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"> <img className='h-[100%] object-cover' src={images[project.id] || ''} alt="" /></div>
                   <div className='flex flex-col items-start w-full gap-2'>
                     <h1 className="text-2xl text-primary-color font-normal">{project.titulo}</h1>
                     <p className='text-sm line-clamp-3'>{project.descricao}</p>
