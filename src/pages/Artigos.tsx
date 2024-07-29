@@ -8,47 +8,30 @@ import { ArticleInt } from './Admin/Artigos';
 function Articles() {
   const [Input, setInput] = useState<string>("");
   const [Card, setCard] = useState<ArticleInt[]>([]);
-
-  const article = [
-      {
-        key: "1",
-        titulo: "Tracy-TD",
-        descricao: "Sistema de gerenciamento de dívidas técnicas.",
-        tema: "Tema",
-        equipe: "Ana Karla ; Arthur Carvalho ",
-        data: "18/07/2024",
-        palavras_chave: "Palavra 1; Palavra2; Palavra3",
-        arquivo: "google.com/"
-      },
-      {
-        key: "1",
-        titulo: "Tracy-TD",
-        descricao: "Sistema de gerenciamento de dívidas técnicas.",
-        tema: "Tema",
-        equipe: "Ana Karla; Arthur Carvalho",
-        data: "18/07/2024",
-        palavras_chave: "Palavra 1; Palavra2; Palavra3",
-        arquivo: "tracytd"
-      }  ,
-      {
-        key: "1",
-        titulo: "Tracy-TD",
-        descricao: "Sistema de gerenciamento de dívidas técnicas.",
-        tema: "Tema",
-        equipe: "Ana Karla; Arthur Carvalho",
-        data: "18/07/2024",
-        palavras_chave: "Palavra 1; Palavra2; Palavra3",
-        arquivo: "tracytd"
-      }    
-    ]
   
   useEffect(() => {
-    //axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {})
-      setCard(article);    
+    axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
+      setCard(response.data)
+    })
   }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
+  };
+
+  const handleDownload = async (id: string) => {
+    try {
+      const response = await axios.get(`https://ecomp-egs.onrender.com/view_pdf_artigo/${id}`);
+      const url = response.data.url;
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erro ao obter o PDF:', error);
+    }
   };
 
   const filteredCards = Card.filter((article) => {    
@@ -110,7 +93,15 @@ function Articles() {
                 <h3>{article.data}</h3>
               </div>
               <div>
-                <button className='flex flex-row gap-2 text-primary-color' onClick={() => {article.arquivo != "" ? window.open("http://" + article.arquivo, "_blank") : "";}}> <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
+                <button className='flex flex-row gap-2 text-primary-color'
+                onClick={() => {
+                  if (article.id) {handleDownload(article.id);
+                    console.log(article.id)
+
+                  } else {
+                    console.error('URL do arquivo não está disponível');
+                  }}}> 
+                  <ArrowDownTrayIcon className="h-5 w-5"/>Visualizar </button>  
               </div>
             </div>
           ))}          

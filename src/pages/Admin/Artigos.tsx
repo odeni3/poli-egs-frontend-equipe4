@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalDeleteArticle from "../../components/ModalDeleteArticle";
 import ModalUpdateArticle from "../../components/ModalUpdateArticle";
+import { FaFileUpload } from "react-icons/fa";
 
 export interface ArticleInt {
   //key: string;
@@ -31,29 +32,7 @@ function ArticlesAdmin () {
     setInput(event.target.value);
   };
 
-  // const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-  //   /*axios.post(`https://ecomp-egs.onrender.com/artigos`, NewArticle)
-  //     .then(() => {
-  //       return axios.get('https://ecomp-egs.onrender.com/artigos');
-  //     })
-  //     .then(response => {
-  //       setArticle(response.data);
-  //       setOpen(false);
-  //     })
-  //     .catch(error => {
-  //       console.error('Erro ao adicionar artigo:', error);
-  //     });*/
-  // };
-
-  const handleUpdate = () => {
-    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
-      setArticle(response.data);
-    }).catch(error => {
-      console.error('Erro ao atualizar artigo', error);
-    });*/
-  };
-
-  const [Article/*, setArticle*/] = useState<ArticleInt[]>([]);
+  const [Article, setArticle] = useState<ArticleInt[]>([]);
   const [open, setOpen] = useState(false)
   const [NewArticle, setNewArticle] = useState({
     titulo: '',
@@ -63,13 +42,55 @@ function ArticlesAdmin () {
     data: '',
     palavras_chave: '',
     id: '',
-    arquivo: ''
+    arquivo: '#'
   })
+
+  const [file, setFile] = useState<File | undefined>();
+  async function uploadPdf(e: React.FormEvent<HTMLInputElement>) {
+    const target = e.target as HTMLInputElement & {
+      files: FileList;
+    };
+    setFile(target.files[0]);
+  }
+
+  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+    try {
+      const postResponse = await axios.post('https://ecomp-egs.onrender.com/artigos', NewArticle);
+      const newArticleId = postResponse.data.id; 
+      console.log(newArticleId)
+      if (!newArticleId) {
+        throw new Error('ID do novo artigo não retornado.');
+      }  
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        console.log("FormData:", formData.get('file'));
+        await axios.post(`https://ecomp-egs.onrender.com/upload_pdf_artigo/?id_projeto=${newArticleId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+      const response = await axios.get('https://ecomp-egs.onrender.com/artigos');
+      setArticle(response.data);  
+      setOpen(false);
+    } catch (error) {
+      console.error('Erro ao adicionar artigo ou enviar arquivo:', error);
+    }
+  };
+
+  const handleUpdate = () => {
+    axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
+      setArticle(response.data);
+    }).catch(error => {
+      console.error('Erro ao atualizar artigo', error);
+    });
+  }; 
   
   useEffect(() => {
-    /*axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
+    axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
       setArticle(response.data)
-    })*/
+    })
   }, []);
 
   const filteredArticle = Article.filter((article:any) => {    
@@ -143,45 +164,67 @@ function ArticlesAdmin () {
               transition
               className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-[40vw] data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
             >
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div className="bg-[#D8DBE2] pb-4 pt-5 sm:p-5 sm:pb-4">
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <DialogTitle as="h2" className="text-base font-semibold leading-6 text-gray-900">
+                    <DialogTitle as="h2" className="text-lg font-semibold leading-6 text-gray-900">
                       Cadastrar novo artigo
                     </DialogTitle>
                   </div>
                 </div>
               </div>
               <form action="POST">
-                <div className="grid grid-cols-2 justify-items-center gap-y-[2vh]">
+                <div className="grid grid-cols-2 justify-items-center pt-3 gap-y-[2vh]">
                   <div>
                     <h3 className="text-lg font-semibold">Titulo</h3>
                     <input type="text" name="titulo" id="titulo" placeholder="Titulo" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, titulo:e.target.value}))}/>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Equipe</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, equipe:e.target.value}))}/>
-                  </div>
+                  </div>                  
                   <div>
                     <h3 className="text-lg font-semibold">Área de pesquisa</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, tema:e.target.value}))}/>
+                    <input type="text" name="tema" id="tema" placeholder="Ex: Inteligencia Artificial" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, tema:e.target.value}))}/>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Palavras-chave</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Ex: Engenharia de Software" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, palavras_chave:e.target.value}))}/>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Data</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, data:e.target.value}))}/>
-                  </div>
+                    <input type="text" name="palavras" id="palavras" placeholder="Ex: Palavra1;Palavra2" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, palavras_chave:e.target.value}))}/>
+                  </div>                  
                   <div>
                     <h3 className="text-lg font-semibold">Descrição</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1;Tecnologia2;Tecnologia3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, descricao:e.target.value}))}/>
+                    <input type="text" name="descricao" id="descricao" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, descricao:e.target.value}))}/>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">Arquivo</h3>
-                    <input type="text" name="titulo" id="titulo" placeholder="Pitch" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, arquivo:e.target.value}))}/>
-                  </div>                  
+                    <h3 className="text-lg font-semibold">Data de publicação</h3>
+                    <input  id="datapublicacao" type="date" name="datapublicacao" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, data:e.target.value}))}/>
+                  </div>
+                  <div className="w-[15vw] relative">
+                    <input
+                      type="file"
+                      id="file-upload"
+                      className="hidden"
+                      onChange={uploadPdf}
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
+                        !file ? "bg-green-500" : "bg-[#D8DBE2]"
+                      } hover:opacity-60 select-none whitespace-nowrap`}
+                      style={{ 
+                        textOverflow: 'ellipsis', 
+                        overflow: 'hidden', 
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {file ? (
+                        <span>{file.name}</span>
+                      ) : (
+                        <span>Subir PDF</span>
+                      )}
+                      <FaFileUpload className="ml-2" />
+                    </label>
+                  </div> 
+                  <div>
+                    <h3 className="text-lg font-semibold">Equipe</h3>
+                    <input type="text" name="equipe" id="equipe" placeholder="Pessoa1;Pessoa2;Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewArticle({...NewArticle, equipe:e.target.value}))}/>
+                  </div>      
                 </div>
               </form>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">

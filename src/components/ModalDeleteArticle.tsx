@@ -9,16 +9,16 @@ interface ModalProps {
   handleUpdate: () => void;
 }
 
-// function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
-//   /*axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
-//     .then(() => {
-//       handleUpdate();
-//       setOpen(false);
-//     })
-//     .catch(error => {
-//       console.error('Erro ao deletar artigo:', error);
-//   });*/
-// }
+function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
+  axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
+    .then(() => {
+      handleUpdate();
+      setOpen(false);
+    })
+    .catch(error => {
+      console.error('Erro ao deletar artigo:', error);
+  });
+}
 
 export default function ModalDeleteArticle({ title/*, id, handleUpdate*/ }: ModalProps) {
 
@@ -59,7 +59,7 @@ export default function ModalDeleteArticle({ title/*, id, handleUpdate*/ }: Moda
                 </div>
               </div>
             </div>
-            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <div className="bg-[#D8DBE2] px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
                 type="button"
                 onClick={handleDelete}

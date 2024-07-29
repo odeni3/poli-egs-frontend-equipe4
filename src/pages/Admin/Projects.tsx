@@ -35,20 +35,6 @@ function ProjectsAdmin () {
       });
   };
 
-  /*const handlePut = (data:any, setOpenEdit: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    // axios.put(`https://ecomp-egs.onrender.com/projeto_update`, data);
-    console.log(data);
-    setOpenEdit(false);
-  }*/
-
-  /*const handleOpenPut = (id:any) => {
-    axios.get(`https://ecomp-egs.onrender.com/projetos/${id}`).then(function (response) {
-      setEditProject(response.data[0])
-    });
-    console.log(EditProject)
-    setOpenEdit(true);
-  }*/
-
   const handleUpdate = () => {
     axios.get('https://ecomp-egs.onrender.com/projetos').then(response => {
       setProject(response.data);
@@ -59,7 +45,6 @@ function ProjectsAdmin () {
 
   const [Project, setProject] = useState<ProjectInt[]>([]);
   const [open, setOpen] = useState(false)
-  //const [openEdit, setOpenEdit] = useState(false)
   const [NewProject, setNewProject] = useState({
     titulo: "",
     descricao: "",
@@ -153,17 +138,17 @@ function ProjectsAdmin () {
             transition
             className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-[40vw] data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
-            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="bg-[#D8DBE2] pt-5 sm:p-3 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                  <DialogTitle as="h2" className="text-base font-semibold leading-6 text-gray-900">
+                  <DialogTitle as="h2" className="text-lg font-semibold leading-6 text-dark-color">
                     Cadastrar novo projeto
                   </DialogTitle>
                 </div>
               </div>
             </div>
             <form action="POST">
-              <div className="grid grid-cols-2 justify-items-center gap-y-[2vh]">
+              <div className="grid grid-cols-2 justify-start pt-4 px-6 gap-y-[2vh]">
                 <div>
                   <h3 className="text-lg font-semibold">Titulo</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Titulo" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, titulo:e.target.value}))}/>
@@ -173,7 +158,7 @@ function ProjectsAdmin () {
                   <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, equipe:e.target.value}))}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Pessoa/Organização Parceira</h3>
+                  <h3 className="text-lg font-semibold">Organização Parceira</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, cliente:e.target.value}))}/>
                 </div>
                 <div>
