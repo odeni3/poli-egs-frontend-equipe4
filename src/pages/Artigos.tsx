@@ -67,7 +67,7 @@ function Articles() {
             <div
               className="flex flex-col w-[35vw] border-solid border-2 border-light-color p-4 gap-3"
             >
-              <h1 className="text-3xl text-primary-color font-normal">{article.titulo}</h1>
+              <h1 className="text-1xl text-primary-color font-normal">{article.titulo}</h1>
               <div>
                 <h3 className="font-semibold">Autor(es):</h3>
                 <ul className='mb-1 flex flex-col'>

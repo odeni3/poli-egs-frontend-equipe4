@@ -191,16 +191,18 @@ function Projects() {
           {filteredCards.map((project) => (
               <div
                 key={project.id}
-                className="flex flex-col w-[23vw] h-[35vh] border-solid border-2 border-light-color p-4 gap-4"
+                className="flex flex-col w-[23vw] border-solid border-2 border-light-color p-4 gap-4"
               >
                 <section className="flex flex-row gap-2">
-                  <div className=" rounded-md w-[15vw] h-[20vh] bg-primary-color"> <img className='h-[100%] object-cover' src={images[project.id] || ''} alt="" /></div>
+                  <div className=" rounded-md w-[15vw] h-[20vh]"> <img className='h-[100%] object-cover' src={images[project.id] || ''} alt="" /></div>
                   <div className='flex flex-col items-start w-full gap-2'>
-                    <h1 className="text-2xl text-primary-color font-normal">{project.titulo}</h1>
+                    <h1 className="text-xl text-primary-color font-normal">{project.titulo}</h1>
                     <p className='text-sm line-clamp-3'>{project.descricao}</p>
                   </div>
                 </section>
-                <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`/projects/selected/` + project.id}>Ver mais</a></button>
+                <div className="mt-auto">
+                  <button type="submit" className="rounded-md bg-primary-color h-[6vh] w-full text-white"><a href={`/projects/selected/` + project.id}>Ver mais</a></button>
+                </div>
               </div>
             ))}
           
