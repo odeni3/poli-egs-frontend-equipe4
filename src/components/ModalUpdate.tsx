@@ -3,6 +3,7 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import axios from "axios";
 import { ProjectInt } from "../pages/Projects";
 import { useState } from "react";
+import { FaFileUpload } from "react-icons/fa";
 
 
 export default function ModalUpdate({ project, handleUpdate }: { project: ProjectInt, handleUpdate: () => void }){
@@ -17,6 +18,7 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
     const handleUpdateProject = () => {
       axios.put(`https://ecomp-egs.onrender.com/projeto_update/`, UpdatedProject)
         .then(() => {
+          handleSubmitFile(UpdatedProject.id)
           handleUpdate();
           setOpen(false);
         })
@@ -24,6 +26,28 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
           console.error('Erro ao atualizar projeto:', error);
         });
     };
+
+    const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleSubmitFile = async (id: string) => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        const response = await axios.post(`https://ecomp-egs.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(response);
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    } else {
+      console.log('Nenhum arquivo selecionado');
+    }
+  };
 
     return(
         <>
@@ -93,6 +117,27 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
                 <div className="mb-10">
                   <h3 className="text-lg font-semibold">Descrição</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Descrição" value={UpdatedProject.descricao} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, descricao:e.target.value}))}/>
+                </div>
+                <div className="w-[15vw] relative">
+                  <input type="file" className="hidden" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
+                  <label
+                    htmlFor="logo"
+                    className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
+                      !selectedFile ? "bg-green-500" : "bg-[#D8DBE2]"
+                    } hover:opacity-60 select-none whitespace-nowrap`}
+                    style={{ 
+                      textOverflow: 'ellipsis', 
+                      overflow: 'hidden', 
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {selectedFile ? (
+                      <span>Modificar Logo</span>
+                    ) : (
+                      <span>Atualizar Logo</span>
+                    )}
+                    <FaFileUpload className="ml-2" />
+                  </label>
                 </div>
               </div>
             </form>

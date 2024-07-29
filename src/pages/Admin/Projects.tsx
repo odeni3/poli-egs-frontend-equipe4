@@ -6,6 +6,7 @@ import ModalDelete from "../../components/ModalDelete";
 import { ProjectInt } from "../Projects";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalUpdate from "../../components/ModalUpdate";
+import { FaFileUpload } from "react-icons/fa";
 
 const columns = [
   { key: "titulo", label: "Titulo" },
@@ -223,9 +224,26 @@ function ProjectsAdmin () {
                   <h3 className="text-lg font-semibold">Descrição</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, descricao:e.target.value}))}/>
                 </div>
-                <div className="mb-10">
-                  <h3 className="text-lg font-semibold">Logo</h3>
-                  <input type="file" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
+                <div className="w-[15vw] relative">
+                  <input type="file" className="hidden" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
+                  <label
+                    htmlFor="logo"
+                    className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
+                      !selectedFile ? "bg-green-500" : "bg-[#D8DBE2]"
+                    } hover:opacity-60 select-none whitespace-nowrap`}
+                    style={{ 
+                      textOverflow: 'ellipsis', 
+                      overflow: 'hidden', 
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {selectedFile ? (
+                      <span>Modificar Logo</span>
+                    ) : (
+                      <span>Atualizar Logo</span>
+                    )}
+                    <FaFileUpload className="ml-2" />
+                  </label>
                 </div>
               </div>
             </form>

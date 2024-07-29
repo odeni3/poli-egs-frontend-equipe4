@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import Header from '../components/Header';
 import { useState } from 'react';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
+import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { CheckIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -105,7 +105,7 @@ function Projects() {
               <label>Área do projeto:</label>
               <Listbox value={Themes} onChange={setThemes}>
                 <div className="relative">
-                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color cursor-default focus:outline-none focus:border-b-2 focus:border-sky-700">
+                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color cursor-default focus:outline-none focus:border-sky-700">
                     <h1>{Themes}</h1>
                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-2 flex items-center pr-2">
                       <ChevronDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
@@ -130,12 +130,12 @@ function Projects() {
                   </ListboxOptions>
                 </div>
               </Listbox>
-            </div>
+            </div>            
             <div className="grid grid-rows-2 py-1">
               <label>Ano/Semestre:</label>
               <Listbox value={Semester} onChange={setSemester}>
                 <div className="relative">
-                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color focus:outline-none focus:border-b-2 focus:border-sky-700">
+                  <ListboxButton className="relative w-full h-[6vh] indent-2 text-left border-b border-light-color focus:outline-none focus:border-sky-700">
                     <h1>{Semester}</h1>
                     <span className="pointer-events-none absolute inset-y-0 right-0 ml-2 flex items-center pr-2">
                       <ChevronDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
