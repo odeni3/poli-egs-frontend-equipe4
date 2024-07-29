@@ -3,6 +3,7 @@ import { ArrowDownTrayIcon } from '@heroicons/react/20/solid';
 import Header from '../components/Header';
 import { useState } from 'react';
 import { ArticleInt } from './Admin/Artigos';
+import axios from 'axios';
 
 
 function Articles() {

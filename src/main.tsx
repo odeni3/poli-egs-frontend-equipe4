@@ -12,6 +12,7 @@ import Login from './pages/Admin/Login.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 import Logout from './components/Logout.tsx'
+import Sobre from './pages/Sobre.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path='/projects/selected/:slug' element={<Project />} />
           <Route path='/articles' element={<Articles />} />
           <Route path='/login' element={<Login />} />          
+          <Route path='/sobre' element={<Sobre />} />          
           <Route element={<ProtectedRoute/>}>
             <Route path='/admin-projects' element={<ProjectsAdmin/>}/>
             <Route path='/admin-articles' element={<ArticlesAdmin />} />

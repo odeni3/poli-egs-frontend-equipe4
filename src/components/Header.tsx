@@ -8,7 +8,7 @@ function Header() {
             <Nav.Link href="/">Início</Nav.Link>
             <Nav.Link href="/projects">Projetos</Nav.Link>
             <Nav.Link href="/Articles">Artigos</Nav.Link>
-            <Nav.Link href="#/">Sobre</Nav.Link>
+            <Nav.Link href="/sobre">Sobre</Nav.Link>
             <Nav.Link className="flex items-center" href="/admin-projects"><UserIcon className="h-5 w-5 me-2"/>Entrar</Nav.Link>
         </Nav>
     </header>
