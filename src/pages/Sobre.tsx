@@ -1,3 +1,4 @@
+import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 function Sobre() {
@@ -15,7 +16,7 @@ function Sobre() {
         </div>        
       </section>
       <section>
-        <div className='flex items-center justify-around'>
+        <div className='flex items-center justify-around pb-20'>
             <div>
                 <h2 className='text-4xl font-semibold'>Sobre Nós</h2>
                 <p className='max-w-[45vw] mt-5'>O projeto do Observatório de Projetos - POLI/UPE foi uma ideia construída dentro da disciplina de Engenharia de Software da Escola Politécinca de Pernambuco. A ideia, construída por estudantes graduandos e pós-graduandos de Engenharia da Computação, consiste em possibilitar que todos os projetos já desenvolvidos e todos aqueles que ainda serão construídos possam ser eternizados em um grande repositório, apresentando suas caracterísiticas únicas, tecnologias, pessoas responsáveis e até mesmo, as organizações e pessoas parceiras que queriam transformar os seus sonhos em realidade.</p>
@@ -23,6 +24,7 @@ function Sobre() {
             <img className='max-h-[40vh] rounded-2xl' src="https://s2.glbimg.com/smbJLb6Jt92GrMIDOFacclQ7K0o=/s.glbimg.com/jo/g1/f/original/2015/05/11/poli1.jpg" alt="" />
         </div>
       </section>
+      <Footer/>
     </>
   )
 }

@@ -3,6 +3,7 @@ import { ArrowLeftIcon, CalendarIcon, Cog8ToothIcon, FolderIcon, UserGroupIcon, 
 import axios from 'axios';
 
 import { useNavigate, useParams } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 
 function Project() {
@@ -34,7 +35,7 @@ function Project() {
       </div>
     </div>
     
-    <main className='flex flex-col gap-16 px-[13vw] mb-20 '>
+    <main className='flex flex-col gap-16 px-[13vw] mb-20 pb-20'>
       <section className='flex flex-col items-center w-full mt-12'>
         <iframe width="560" height="315" src={"https://www.youtube.com/embed/"+Data.pitch} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
       </section>
@@ -90,6 +91,7 @@ function Project() {
         </div>
       </div>
     </main>
+    <Footer/>
     </>
   )
 }
