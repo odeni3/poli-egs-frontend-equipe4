@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import Header from '../components/Header';
 import { useState } from 'react';
-import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import { CheckIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ function Projects() {
     axios.get('https://ecomp-egs.onrender.com/semestreProjetos').then(function (response) {
       setselectedSemester(response.data.semestres)
     })
-    filteredCards.forEach((project) => {
+    filteredCards.forEach((project: any) => {
       if (project.id) {
         
       }
@@ -70,7 +70,7 @@ function Projects() {
     }
   };
 
-  const filteredCards = Card.filter((project) => {    
+  const filteredCards = Array.isArray(Card) ? Card.filter((project) => {    
     const input = Input.toLowerCase();
     const inputMembers = InputMembers.toLowerCase();
     const inputThemes = Themes.toLowerCase();
@@ -89,7 +89,7 @@ function Projects() {
         project.semestre?.toLowerCase().includes(inputSemester)
       )
     );
-  });
+  }) : [];
   
   return (
     <>
@@ -115,7 +115,7 @@ function Projects() {
                     transition
                     className="absolute max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg z-50  focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in " 
                   >
-                    {selectedThemes.map((theme) => (
+                    {Array.isArray(selectedThemes) && selectedThemes.map((theme) => (
                       <ListboxOption
                         key={theme}
                         value={theme}
@@ -145,7 +145,7 @@ function Projects() {
                     transition
                     className="absolute max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg z-10"
                   >
-                    {selectedSemester.map((semester) => (
+                    {Array.isArray(selectedSemester) && selectedSemester.map((semester) => (
                       <ListboxOption
                         key={semester}
                         value={semester}

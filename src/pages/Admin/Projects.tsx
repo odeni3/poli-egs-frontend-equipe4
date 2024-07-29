@@ -98,7 +98,7 @@ function ProjectsAdmin () {
     })
   }, []);
 
-  const filteredProject = Project.filter((project) => {    
+  const filteredProject = Array.isArray(Project)  ? Project.filter((project) => {    
     const input = Input.toLowerCase();
     return (
       (
@@ -107,7 +107,7 @@ function ProjectsAdmin () {
         project.tema?.toLowerCase().includes(input)
       ) 
     );
-  });
+  }) : [];
 
   return (
     <>
