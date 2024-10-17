@@ -8,12 +8,13 @@ import Project from './pages/Project.tsx'
 import ProjectsAdmin from './pages/Admin/Projects.tsx'
 import ArticlesAdmin from './pages/Admin/Artigos.tsx'
 import Articles from './pages/Artigos.tsx'
-import Login from './pages/Admin/Login.tsx' // Comentar Login
-import { AuthProvider } from './contexts/AuthContext.tsx' // Comentar AuthProvider
-import ProtectedRoute from './components/ProtectedRoute.tsx' // Comentar ProtectedRoute
-import Logout from './components/Logout.tsx' // Comentar Logout
+import Login from './pages/Admin/Login.tsx'
+import { AuthProvider } from './contexts/AuthContext.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx'
+import Logout from './components/Logout.tsx'
 import Sobre from './pages/Sobre.tsx'
 import FAQ from './pages/FAQ.tsx'
+import LoginTest from './pages/LoginTest.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path='/projects/:slug?' element={<Projects />} />
           <Route path='/projects/selected/:slug' element={<Project />} />
           <Route path='/articles' element={<Articles />} />
+          <Route path='/logintest' element={<LoginTest />} />
           {/* <Route path='/login' element={<Login />} />  */}
           <Route path='/sobre' element={<Sobre />} />
           <Route path='/faq' element={<FAQ />} />

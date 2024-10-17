@@ -16,14 +16,6 @@ const faqData: FAQItem[] = [
     question: 'Quem pode submeter projetos ao observatório?',
     answer: 'Alunos e professores da UPE podem submeter projetos em andamento ou concluídos.',
   },
-  {
-    question: 'Os projetos recebem alguma premiação ou reconhecimento?',
-    answer: 'Sim, alguns projetos podem ser indicados para prêmios acadêmicos ou destaque na instituição.',
-  },
-  {
-    question: 'Como sei se meu projeto foi aprovado?',
-    answer: 'Você receberá um e-mail de confirmação, além de poder acompanhar o status na página de projetos.',
-  },
 ];
 
 function FAQ() {
