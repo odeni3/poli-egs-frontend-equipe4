@@ -10,8 +10,8 @@ function Header() {
             <Nav.Link href="/Articles">Artigos</Nav.Link>
             <Nav.Link href="/sobre">Sobre</Nav.Link>
             <Nav.Link href="/faq">FAQ</Nav.Link>
-            <Nav.Link className="flex items-center" href="/logintest"><UserIcon className="h-5 w-5 me-2"/>Login</Nav.Link>
-            <Nav.Link className="flex items-center" href="/admin-projects"><UserIcon className="h-5 w-5 me-2"/>Entrar</Nav.Link>
+            <Nav.Link className="flex items-center" href="/logintest"><UserIcon className="h-5 w-5 me-2"/>Entrar</Nav.Link>
+            <Nav.Link className="flex items-center" href="/admin-projects">adm</Nav.Link>
         </Nav>
     </header>
   )

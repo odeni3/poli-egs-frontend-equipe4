@@ -15,6 +15,7 @@ import Logout from './components/Logout.tsx'
 import Sobre from './pages/Sobre.tsx'
 import FAQ from './pages/FAQ.tsx'
 import LoginTest from './pages/LoginTest.tsx'
+import Register from './pages/Register';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path='/projects/selected/:slug' element={<Project />} />
           <Route path='/articles' element={<Articles />} />
           <Route path='/logintest' element={<LoginTest />} />
+          <Route path="/register" element={<Register />} />
           {/* <Route path='/login' element={<Login />} />  */}
           <Route path='/sobre' element={<Sobre />} />
           <Route path='/faq' element={<FAQ />} />
