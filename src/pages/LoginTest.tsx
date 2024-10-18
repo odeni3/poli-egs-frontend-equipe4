@@ -30,9 +30,9 @@ const LoginTest = () => {
       </button>
 
       <div
-        className="p-10 rounded-lg shadow-lg w-96"
+        className="p-14 rounded-lg shadow-lg w-96"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          backgroundColor: 'rgba(187, 170, 170, 0.205)',
           backdropFilter: 'blur(15px)',
         }}
       >
