@@ -10,6 +10,7 @@ import GESTAO from './images/gestao.png';
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import emailjs from '@emailjs/browser';
+import backgroundImage from './images/mainpage.jpg';
 
 function App() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ function App() {
       <Header />
 
       {/* Seção Hero */}
-      <section className="relative bg-cover bg-center h-screen" style={{ backgroundImage: 'url(https://source.unsplash.com/random/1920x1080/?technology)' }}>
+      <section className="relative bg-cover bg-center h-screen" style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
           <h1 className="text-5xl font-bold mb-6 text-center">Observatório de Projetos - POLI/UPE</h1>
