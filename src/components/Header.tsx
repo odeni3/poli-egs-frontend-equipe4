@@ -1,3 +1,5 @@
+// src/components/Header.js
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -7,19 +9,18 @@ function Header() {
   return (
     <header className="bg-primary-color text-light-color h-[6vh]">
       <nav className="container flex items-center justify-between h-full">
-        {/* Logo e Título do Observatório */}
-        <div className="flex items-center mr-10"> {/* Margem direita adicionada */}
+        {/* Logo */}
+        <div className="flex items-center">
           <NavLink to="/" className="flex items-center space-x-3">
-            <img 
+          ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ<img 
               src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Logo-upe-site.png" 
               alt="Logo" 
               className="h-12 w-12 object-contain"
             />
-            <span className="text-3xl font-bold">Observatório</span>
+            <span className="text-2xl font-bold">Observatório de Projetos</span>
           </NavLink>
         </div>
 
-        {/* Botão para mobile */}
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -37,7 +38,6 @@ function Header() {
           </button>
         </div>
 
-        {/* Navegação principal */}
         <div className={`flex-1 justify-center md:flex items-center space-x-8 ${isOpen ? 'block' : 'hidden'} md:block`}>
           <NavLink exact to="/" className="text-lg hover:text-gray-300" activeClassName="underline">
             Início
@@ -56,7 +56,6 @@ function Header() {
           </NavLink>
         </div>
 
-        {/* Links adicionais à direita */}
         <div className="hidden md:flex items-center space-x-6">
           <NavLink to="/logintest" className="flex items-center hover:text-gray-300" activeClassName="underline">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,7 +69,6 @@ function Header() {
         </div>
       </nav>
 
-      {/* Menu para mobile */}
       {isOpen && (
         <div className="md:hidden">
           <ul className="px-4 pt-3 pb-5 space-y-2">
