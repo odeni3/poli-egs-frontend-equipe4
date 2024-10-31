@@ -10,7 +10,7 @@ O **Observatório de Projetos** é uma plataforma que centraliza projetos acadê
 
 ---
 
-## **Tecnologias Utilizadas**
+## **Tecnologias Utilizadas (NO FRONT-END)**
 
 - **React**: Biblioteca JavaScript para construção de interfaces reativas.
 - **TypeScript**: Superset do JavaScript com tipagem estática para maior segurança e manutenção do código.
