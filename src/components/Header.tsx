@@ -12,7 +12,7 @@ function Header() {
         {/* Logo */}
         <div className="flex items-center">
           <NavLink to="/" className="flex items-center space-x-3">
-          ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ<img 
+          <img 
               src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Logo-upe-site.png" 
               alt="Logo" 
               className="h-12 w-12 object-contain"

@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
 import mockData from '../dados/mockData';
 import iconImage from '../images/avatar.png';
+import Header from '../components/Header';
+import backgroundImage from '../images/mainpage.jpg';
 
 function Project() {
   const { slug } = useParams();
@@ -12,11 +14,11 @@ function Project() {
   const [images, setImg] = useState();
   const [comentarios, setComentarios] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Verificação de login
+  const [likes, setLikes] = useState(0); // Estado para armazenar likes
 
   useEffect(() => {
     // Simulação de verificação de login. Altere para verificar o estado real de login
     const checkLoginStatus = () => {
-      // Aqui você deve implementar sua lógica de autenticação
       const loggedInUser = false; // Troque isso pelo valor real
       setIsLoggedIn(loggedInUser);
     };
@@ -25,6 +27,7 @@ function Project() {
 
     axios.get(`https://ecomp-egs.onrender.com/projetos/${slug}`).then((response) => {
       setData(response.data[0]);
+      setLikes(response.data[0].curtidas || 0); // Defina a contagem inicial de likes, se disponível
     });
     axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${slug}`).then((response) => {
       setImg(response.data["url"]);
@@ -37,31 +40,31 @@ function Project() {
   const navigate = useNavigate();
   const handleBackClick = () => navigate(-1);
 
-  const toggleLike = (index) => {
-    if (!isLoggedIn) {
-      // Se o usuário não estiver logado, não faz nada
-      return;
+  const handleLikeClick = () => {
+    if (isLoggedIn) {
+      setLikes(likes + 1); // Incrementa a contagem de likes
+      // Aqui você pode fazer uma requisição para o backend para persistir a contagem de likes, se necessário.
+    } else {
+      alert("Você precisa estar logado para dar like."); // Mensagem se não estiver logado
     }
-    
-    setComentarios((prevComentarios) => {
-      const newComentarios = [...prevComentarios];
-      newComentarios[index].curtidas += newComentarios[index].curtidas > 0 ? -1 : 1;
-      return newComentarios;
-    });
   };
 
   return (
     <>
-      <div className="relative h-[20vh] bg-primary-color">
-        <button onClick={handleBackClick} className="absolute inset-y-0 my-auto left-4 z-50 text-light-color">
-          <ArrowLeftIcon className="h-10 w-10" />
-        </button>
-        <div className="h-full w-full bg-primary-color flex justify-center items-center z-10 gap-5 flex-row">
-          <h1 className="text-3xl font-bold tracking-tight text-light-color">{Data.titulo}</h1>
+      <Header />
+      
+      {/* Seção Hero */}
+      <section
+        className="relative bg-cover bg-center h-96"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
+          <h1 className="text-5xl font-bold mb-6 text-center">{Data.titulo}</h1>
         </div>
-      </div>
+      </section>
 
-      <main className="flex flex-col gap-16 px-[13vw] mb-20 pb-20">
+      <main className="flex flex-col gap-14 px-[13vw] mb-20 pb-20">
         
         {/* Vídeo do pitch */}
         <section className="flex flex-col items-center w-full mt-12">
@@ -77,71 +80,90 @@ function Project() {
         </section>
 
         {/* Imagem e descrição do projeto */}
-        <section className="flex flex-row gap-5 items-center w-full">
-          <div className="h-[30vh] w-[15vw] rounded-full flex items-center justify-center">
-            <img className="shadow-lg rounded-full" src={images} alt="" />
+        <section className="flex justify-center w-full">
+          <div className="flex flex-col md:flex-row items-center gap-5 bg-white shadow-lg rounded-lg p-6 md:p-8 max-w-4xl w-full">
+            <div className="flex-shrink-0">
+              <div className="h-32 w-32 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-gray-200 shadow-md flex items-center justify-center">
+                <img className="w-full h-full object-cover" src={iconImage} alt="Project Thumbnail" />
+              </div>
+            </div>
+            <div className="flex flex-col justify-center text-center md:text-left">
+              <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
+                {Data.descricao || "Descrição do projeto não disponível."}
+              </p>
+              <button 
+                onClick={handleLikeClick} 
+                className="mt-4 inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 transition w-30 ml-auto">
+                <HeartIcon className="h-6 w-6 mr-2" />
+                {likes} Likes
+              </button>
+            </div>
           </div>
-          <p className="text-gray-600">{Data.descricao}</p>
         </section>
 
         {/* Informações do projeto */}
-        <div className="w-full grid grid-cols-2 gap-[2vw] ">
-          <section className="w-full flex flex-col border-solid rounded-t-lg border-2 border-light-color gap-3 pb-8">
-            <div className="w-full flex flex-row items-center space-x-1 bg-[#D8DBE2] rounded-t-lg px-4 py-1">
-              <UserGroupIcon className="h-5 w-5 me-2" />
-              <h2 className="text-lg font-semibold text-dark-color">Equipe</h2>
-            </div>
-            <ul className="grid grid-cols-2 px-4">
-              {Data.equipe?.split(";").map((pessoa, index) => (
-                <li key={index}>{pessoa}</li>
-              ))}
-            </ul>
-          </section>
+        <div className="w-full flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
+              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
+                <UserGroupIcon className="h-5 w-5 mr-2" />
+                <h2 className="text-base font-semibold">Equipe</h2>
+              </div>
+              <ul className="px-4 py-2 text-gray-700">
+                {Data.equipe?.split(";").map((pessoa, index) => (
+                  <li key={index}>{pessoa}</li>
+                ))}
+              </ul>
+            </section>
 
-          <section className="w-full flex flex-col border-solid rounded-t-lg border-2 border-light-color gap-3 pb-8">
-            <div className="w-full flex flex-row items-center space-x-1 bg-[#D8DBE2] rounded-t-lg px-4 py-1">
-              <Cog8ToothIcon className="h-5 w-5 me-2" />
-              <h2 className="text-lg font-semibold text-dark-color">Tecnologias Utilizadas</h2>
-            </div>
-            <ul className="mb-5 grid grid-cols-2 px-4">
-              {Data.tecnologias_utilizadas?.split(";").map((tech, index) => (
-                <li key={index}>{tech}</li>
-              ))}
-            </ul>
-          </section>
+            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
+              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
+                <Cog8ToothIcon className="h-5 w-5 mr-2" />
+                <h2 className="text-base font-semibold">Tecnologias Utilizadas</h2>
+              </div>
+              <ul className="px-4 py-2 text-gray-700">
+                {Data.tecnologias_utilizadas?.split(";").map((tech, index) => (
+                  <li key={index}>{tech}</li>
+                ))}
+              </ul>
+            </section>
 
-          <div className="w-full flex flex-col rounded-t-lg border-solid border-2 border-light-color gap-3 pb-8">
-            <div className="w-full flex flex-row items-center space-x-1 bg-[#D8DBE2] rounded-t-lg px-4 py-1">
-              <UserIcon className="h-5 w-5 me-2" />
-              <h2 className="text-lg font-semibold text-dark-color">Pessoa/Organização Parceira</h2>
-            </div>
-            <p className="text-gray-600 px-4">{Data.cliente}</p>
-          </div>
+            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
+              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
+                <UserIcon className="h-5 w-5 mr-2" />
+                <h2 className="text-base font-semibold">Pessoa/Organização Parceira</h2>
+              </div>
+              <p className="px-4 py-2 text-gray-700">{Data.cliente || "Informação não disponível"}</p>
+            </section>
 
-          <div className="w-full flex flex-col rounded-t-lg border-solid border-2 border-light-color gap-3 pb-8">
-            <div className="w-full flex flex-row items-center space-x-1 bg-[#D8DBE2] rounded-t-lg px-4 py-1">
-              <CalendarIcon className="h-5 w-5 me-2" />
-              <h2 className="text-lg font-semibold text-dark-color">Semestre</h2>
-            </div>
-            <p className="text-gray-600 px-4">{Data.semestre}</p>
-          </div>
+            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
+              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
+                <CalendarIcon className="h-5 w-5 mr-2" />
+                <h2 className="text-base font-semibold">Semestre</h2>
+              </div>
+              <p className="px-4 py-2 text-gray-700">{Data.semestre || "Informação não disponível"}</p>
+            </section>
 
-          <div className="w-full flex flex-col rounded-t-lg border-solid border-2 border-light-color gap-3 pb-8">
-            <div className="w-full flex flex-row items-center space-x-1 bg-[#D8DBE2] rounded-t-lg px-4 py-1">
-              <FolderIcon className="h-5 w-5 me-2" />
-              <h2 className="text-lg font-semibold text-dark-color">Links Úteis</h2>
-            </div>
-            <p className="text-blue-400 px-4 underline">
-              <a href={Data.link_repositorio} target="_blank" rel="noopener noreferrer">Link para Repositório no GitHub</a>
-            </p>
-            <p className="text-blue-400 px-4 underline">
-              <a href={Data.video_tecnico} target="_blank" rel="noopener noreferrer">Link para Vídeo Técnico</a>
-            </p>
+            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
+              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
+                <FolderIcon className="h-5 w-5 mr-2" />
+                <h2 className="text-base font-semibold">Links Úteis</h2>
+              </div>
+              <div className="px-4 py-2 space-y-1">
+                <p className="text-blue-600 underline">
+                  <a href={Data.link_repositorio} target="_blank" rel="noopener noreferrer">Link para Repositório no GitHub</a>
+                </p>
+                <p className="text-blue-600 underline">
+                  <a href={Data.video_tecnico} target="_blank" rel="noopener noreferrer">Link para Vídeo Técnico</a>
+                </p>
+              </div>
+            </section>
           </div>
         </div>
-
+        
         {/* Seção de Comentários */}
         <section className="mt-10">
+          <hr className="border-t border-gray-300 my-4" />
           <h2 className="text-2xl font-semibold mb-4">Comentários</h2>
           <div className="flex flex-col gap-4">
             {comentarios.map((comentario, index) => (
@@ -150,12 +172,6 @@ function Project() {
                 <div className="flex-grow">
                   <p className="font-medium">{comentario.usuario}</p>
                   <p>{comentario.comentario}</p>
-                </div>
-                <div className="flex items-center">
-                  <button onClick={() => toggleLike(index)} className="flex items-center">
-                    <HeartIcon className={`w-5 h-5 ${isLoggedIn ? 'text-red-500' : 'text-gray-500'}`} />
-                  </button>
-                  <p className="ml-2 mr-2">{comentario.curtidas}</p> Likes
                 </div>
               </div>
             ))}
