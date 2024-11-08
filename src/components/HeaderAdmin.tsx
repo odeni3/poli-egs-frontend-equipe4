@@ -2,9 +2,10 @@ import { ArrowLeftStartOnRectangleIcon } from '@heroicons/react/20/solid';
 import Nav from 'react-bootstrap/Nav';
 
 function HeaderAdmin() {
+  const userName = localStorage.getItem('userName');
+
   return (
-    
-    <header className="bg-primary-color shadow text-light-color h-[10vh] w-full flex justify-between items-center px-4">     
+    <header className="bg-primary-color shadow text-light-color h-[10vh] w-full flex justify-between items-center px-4">
       <Nav className="flex flex-1">
         <Nav.Link href="/" className="mr-auto ml-8 relative flex items-center">
           <ArrowLeftStartOnRectangleIcon className="absolute w-10 h-10"/>
@@ -14,9 +15,13 @@ function HeaderAdmin() {
           <Nav.Link href="/admin-articles">Artigos</Nav.Link>
         </div>
       </Nav>
-  </header>
- 
-  )
+      <div className="text-white text-lg ml-auto flex items-center space-x-2 px-4 py-2 bg-blue-1000 transition duration-300">
+        <span className="font-semibold">
+          {userName ? `Olá, ${userName}` : 'UNKNOWN'}
+        </span>
+      </div>
+    </header>
+  );
 }
 
-export default HeaderAdmin
+export default HeaderAdmin;
