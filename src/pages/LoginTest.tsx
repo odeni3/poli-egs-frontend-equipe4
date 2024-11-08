@@ -5,13 +5,69 @@ import backgroundImage from '../images/backgroundlogin.jpg';
 const LoginTest = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
+    try {
+      // 1. Enviar a requisição para o login com email e senha na URL
+      const response = await fetch(`http://127.0.0.1:8000/login?email=${email}&password=${password}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      // Verificar se a resposta do login foi bem-sucedida
+      if (!response.ok) {
+        throw new Error('Login falhou');
+      }
+  
+      // 2. Captura do token e dados do usuário
+      const data = await response.json();
+      // Verificando se o token foi retornado
+      if (!data.idToken) {
+        throw new Error('Token não encontrado');
+      }
+  
+      // Armazenando o token no localStorage
+      localStorage.setItem('authToken', data.idToken);
+      const nomezinho = data.username;
+      localStorage.setItem('userName', nomezinho)
+  
+      // 3. Fazer uma requisição para a rota /users com o token
+      const usersResponse = await fetch(`http://127.0.0.1:8000/users?id_token=${data.idToken}`);
+  
+      // Verificando a resposta da rota de usuários
+      if (!usersResponse.ok) {
+        const errorData = await usersResponse.json();
+        if (errorData.detail && errorData.detail === 'Access forbidden: Admins only.') {
+          // O usuário não é admin
+          setError('Acesso restrito: apenas administradores podem acessar a lista de usuários.');
+          navigate('/user-projects');  // Redirecionar para a página do usuário
+          return; // Não prossegue, pois não é admin
+        }
+        throw new Error('Erro ao acessar os usuários');
+      }
+  
+      // 4. Captura da lista de usuários, se a resposta for bem-sucedida
+      const usersData = await usersResponse.json();
+  
+      // Verifica se algum dos usuários é admin
+      const adminUser = usersData.usuários.find((user: any) => user.email === email && user.is_admin);
+      
+      // Se for admin, redireciona para a página de administração
+      if (adminUser) {
+        navigate('/admin-projects');
+      } else {
+        navigate('/user-projects');
+      }
+  
+    } catch (error) {
+      console.error('Erro no login:', error);
+      setError('Email ou senha inválidos');
+    }
   };
+  
 
   return (
     <div
@@ -37,7 +93,7 @@ const LoginTest = () => {
         }}
       >
         <h2 className="text-3xl font-bold text-center mb-6 text-white">Entrar</h2>
-        
+
         <form onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-4 relative">
             <input
@@ -69,6 +125,8 @@ const LoginTest = () => {
           >
             Log in
           </button>
+
+          {error && <p className="mt-2 text-center text-red-600">{error}</p>}
 
           <div className="mt-4 text-center">
             <p className="text-white">

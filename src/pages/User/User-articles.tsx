@@ -1,5 +1,5 @@
 import { Table } from "react-bootstrap";
-import HeaderAdmin from "../../components/HeaderAdmin";
+import HeaderUser from "../../components/HeaderUser";
 import { SetStateAction, useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalDeleteArticle from "../../components/ModalDeleteArticle";
@@ -8,15 +8,14 @@ import { FaFileUpload } from "react-icons/fa";
 import axios from "axios";
 
 export interface ArticleInt {
-  //key: string;
   titulo?: string;
   descricao?: string;
   equipe?: string;
   tema?: string;
   data?: string;
   palavras_chave?: string;
-  id?: string,
-  arquivo?: string,
+  id?: string;
+  arquivo?: string;
 }
 
 const columns = [
@@ -25,26 +24,24 @@ const columns = [
   { key: "excluir", label: "Excluir" },
 ];
 
-
-function ArticlesAdmin () {
-
+function Userarticles() {
   const [Input, setInput] = useState<string>("");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
 
   const [Article, setArticle] = useState<ArticleInt[]>([]);
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [NewArticle, setNewArticle] = useState({
-    titulo: '',
-    descricao: '',
-    equipe: '',
-    tema: '',
-    data: '',
-    palavras_chave: '',
-    id: '',
-    arquivo: '#'
-  })
+    titulo: "",
+    descricao: "",
+    equipe: "",
+    tema: "",
+    data: "",
+    palavras_chave: "",
+    id: "",
+    arquivo: "#",
+  });
 
   const [file, setFile] = useState<File | undefined>();
   async function uploadPdf(e: React.FormEvent<HTMLInputElement>) {
@@ -54,61 +51,59 @@ function ArticlesAdmin () {
     setFile(target.files[0]);
   }
 
-  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void }) => {
     try {
-      const postResponse = await axios.post('https://ecomp-egs.onrender.com/artigos', NewArticle);
-      const newArticleId = postResponse.data.id; 
-      console.log(newArticleId)
+      const postResponse = await axios.post("https://ecomp-egs.onrender.com/artigos", NewArticle);
+      const newArticleId = postResponse.data.id;
+      console.log(newArticleId);
       if (!newArticleId) {
-        throw new Error('ID do novo artigo não retornado.');
-      }  
+        throw new Error("ID do novo artigo não retornado.");
+      }
       if (file) {
         const formData = new FormData();
-        formData.append('file', file);
-        console.log("FormData:", formData.get('file'));
+        formData.append("file", file);
+        console.log("FormData:", formData.get("file"));
         await axios.post(`https://ecomp-egs.onrender.com/upload_pdf_artigo/?id_projeto=${newArticleId}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            "Content-Type": "multipart/form-data",
+          },
         });
       }
-      const response = await axios.get('https://ecomp-egs.onrender.com/artigos');
-      setArticle(response.data);  
+      const response = await axios.get("https://ecomp-egs.onrender.com/artigos");
+      setArticle(response.data);
       setOpen(false);
     } catch (error) {
-      console.error('Erro ao adicionar artigo ou enviar arquivo:', error);
+      console.error("Erro ao adicionar artigo ou enviar arquivo:", error);
     }
   };
 
   const handleUpdate = () => {
-    axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
+    axios.get("https://ecomp-egs.onrender.com/artigos").then(response => {
       setArticle(response.data);
     }).catch(error => {
-      console.error('Erro ao atualizar artigo', error);
+      console.error("Erro ao atualizar artigo", error);
     });
-  }; 
-  
+  };
+
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
-      setArticle(response.data)
-    })
+    axios.get("https://ecomp-egs.onrender.com/artigos").then(function (response) {
+      setArticle(response.data);
+    });
   }, []);
 
-  const filteredArticle = Article.filter((article:any) => {    
+  const filteredArticle = Article.filter((article: any) => {
     const input = Input.toLowerCase();
     return (
-      (
-        article.titulo?.toLowerCase().includes(input) ||
-        article.palavras_chave?.toLowerCase().includes(input) ||
-        article.tema?.toLowerCase().includes(input)
-      ) 
+      article.titulo?.toLowerCase().includes(input) ||
+      article.palavras_chave?.toLowerCase().includes(input) ||
+      article.tema?.toLowerCase().includes(input)
     );
   });
 
   return (
     <>
-      <HeaderAdmin />
-      <div className="flex flex-col px-[13vw] pt-10 gap-6">
+    <HeaderUser />
+    <div className="flex flex-col px-[13vw] pt-10 gap-6">
         <section className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-start text-dark-color">Artigos</h1>
           <button
@@ -305,8 +300,7 @@ function ArticlesAdmin () {
         </div>
       </Dialog>
     </>
-
-  )
+  );
 }
 
-export default ArticlesAdmin
+export default Userarticles;

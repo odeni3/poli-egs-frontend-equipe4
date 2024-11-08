@@ -16,6 +16,8 @@ import Sobre from './pages/Sobre.tsx'
 import FAQ from './pages/FAQ.tsx'
 import LoginTest from './pages/LoginTest.tsx'
 import Register from './pages/Register';
+import Userprojects from './pages/User/User-projects.tsx';
+import Userarticles from './pages/User/User-articles.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -31,6 +33,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           {/* <Route path='/login' element={<Login />} />  */}
           <Route path='/sobre' element={<Sobre />} />
           <Route path='/faq' element={<FAQ />} />
+          <Route path='/user-projects' element={<Userprojects />} />
+          <Route path='/user-articles' element={<Userarticles />} />
           {/* <Route element={<ProtectedRoute />}> */}
             <Route path='/admin-projects' element={<ProjectsAdmin />} />
             <Route path='/admin-articles' element={<ArticlesAdmin />} />
