@@ -64,7 +64,10 @@ function Header() {
             Entrar
           </NavLink>
           <NavLink to="/admin-projects" className="text-lg hover:text-gray-300" activeClassName="underline">
-            ...
+            DA
+          </NavLink>
+          <NavLink to="/user-projects" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
+            DU
           </NavLink>
         </div>
       </nav>
@@ -107,7 +110,10 @@ function Header() {
             </li>
             <li>
               <NavLink to="/admin-projects" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                ...
+                DA
+              </NavLink>
+              <NavLink to="/user" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
+                DU
               </NavLink>
             </li>
           </ul>
