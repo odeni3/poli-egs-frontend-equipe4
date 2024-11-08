@@ -14,7 +14,8 @@ const columns = [
   { key: "excluir", label: "Excluir" },
 ];
 
-function Userprojects() {
+function Userprojects
+() {
   const [Input, setInput] = useState<string>("");
   const [Project, setProject] = useState<ProjectInt[]>([]);
   const [open, setOpen] = useState(false);
@@ -108,73 +109,163 @@ function Userprojects() {
       <HeaderUser />
       <div className="flex flex-col px-[13vw] pt-10 gap-6">
         <section className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-dark-color">Projetos</h1>
-          <button 
-            onClick={() => setOpen(true)} 
-            className="rounded-md bg-primary-color text-white py-2 px-6 hover:bg-primary-color-dark transition duration-200"
-          >
-            Novo projeto
-          </button>
+          <h1 className="text-2xl font-bold text-start text-dark-color ">Projetos</h1>
+          <button type="submit" onClick={() => setOpen(true)} className="rounded-md bg-primary-color h-full w-[15vw] text-white">Novo projeto</button>
         </section>
         <input 
           type="search" 
-          className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2] focus:ring-2 focus:ring-primary-color transition-all"
+          name="searchbar" 
+          id="searchbar" 
+          className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2] "
           placeholder="Pesquise por nome, tema, palavra-chave"
           value={Input}
           onChange={handleInputChange}
         />
-      </div>
+      </div>  
       <div className="px-[13vw] pt-10">
-        <Table className="w-full">
-          <thead className="bg-primary-color text-white">
+        <Table className="h-auto w-full">
+          <thead>
             {columns.map((column) => (
-              <th key={column.key} className={`py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>{column.label}</th>
+              <th key={column.key} className={column.key === "titulo" ? "text-left" : "text-right "}>{column.label}</th>
             ))}
-          </thead>
-          <tbody>
+          </thead>    
+          <tbody >
             {filteredProject.map((project) => (
-              <tr key={project.id} className="border border-light-color hover:bg-gray-100 transition duration-300">
+              <tr key={project.id} className="border border-light-color">
                 {columns.map((column) => (
-                  <td key={column.key} className={`py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
-                    {column.key === "editar" ? (
-                      <ModalUpdate project={project} handleUpdate={handleUpdate} />
-                    ) : column.key === "excluir" ? (
-                      <ModalDelete title={project.titulo} id={project.id} handleUpdate={handleUpdate} />
+                  <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
+                    {column.key == "editar" ? (
+                      <ModalUpdate
+                        project={project}
+                        handleUpdate={handleUpdate}
+                      />
+                    ) : column.key == "excluir" ? (
+                      <ModalDelete
+                        title={project.titulo}
+                        id={project.id}
+                        handleUpdate={handleUpdate}
+                      />
                     ) : (
                       project.titulo
-                    )}
+                    )
+                  }
                   </td>
                 ))}
               </tr>
-            ))}
-          </tbody>
+            ))}   
+          </tbody>    
         </Table>
       </div>
-
-      {/* Modal de criação de projeto */}
-      <Dialog open={open} onClose={() => setOpen(false)} className="relative z-10">
-        <DialogBackdrop className="fixed inset-0 bg-gray-500 bg-opacity-75" />
-        <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-[40vw]">
-          <div className="bg-[#D8DBE2] pt-5 sm:p-3 sm:pb-4">
-            <DialogTitle as="h2" className="text-lg font-semibold leading-6 text-dark-color">
-              Cadastrar novo projeto
-            </DialogTitle>
-          </div>
-          <form>
-            {/* Formulário com campos de entrada */}
-          </form>
-          <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse">
-            <button onClick={() => handlePost(setOpen)} className="rounded-md bg-primary-color px-4 py-2 text-white hover:bg-primary-color-dark transition duration-200">
-              Enviar
-            </button>
-            <button onClick={() => setOpen(false)} className="rounded-md bg-white px-4 py-2 text-gray-900 hover:bg-gray-200 transition duration-200">
-              Cancelar
-            </button>
-          </div>
-        </DialogPanel>
+      <Dialog open={open} onClose={setOpen} className="relative z-10">
+        <DialogBackdrop transition className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"/>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <DialogPanel
+            transition
+            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-[40vw] data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+          >
+            <div className="bg-[#D8DBE2] pt-5 sm:p-3 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <DialogTitle as="h2" className="text-lg font-semibold leading-6 text-dark-color">
+                    Cadastrar novo projeto
+                  </DialogTitle>
+                </div>
+              </div>
+            </div>
+            <form action="POST">
+              <div className="grid grid-cols-2 justify-start pt-4 px-6 gap-y-[2vh]">
+                <div>
+                  <h3 className="text-lg font-semibold">Titulo</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Titulo" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, titulo:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Equipe</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, equipe:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Organização Parceira</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, cliente:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Tema</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Ex: Engenharia de Software" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, tema:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Semestre</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, semestre:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Tecnologias Utilizadas</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1;Tecnologia2;Tecnologia3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, tecnologias_utilizadas:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Link do Pitch</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Pitch" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, pitch:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Link do Vídeo Técnico</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Vídeo Técnico" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, video_tecnico:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Repositório</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Repositório" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, link_repositorio:e.target.value}))}/>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Palavras Chave</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Palavra1;Palavra2;Palavra3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, palavras_chave:e.target.value}))}/>
+                </div>
+                <div className="mb-10">
+                  <h3 className="text-lg font-semibold">Descrição</h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, descricao:e.target.value}))}/>
+                </div>
+                <div className="w-[15vw] relative">
+                  <input type="file" className="hidden" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
+                  <label
+                    htmlFor="logo"
+                    className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
+                      !selectedFile ? "bg-green-500" : "bg-[#D8DBE2]"
+                    } hover:opacity-60 select-none whitespace-nowrap`}
+                    style={{ 
+                      textOverflow: 'ellipsis', 
+                      overflow: 'hidden', 
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {selectedFile ? (
+                      <span>Modificar Logo</span>
+                    ) : (
+                      <span>Atualizar Logo</span>
+                    )}
+                    <FaFileUpload className="ml-2" />
+                  </label>
+                </div>
+              </div>
+            </form>
+            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button
+                type="button"
+                className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
+                onClick={() => handlePost(setOpen)}
+              >
+                Enviar
+              </button>
+              <button
+                type="button"
+                data-autofocus
+                onClick={() => setOpen(false)}
+                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+              >
+                Cancelar
+              </button>
+            </div>
+          </DialogPanel>
+        </div>
+      </div>
       </Dialog>
     </>
   );
 }
 
-export default Userprojects;
+export default Userprojects
+;
