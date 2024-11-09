@@ -3,17 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../images/backgroundlogin.jpg';
 
 const Register = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
-    // Adicione a lógica de registro aqui
+
+    // Verificando se as senhas coincidem antes de enviar a requisição
+    if (password !== confirmPassword) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          is_admin: false, // Definindo automaticamente como false
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Registro bem-sucedido:', data);
+        navigate('/logintest');
+      } else {
+        setError("O endereço de e-mail já existe ou a senha possui menos de 6 caracteres.");
+      }
+    } catch (error) {
+      console.error('Erro de rede:', error);
+      setError('Erro de rede. Verifique sua conexão.');
+    }
   };
 
   return (
@@ -44,6 +74,18 @@ const Register = () => {
         <form onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-4 relative">
             <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Nome de usuário"
+              className="w-full py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white border-transparent focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-300 hover:border hover:border-white/30"
+              required
+            />
+          </div>
+
+          <div className="mb-4 relative">
+            <input
               type="email"
               id="email"
               value={email}
@@ -51,6 +93,7 @@ const Register = () => {
               placeholder="Email"
               className="w-full py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white border-transparent focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-300 hover:border hover:border-white/30"
               autoComplete="off"
+              required
             />
           </div>
 
@@ -63,6 +106,7 @@ const Register = () => {
               placeholder="Senha"
               className="w-full py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white border-transparent focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-300 hover:border hover:border-white/30"
               autoComplete="new-password"
+              required
             />
           </div>
 
@@ -75,6 +119,7 @@ const Register = () => {
               placeholder="Confirmar Senha"
               className="w-full py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white border-transparent focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-300 hover:border hover:border-white/30"
               autoComplete="new-password"
+              required
             />
           </div>
 
@@ -84,6 +129,8 @@ const Register = () => {
           >
             Registrar
           </button>
+
+          {error && <p className="mt-2 text-center text-red-600">{error}</p>}
 
           <div className="mt-4 text-center">
             <p className="text-white">
