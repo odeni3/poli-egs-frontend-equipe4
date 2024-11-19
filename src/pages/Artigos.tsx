@@ -3,16 +3,18 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid';
-import backgroundImage from '../images/mainpage.jpg'; // Utilize a mesma imagem de fundo ou uma específica para artigos
+import backgroundImage from '../images/mainpage.jpg';
 
 function Articles() {
   const [input, setInput] = useState("");
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/artigos').then((response) => {
-      setArticles(response.data);
-    });
+    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos')
+      .then((response) => {
+        setArticles(response.data.artigos || []);
+      })
+      .catch((error) => console.error('Erro ao carregar artigos:', error));
   }, []);
 
   const handleInputChange = (event) => {
@@ -21,14 +23,18 @@ function Articles() {
 
   const handleDownload = async (id) => {
     try {
-      const response = await axios.get(`https://ecomp-egs.onrender.com/view_pdf_artigo/${id}`);
+      const response = await axios.get(`https://poli-egs-fastapi-1.onrender.com/view_pdf_artigo/${id}`);
       const url = response.data.url;
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (url) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        console.error('URL não encontrada');
+      }
     } catch (error) {
       console.error('Erro ao obter o PDF:', error);
     }
@@ -38,8 +44,10 @@ function Articles() {
     const searchInput = input.toLowerCase();
     return (
       article.titulo?.toLowerCase().includes(searchInput) ||
-      article.palavras_chave?.toLowerCase().includes(searchInput) ||
-      article.tema?.toLowerCase().includes(searchInput)
+      article.tema?.toLowerCase().includes(searchInput) ||
+      (article.palavras_chave?.some((keyword) =>
+        keyword.toLowerCase().includes(searchInput))
+      )
     );
   });
 
@@ -104,31 +112,31 @@ function Articles() {
                   <div className="mb-4">
                     <h3 className="font-semibold">Autor(es):</h3>
                     <ul className="list-disc list-inside">
-                      {article.equipe?.split(";").map((autor, index) => (
+                      {article.equipe?.map((autor, index) => (
                         <li key={index}>{autor}</li>
-                      ))}
+                      )) || <p>Autor não informado</p>}
                     </ul>
                   </div>
                   <div className="mb-4">
                     <h3 className="font-semibold">Área de pesquisa:</h3>
-                    <p>{article.tema}</p>
+                    <p>{article.tema || "Tema não informado"}</p>
                   </div>
                   <div className="mb-4">
                     <h3 className="font-semibold">Palavras-chave:</h3>
                     <div className="flex flex-wrap gap-2">
-                      {article.palavras_chave?.split(";").map((palavra, index) => (
+                      {article.palavras_chave?.map((palavra, index) => (
                         <span
                           key={index}
                           className="bg-blue-600 text-white px-2 py-1 rounded-full text-sm"
                         >
                           {palavra}
                         </span>
-                      ))}
+                      )) || <p>Não informado</p>}
                     </div>
                   </div>
                   <div className="mb-4">
                     <h3 className="font-semibold">Data de publicação:</h3>
-                    <p>{article.data}</p>
+                    <p>{article.data || "Data não disponível"}</p>
                   </div>
                   <button
                     className="mt-auto flex items-center text-blue-600 hover:text-blue-800 font-semibold"
