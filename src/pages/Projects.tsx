@@ -7,6 +7,33 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import backgroundImage from '../images/mainpage.jpg'; 
 
+// Definir a interface do projeto
+interface Project {
+  id: string;
+  titulo: string;
+  descricao: string;
+  equipe: string[];
+  cliente: string;
+  pitch: string;
+  tema: string;
+  semestre: string;
+  video_tecnico: string;
+  tecnologias_utilizadas: string[];
+  palavras_chave: string[];
+  link_repositorio: string;
+  revisado?: string;
+  curtidas?: number;
+}
+
+// Criar instância do axios com configurações base
+const api = axios.create({
+  baseURL: 'https://ecomp-egs.onrender.com',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false
+});
+
 function Projects() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -14,21 +41,29 @@ function Projects() {
   const [inputMembers, setInputMembers] = useState('');
   const [themes, setThemes] = useState('');
   const [semester, setSemester] = useState('');
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState<Project[]>([]);
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [selectedSemesters, setSelectedSemesters] = useState([]);
   const [images, setImages] = useState({});
 
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/projetos').then((response) => {
-      setCards(response.data);
-    });
-    axios.get('https://ecomp-egs.onrender.com/temasProjeto').then((response) => {
-      setSelectedThemes(response.data.temas);
-    });
-    axios.get('https://ecomp-egs.onrender.com/semestreProjetos').then((response) => {
-      setSelectedSemesters(response.data.semestres);
-    });
+    const fetchData = async () => {
+      try {
+        const [projectsRes, themesRes, semestersRes] = await Promise.all([
+          api.get('/projetos'),
+          api.get('/temasProjeto'),
+          api.get('/semestreProjetos')
+        ]);
+
+        setCards(projectsRes.data);
+        setSelectedThemes(themesRes.data.temas);
+        setSelectedSemesters(semestersRes.data.semestres);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleInputChange = (event) => {
@@ -41,13 +76,17 @@ function Projects() {
 
   const handleGetImage = async (id) => {
     try {
-      const response = await axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${id}`);
-      setImages((prevImages) => ({
-        ...prevImages,
-        [id]: response.data.url,
-      }));
+      const response = await api.get(`/view_logo_projeto/${id}`);
+      
+      if (response.status === 200 && response.data) {
+        const imageUrl = URL.createObjectURL(response.data);
+        setImages(prev => ({
+          ...prev,
+          [id]: imageUrl
+        }));
+      }
     } catch (error) {
-      console.log('Error fetching images: ', error);
+      console.error('Error fetching images:', error);
     }
   };
 
@@ -57,14 +96,26 @@ function Projects() {
         const searchMembers = inputMembers.toLowerCase();
         const searchThemes = themes.toLowerCase();
         const searchSemester = semester.toLowerCase();
+
+        // Verificar se o membro está na equipe
+        const hasMatchingMember = project.equipe.some(member => 
+          member.toLowerCase().includes(searchMembers)
+        );
+
+        // Verificar palavras-chave
+        const hasMatchingKeyword = project.palavras_chave.some(keyword => 
+          keyword.toLowerCase().includes(searchInput)
+        );
+
         handleGetImage(project.id);
+
         return (
-          (project.titulo?.toLowerCase().includes(searchInput) ||
-            project.palavras_chave?.toLowerCase().includes(searchInput) ||
-            project.tema?.toLowerCase().includes(searchInput)) &&
-          project.equipe?.toLowerCase().includes(searchMembers) &&
-          project.tema?.toLowerCase().includes(searchThemes) &&
-          project.semestre?.toLowerCase().includes(searchSemester)
+          (project.titulo.toLowerCase().includes(searchInput) ||
+            hasMatchingKeyword ||
+            project.tema.toLowerCase().includes(searchInput)) &&
+          hasMatchingMember &&
+          project.tema.toLowerCase().includes(searchThemes) &&
+          project.semestre.toLowerCase().includes(searchSemester)
         );
       })
     : [];
@@ -265,7 +316,7 @@ function Projects() {
                       <h3 className="text-2xl font-bold text-blue-600 mb-2">{project.titulo}</h3>
                       <p className="text-gray-700 flex-grow">{project.descricao}</p>
                       <button
-                        onClick={() => navigate(`/projects/selected/${project.id}`)}
+                        onClick={() => navigate(`/projetos/${project.id}/`)}
                         className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                       >
                         Ver mais

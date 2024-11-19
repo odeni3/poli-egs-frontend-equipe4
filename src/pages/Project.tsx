@@ -1,58 +1,130 @@
-import { useEffect, useState } from 'react';
-import { ArrowLeftIcon, CalendarIcon, Cog8ToothIcon, FolderIcon, UserGroupIcon, UserIcon, HeartIcon } from '@heroicons/react/20/solid';
+import React, { useEffect, useState } from 'react';
+import { Listbox } from '@headlessui/react';
+import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import Footer from '../components/Footer';
-import mockData from '../dados/mockData';
-import iconImage from '../images/avatar.png';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import backgroundImage from '../images/mainpage.jpg';
+import Footer from '../components/Footer';
+import backgroundImage from '../images/mainpage.jpg'; 
 
-function Project() {
+// Definir a interface do projeto
+interface Project {
+  id: string;
+  titulo: string;
+  descricao: string;
+  equipe: string[];
+  cliente: string;
+  pitch: string;
+  tema: string;
+  semestre: string;
+  video_tecnico: string;
+  tecnologias_utilizadas: string[];
+  palavras_chave: string[];
+  link_repositorio: string;
+}
+
+// Criar instância do axios com configurações base
+const api = axios.create({
+  baseURL: 'https://ecomp-egs.onrender.com',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false
+});
+
+function Projects() {
   const { slug } = useParams();
-  const [Data, setData] = useState({});
-  const [images, setImg] = useState();
-  const [comentarios, setComentarios] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Verificação de login
-  const [likes, setLikes] = useState(0); // Estado para armazenar likes
+  const navigate = useNavigate();
+  const [input, setInput] = useState(slug || '');
+  const [inputMembers, setInputMembers] = useState('');
+  const [themes, setThemes] = useState('');
+  const [semester, setSemester] = useState('');
+  const [cards, setCards] = useState<Project[]>([]);
+  const [selectedThemes, setSelectedThemes] = useState([]);
+  const [selectedSemesters, setSelectedSemesters] = useState([]);
+  const [images, setImages] = useState({});
 
   useEffect(() => {
-    // Simulação de verificação de login. Altere para verificar o estado real de login
-    const checkLoginStatus = () => {
-      const loggedInUser = false; // Troque isso pelo valor real
-      setIsLoggedIn(loggedInUser);
+    const fetchData = async () => {
+      try {
+        const [projectsRes, themesRes, semestersRes] = await Promise.all([
+          api.get('/projetos'),
+          api.get('/temasProjeto'),
+          api.get('/semestreProjetos')
+        ]);
+
+        const projectsData = projectsRes.data.projeto ? [projectsRes.data.projeto] : [];
+        setCards(projectsData);
+        setSelectedThemes(themesRes.data.temas);
+        setSelectedSemesters(semestersRes.data.semestres);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
     };
 
-    checkLoginStatus();
+    fetchData();
+  }, []);
 
-    axios.get(`https://ecomp-egs.onrender.com/projetos/${slug}`).then((response) => {
-      setData(response.data[0]);
-      setLikes(response.data[0].curtidas || 0); // Defina a contagem inicial de likes, se disponível
-    });
-    axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${slug}`).then((response) => {
-      setImg(response.data["url"]);
-    });
-    // Carrega os comentários específicos para o projeto atual usando o `id`
-    const comentariosDoProjeto = mockData.projetos[slug] || [];
-    setComentarios(comentariosDoProjeto);
-  }, [slug]);
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+  };
 
-  const navigate = useNavigate();
-  const handleBackClick = () => navigate(-1);
+  const handleInputMembersChange = (event) => {
+    setInputMembers(event.target.value);
+  };
 
-  const handleLikeClick = () => {
-    if (isLoggedIn) {
-      setLikes(likes + 1); // Incrementa a contagem de likes
-      // Aqui você pode fazer uma requisição para o backend para persistir a contagem de likes, se necessário.
-    } else {
-      alert("Você precisa estar logado para dar like."); // Mensagem se não estiver logado
+  const handleGetImage = async (id: string) => {
+    try {
+      const response = await api.get(`/view_logo_projeto/${id}`, {
+        responseType: 'blob'
+      });
+      
+      if (response.status === 200 && response.data) {
+        const imageUrl = URL.createObjectURL(response.data);
+        setImages(prev => ({
+          ...prev,
+          [id]: imageUrl
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching images:', error);
     }
   };
+
+  const filteredCards = Array.isArray(cards)
+    ? cards.filter((project) => {
+        const searchInput = input.toLowerCase();
+        const searchMembers = inputMembers.toLowerCase();
+        const searchThemes = themes.toLowerCase();
+        const searchSemester = semester.toLowerCase();
+
+        // Verificar se o membro está na equipe
+        const hasMatchingMember = project.equipe.some(member => 
+          member.toLowerCase().includes(searchMembers)
+        );
+
+        // Verificar palavras-chave
+        const hasMatchingKeyword = project.palavras_chave.some(keyword => 
+          keyword.toLowerCase().includes(searchInput)
+        );
+
+        handleGetImage(project.id);
+
+        return (
+          (project.titulo.toLowerCase().includes(searchInput) ||
+            hasMatchingKeyword ||
+            project.tema.toLowerCase().includes(searchInput)) &&
+          hasMatchingMember &&
+          project.tema.toLowerCase().includes(searchThemes) &&
+          project.semestre.toLowerCase().includes(searchSemester)
+        );
+      })
+    : [];
 
   return (
     <>
       <Header />
-      
+
       {/* Seção Hero */}
       <section
         className="relative bg-cover bg-center h-96"
@@ -60,128 +132,210 @@ function Project() {
       >
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
-          <h1 className="text-5xl font-bold mb-6 text-center">{Data.titulo}</h1>
+          <h1 className="text-5xl font-bold mb-6 text-center">Projetos</h1>
+          <p className="text-2xl mb-8 text-center">Explore nossos projetos e iniciativas</p>
+          <div className="flex w-full max-w-lg">
+            <input
+              type="search"
+              name="searchbar"
+              id="searchbar"
+              className="w-full h-16 px-6 rounded-l-full bg-white bg-opacity-20 text-white placeholder-white outline-none focus:bg-white focus:text-black transition-colors duration-300"
+              placeholder="Pesquise por nome, tema, palavra-chave"
+              value={input}
+              onChange={handleInputChange}
+            />
+            <button
+              className="bg-blue-600 h-16 px-6 rounded-r-full hover:bg-blue-700 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1111 5a6 6 0 016 6z"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
 
-      <main className="flex flex-col gap-14 px-[13vw] mb-20 pb-20">
-        
-        {/* Vídeo do pitch */}
-        <section className="flex flex-col items-center w-full mt-12">
-          <iframe
-            width="560"
-            height="315"
-            src={"https://www.youtube.com/embed/" + Data.pitch}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </section>
-
-        {/* Imagem e descrição do projeto */}
-        <section className="flex justify-center w-full">
-          <div className="flex flex-col md:flex-row items-center gap-5 bg-white shadow-lg rounded-lg p-6 md:p-8 max-w-4xl w-full">
-            <div className="flex-shrink-0">
-              <div className="h-32 w-32 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-gray-200 shadow-md flex items-center justify-center">
-                <img className="w-full h-full object-cover" src={iconImage} alt="Project Thumbnail" />
+      {/* Filtros e Lista de Projetos */}
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
+          {/* Filtro de Pesquisa */}
+          <div className="w-full lg:w-1/4 bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-6">Filtrar Projetos</h2>
+            <form>
+              {/* Área do Projeto */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-semibold mb-2">Área do projeto:</label>
+                <Listbox value={themes} onChange={setThemes}>
+                  <div className="relative">
+                    <Listbox.Button className="relative w-full h-12 pl-3 pr-10 text-left bg-white rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <span className="block truncate">{themes || 'Selecione uma área'}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                        <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </span>
+                    </Listbox.Button>
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg">
+                      {selectedThemes.map((theme, index) => (
+                        <Listbox.Option
+                          key={index}
+                          value={theme}
+                          className={({ active }) =>
+                            `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                              active ? 'text-white bg-blue-600' : 'text-gray-900'
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? 'font-medium' : 'font-normal'
+                                }`}
+                              >
+                                {theme}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                  <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </div>
+                </Listbox>
               </div>
-            </div>
-            <div className="flex flex-col justify-center text-center md:text-left">
-              <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
-                {Data.descricao || "Descrição do projeto não disponível."}
-              </p>
-              <button 
-                onClick={handleLikeClick} 
-                className="mt-4 inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 transition w-30 ml-auto">
-                <HeartIcon className="h-6 w-6 mr-2" />
-                {likes} Likes
+
+              {/* Semestre */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-semibold mb-2">Ano/Semestre:</label>
+                <Listbox value={semester} onChange={setSemester}>
+                  <div className="relative">
+                    <Listbox.Button className="relative w-full h-12 pl-3 pr-10 text-left bg-white rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <span className="block truncate">{semester || 'Selecione um semestre'}</span>
+                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                        <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </span>
+                    </Listbox.Button>
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg">
+                      {selectedSemesters.map((sem, index) => (
+                        <Listbox.Option
+                          key={index}
+                          value={sem}
+                          className={({ active }) =>
+                            `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                              active ? 'text-white bg-blue-600' : 'text-gray-900'
+                            }`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? 'font-medium' : 'font-normal'
+                                }`}
+                              >
+                                {sem}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                  <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </div>
+                </Listbox>
+              </div>
+
+              {/* Pesquisar por nome, palavra-chave */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Pesquisar (nome, palavra-chave):
+                </label>
+                <input
+                  type="text"
+                  className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: Tracy-TD, Inteligência Artificial..."
+                  value={input}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              {/* Integrantes */}
+              <div className="mb-6">
+                <label className="block text-gray-700 font-semibold mb-2">Integrantes:</label>
+                <input
+                  type="text"
+                  className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: Ana Karla, Arthur Xavier..."
+                  value={inputMembers}
+                  onChange={handleInputMembersChange}
+                />
+              </div>
+
+              {/* Botão de Enviar */}
+              <button
+                type="submit"
+                className="w-full h-12 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Aplicar Filtros
               </button>
-            </div>
+            </form>
           </div>
-        </section>
 
-        {/* Informações do projeto */}
-        <div className="w-full flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
-              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
-                <UserGroupIcon className="h-5 w-5 mr-2" />
-                <h2 className="text-base font-semibold">Equipe</h2>
-              </div>
-              <ul className="px-4 py-2 text-gray-700">
-                {Data.equipe?.split(";").map((pessoa, index) => (
-                  <li key={index}>{pessoa}</li>
+          {/* Lista de Projetos */}
+          <div className="w-full lg:w-3/4">
+            {filteredCards.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {filteredCards.map((project) => (
+                  <div
+                    key={project.id}
+                    className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
+                  >
+                    <img
+                      src={images[project.id] || ''}
+                      alt={project.titulo}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6 flex flex-col flex-grow">
+                      <h3 className="text-2xl font-bold text-blue-600 mb-2">{project.titulo}</h3>
+                      <p className="text-gray-700 flex-grow">{project.descricao}</p>
+                      <button
+                        onClick={() => navigate(`/projects/selected/${project.id}`)}
+                        className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                      >
+                        Ver mais
+                      </button>
+                    </div>
+                  </div>
                 ))}
-              </ul>
-            </section>
-
-            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
-              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
-                <Cog8ToothIcon className="h-5 w-5 mr-2" />
-                <h2 className="text-base font-semibold">Tecnologias Utilizadas</h2>
               </div>
-              <ul className="px-4 py-2 text-gray-700">
-                {Data.tecnologias_utilizadas?.split(";").map((tech, index) => (
-                  <li key={index}>{tech}</li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
-              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
-                <UserIcon className="h-5 w-5 mr-2" />
-                <h2 className="text-base font-semibold">Pessoa/Organização Parceira</h2>
-              </div>
-              <p className="px-4 py-2 text-gray-700">{Data.cliente || "Informação não disponível"}</p>
-            </section>
-
-            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
-              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
-                <CalendarIcon className="h-5 w-5 mr-2" />
-                <h2 className="text-base font-semibold">Semestre</h2>
-              </div>
-              <p className="px-4 py-2 text-gray-700">{Data.semestre || "Informação não disponível"}</p>
-            </section>
-
-            <section className="flex flex-col border border-light-color rounded-lg shadow-md pb-4">
-              <div className="flex items-center bg-blue-600 text-white rounded-t-lg px-4 py-2 transition-colors hover:bg-blue-700">
-                <FolderIcon className="h-5 w-5 mr-2" />
-                <h2 className="text-base font-semibold">Links Úteis</h2>
-              </div>
-              <div className="px-4 py-2 space-y-1">
-                <p className="text-blue-600 underline">
-                  <a href={Data.link_repositorio} target="_blank" rel="noopener noreferrer">Link para Repositório no GitHub</a>
-                </p>
-                <p className="text-blue-600 underline">
-                  <a href={Data.video_tecnico} target="_blank" rel="noopener noreferrer">Link para Vídeo Técnico</a>
-                </p>
-              </div>
-            </section>
+            ) : (
+              <p className="text-center text-gray-600">Nenhum projeto encontrado.</p>
+            )}
           </div>
         </div>
-        
-        {/* Seção de Comentários */}
-        <section className="mt-10">
-          <hr className="border-t border-gray-300 my-4" />
-          <h2 className="text-2xl font-semibold mb-4">Comentários</h2>
-          <div className="flex flex-col gap-4">
-            {comentarios.map((comentario, index) => (
-              <div key={index} className="flex items-center border-b border-gray-200 py-2">
-                <img src={comentario.icone || iconImage} alt="Icone do usuario" className="w-8 h-8 rounded-full mr-3" />
-                <div className="flex-grow">
-                  <p className="font-medium">{comentario.usuario}</p>
-                  <p>{comentario.comentario}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
+      </section>
 
       <Footer />
     </>
   );
 }
 
-export default Project;
+export default Projects;
