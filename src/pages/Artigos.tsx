@@ -112,9 +112,10 @@ function Articles() {
                   <div className="mb-4">
                     <h3 className="font-semibold">Autor(es):</h3>
                     <ul className="list-disc list-inside">
-                      {article.equipe?.map((autor, index) => (
-                        <li key={index}>{autor}</li>
-                      )) || <p>Autor não informado</p>}
+                    {(Array.isArray(article.equipe) ? article.equipe : [article.equipe]).map((autor, index) => (
+                      <li key={index}>{autor}</li>
+                    )) || <p>Autor não informado</p>}
+
                     </ul>
                   </div>
                   <div className="mb-4">
@@ -124,14 +125,15 @@ function Articles() {
                   <div className="mb-4">
                     <h3 className="font-semibold">Palavras-chave:</h3>
                     <div className="flex flex-wrap gap-2">
-                      {article.palavras_chave?.map((palavra, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-600 text-white px-2 py-1 rounded-full text-sm"
-                        >
-                          {palavra}
-                        </span>
-                      )) || <p>Não informado</p>}
+                    {(Array.isArray(article.palavras_chave) ? article.palavras_chave : [article.palavras_chave]).map((palavra, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-600 text-white px-2 py-1 rounded-full text-sm"
+                      >
+                        {palavra}
+                      </span>
+                    )) || <p>Não informado</p>}
+
                     </div>
                   </div>
                   <div className="mb-4">
