@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import Projects from './pages/Projects'
 import { Route, Routes, BrowserRouter } from 'react-router-dom'
-import Project from './pages/Project.tsx'
+import Project from './pages/Project'
 import ProjectsAdmin from './pages/Admin/Projects.tsx'
 import ArticlesAdmin from './pages/Admin/Artigos.tsx'
 import Articles from './pages/Artigos.tsx'
@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path='/' element={<App />} />
           <Route path='/projects/:slug?' element={<Projects />} />
-          <Route path='/projects/selected/:slug' element={<Project />} />
+          <Route path='/project/:slug' element={<Project />} />
           <Route path='/articles' element={<Articles />} />
           <Route path='/logintest' element={<LoginTest />} />
           <Route path="/register" element={<Register />} />

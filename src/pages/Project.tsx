@@ -25,7 +25,7 @@ interface Project {
 
 // Criar instância do axios com configurações base
 const api = axios.create({
-  baseURL: 'https://ecomp-egs.onrender.com',
+  baseURL: 'https://poli-egs-fastapi-1.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -47,16 +47,18 @@ function Projects() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [projectsRes, themesRes, semestersRes] = await Promise.all([
+        const [projectsRes] = await Promise.all([
           api.get('/projetos'),
-          api.get('/temasProjeto'),
-          api.get('/semestreProjetos')
+          // rotas não mais utilizadas
+          //api.get('/temasProjeto'),
+          //api.get('/semestreProjetos')
         ]);
 
         const projectsData = projectsRes.data.projeto ? [projectsRes.data.projeto] : [];
         setCards(projectsData);
-        setSelectedThemes(themesRes.data.temas);
-        setSelectedSemesters(semestersRes.data.semestres);
+        // dados não existentes
+        //setSelectedThemes(themesRes.data.temas);
+        //setSelectedSemesters(semestersRes.data.semestres);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }

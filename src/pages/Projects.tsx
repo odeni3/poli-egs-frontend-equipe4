@@ -12,18 +12,30 @@ interface Project {
   id: string;
   titulo: string;
   descricao: string;
-  equipe: string[];
+  equipe: string | string[]; // Aceita string ou array de strings
   cliente: string;
   pitch: string;
   tema: string;
   semestre: string;
   video_tecnico: string;
-  tecnologias_utilizadas: string[];
-  palavras_chave: string[];
+  tecnologias_utilizadas: string | string[]; // Aceita string ou array de strings
+  palavras_chave: string | string[]; // Aceita string ou array de strings
   link_repositorio: string;
   revisado?: string;
   curtidas?: number;
 }
+const normalizeProject = (project: any): Project => {
+  return {
+    ...project,
+    equipe: Array.isArray(project.equipe) ? project.equipe : [project.equipe],
+    palavras_chave: Array.isArray(project.palavras_chave) ? project.palavras_chave : [project.palavras_chave],
+    tecnologias_utilizadas: Array.isArray(project.tecnologias_utilizadas)
+      ? project.tecnologias_utilizadas
+      : [project.tecnologias_utilizadas],
+  };
+};
+
+
 
 // Criar instância do axios com configurações base
 const api = axios.create({
@@ -49,22 +61,28 @@ function Projects() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Chamada das APIs
         const [projectsRes, themesRes, semestersRes] = await Promise.all([
           api.get('/projetos'),
           api.get('/temasProjeto'),
-          api.get('/semestreProjetos')
+          api.get('/semestreProjetos'),
         ]);
-
-        setCards(projectsRes.data);
+  
+        // Normalizar os projetos para lidar com inconsistências
+        const normalizedProjects = projectsRes.data.map(normalizeProject);
+  
+        // Atualizar o estado com os dados normalizados
+        setCards(normalizedProjects);
         setSelectedThemes(themesRes.data.temas);
         setSelectedSemesters(semestersRes.data.semestres);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
@@ -91,34 +109,38 @@ function Projects() {
   };
 
   const filteredCards = Array.isArray(cards)
-    ? cards.filter((project) => {
-        const searchInput = input.toLowerCase();
-        const searchMembers = inputMembers.toLowerCase();
-        const searchThemes = themes.toLowerCase();
-        const searchSemester = semester.toLowerCase();
+  ? cards.filter((project) => {
+      const searchInput = input.toLowerCase();
+      const searchMembers = inputMembers.toLowerCase();
+      const searchThemes = themes.toLowerCase();
+      const searchSemester = semester.toLowerCase();
 
-        // Verificar se o membro está na equipe
-        const hasMatchingMember = project.equipe.some(member => 
-          member.toLowerCase().includes(searchMembers)
-        );
+      const equipeArray = Array.isArray(project.equipe) ? project.equipe : [project.equipe];
+      const palavrasChaveArray = Array.isArray(project.palavras_chave)
+        ? project.palavras_chave
+        : [project.palavras_chave];
 
-        // Verificar palavras-chave
-        const hasMatchingKeyword = project.palavras_chave.some(keyword => 
-          keyword.toLowerCase().includes(searchInput)
-        );
+      const hasMatchingMember = equipeArray.some((member) =>
+        member.toLowerCase().includes(searchMembers)
+      );
 
-        handleGetImage(project.id);
+      const hasMatchingKeyword = palavrasChaveArray.some((keyword) =>
+        keyword.toLowerCase().includes(searchInput)
+      );
 
-        return (
-          (project.titulo.toLowerCase().includes(searchInput) ||
-            hasMatchingKeyword ||
-            project.tema.toLowerCase().includes(searchInput)) &&
-          hasMatchingMember &&
-          project.tema.toLowerCase().includes(searchThemes) &&
-          project.semestre.toLowerCase().includes(searchSemester)
-        );
-      })
-    : [];
+      handleGetImage(project.id);
+
+      return (
+        (project.titulo.toLowerCase().includes(searchInput) ||
+          hasMatchingKeyword ||
+          project.tema.toLowerCase().includes(searchInput)) &&
+        hasMatchingMember &&
+        project.tema.toLowerCase().includes(searchThemes) &&
+        project.semestre.toLowerCase().includes(searchSemester)
+      );
+    })
+  : [];
+
 
   return (
     <>
@@ -316,7 +338,7 @@ function Projects() {
                       <h3 className="text-2xl font-bold text-blue-600 mb-2">{project.titulo}</h3>
                       <p className="text-gray-700 flex-grow">{project.descricao}</p>
                       <button
-                        onClick={() => navigate(`/projetos/${project.id}/`)}
+                        onClick={() => navigate(`/project/${project.id}/`)}
                         className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                       >
                         Ver mais
