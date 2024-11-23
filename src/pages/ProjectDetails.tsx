@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import mockData from '../dados/mockData.json';
 
 interface Project {
   id: string;
@@ -32,6 +33,7 @@ const api = axios.create({
 function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
+  const [comments, setComments] = useState<Array<{ usuario: string; comentario: string; icone: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +43,9 @@ function ProjectDetails() {
         const response = await api.get(`/projetos/${id}`);
         if (response.data && response.data.projeto) {
           setProject(response.data.projeto);
+          if (id && mockData.projetos[id]) {
+            setComments(mockData.projetos[id]);
+          }
         } else {
           setError('Dados do projeto não encontrados');
         }
@@ -142,6 +147,36 @@ function ProjectDetails() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-lg p-8 mt-8">
+          <h2 className="text-2xl font-semibold mb-6">Comentários</h2>
+          
+          <div className="space-y-4">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <div key={index} className="border-b border-gray-200 pb-4">
+                  <div className="flex items-center mb-2">
+                    {comment.icone ? (
+                      <img 
+                        src={comment.icone} 
+                        alt={comment.usuario} 
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-2">
+                        {comment.usuario.charAt(0)}
+                      </div>
+                    )}
+                    <span className="font-semibold">{comment.usuario}</span>
+                  </div>
+                  <p className="text-gray-700 ml-10">{comment.comentario}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 italic">Nenhum comentário ainda.</p>
+            )}
           </div>
         </div>
       </div>
