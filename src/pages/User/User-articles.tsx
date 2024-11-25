@@ -18,11 +18,17 @@ export interface ArticleInt {
   arquivo?: string;
 }
 
+const generateRandomStatus = () => {
+  const statuses = ["em andamento", "recusado", "aprovado"];
+  return statuses[Math.floor(Math.random() * statuses.length)];
+};
+
+
 const columns = [
   { key: "titulo", label: "Titulo" },
-  { key: "editar", label: "Editar" },
-  { key: "excluir", label: "Excluir" },
+  { key: "status", label: "Status" }, // Adiciona a coluna para o status
 ];
+
 
 function Userarticles() {
   const [Input, setInput] = useState<string>("");
@@ -70,12 +76,17 @@ function Userarticles() {
         });
       }
       const response = await axios.get("https://ecomp-egs.onrender.com/artigos");
-      setArticle(response.data);
+      const articlesWithStatus = response.data.map((article: any) => ({
+        ...article,
+        status: generateRandomStatus(),
+      }));
+      setArticle(articlesWithStatus);
       setOpen(false);
     } catch (error) {
       console.error("Erro ao adicionar artigo ou enviar arquivo:", error);
     }
   };
+  
 
   const handleUpdate = () => {
     axios.get("https://ecomp-egs.onrender.com/artigos").then(response => {
@@ -87,9 +98,14 @@ function Userarticles() {
 
   useEffect(() => {
     axios.get("https://ecomp-egs.onrender.com/artigos").then(function (response) {
-      setArticle(response.data);
+      const articlesWithStatus = response.data.map((article: any) => ({
+        ...article,
+        status: generateRandomStatus(),
+      }));
+      setArticle(articlesWithStatus);
     });
   }, []);
+  
 
   const filteredArticle = Article.filter((article: any) => {
     const input = Input.toLowerCase();
@@ -144,27 +160,33 @@ function Userarticles() {
                     key={column.key}
                     className={`items-center py-3 ${
                       column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"
-                    }`}
+                    } ${column.key === "status" ? "w-[20vw]" : ""}`} // A largura é aumentada aqui
                   >
-                    {column.key === "editar" ? (
-                      <ModalUpdateArticle
-                        article={article}
-                        handleUpdate={handleUpdate}
-                      />
-                    ) : column.key === "excluir" ? (
-                      <ModalDeleteArticle
-                        title={article.titulo}
-                        id={article.id}
-                        handleUpdate={handleUpdate}
-                      />
-                    ) : (
-                      article.titulo
+                    {/* Condicional para mostrar título */}
+                    {column.key === "titulo" && article.titulo}
+
+                    {/* Condicional para mostrar o status com a cor */}
+                    {column.key === "status" && (
+                      <span
+                        className={`px-3 py-1 rounded-full text-white ${
+                          article.status === "em andamento"
+                            ? "bg-yellow-500"
+                            : article.status === "recusado"
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                        }`}
+                      >
+                        {article.status}
+                      </span>
                     )}
                   </td>
                 ))}
               </tr>
             ))}
           </tbody>
+
+
+
         </Table>
       </div>
       <Dialog open={open} onClose={setOpen} className="relative z-10">
