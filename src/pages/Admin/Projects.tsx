@@ -14,39 +14,52 @@ const columns = [
   { key: "excluir", label: "Excluir" },
 ];
 
-
 function ProjectsAdmin () {
 
   const [Input, setInput] = useState<string>("");
+  const [projetos, setProjetos] = useState<any[]>([]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
 
   const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    axios.post(`https://ecomp-egs.onrender.com/projeto_add`, NewProject)
+    if (!NewProject.titulo || !NewProject.descricao) {
+      console.error('Os campos obrigatórios não foram preenchidos.');
+      alert("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+  
+    axios.post(`https://poli-egs-fastapi-1.onrender.com/projeto_add`, NewProject)
       .then(() => {
-        return axios.get('https://ecomp-egs.onrender.com/projetos');
+        return axios.get('https://poli-egs-fastapi-1.onrender.com/projetos');
       })
-      .then(response => {
-        setProject(response.data);
-        var c = 0;
-        while(c != -1) {
-          if(response.data[c].titulo === NewProject.titulo) {
-            handleSubmitFile(response.data[c].id);
-            c = -1
-          } else {
-            c++
-          }
-        }
+      .then((response) => {
+        const mappedData = response.data.map((item: any) => ({
+          id: item.id,
+          titulo: item.titulo || "Título não disponível",
+          palavras_chave: item.palavras_chave || "",
+          tema: item.tema || "",
+          descricao: item.descricao || "",
+          equipe: item.equipe || "",
+          cliente: item.cliente || "",
+          pitch: item.pitch || "",
+          semestre: item.semestre || "",
+          video_tecnico: item.video_tecnico || "",
+          tecnologias_utilizadas: item.tecnologias_utilizadas || "",
+          link_repositorio: item.link_repositorio || "",
+        }));
+        setProject(mappedData);
         setOpen(false);
       })
       .catch(error => {
         console.error('Erro ao adicionar projeto:', error);
       });
   };
+  
 
   const handleUpdate = () => {
-    axios.get('https://ecomp-egs.onrender.com/projetos').then(response => {
+    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos').then(response => {
       setProject(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar projetos:', error);
@@ -77,7 +90,7 @@ function ProjectsAdmin () {
       formData.append('file', selectedFile);
 
       try {
-        const response = await axios.post(`https://ecomp-egs.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
+        const response = await axios.post(`https://poli-egs-fastapi-1.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -93,21 +106,44 @@ function ProjectsAdmin () {
   //const [EditProject, setEditProject] = useState<ProjectInt>({})
   
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/projetos').then(function (response) {
-      setProject(response.data)
-    })
+    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos')
+      .then((response) => {
+        console.log('Dados recebidos da API:', response.data);
+        const projetos = response.data.projetos;
+        if (Array.isArray(projetos)) {
+          const mappedData = projetos.map((item: any) => ({
+            id: item.id,
+            titulo: item.titulo || "Sem título",
+            equipe: item.equipe || "Equipe não informada",
+            cliente: item.cliente || "Cliente não informado",
+            descricao: item.descricao || "Sem descrição",
+            semestre: item.semestre || "Semestre não informado",
+            tema: item.tema || "Tema não informado",
+            tecnologias_utilizadas: item.tecnologias_utilizadas || [],
+            palavras_chave: item.palavras_chave || [],
+            link_repositorio: item.link_repositorio || "Sem repositório",
+          }));
+          setProjetos(mappedData);
+        } else {
+          console.error('A propriedade "projetos" não é um array:', projetos);
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar os projetos:', error);
+      });
   }, []);
+  
+  
 
-  const filteredProject = Array.isArray(Project)  ? Project.filter((project) => {    
+  const filteredProject = Array.isArray(projetos) ? projetos.filter((project) => {    
     const input = Input.toLowerCase();
     return (
-      (
-        project.titulo?.toLowerCase().includes(input) ||
-        project.palavras_chave?.toLowerCase().includes(input) ||
-        project.tema?.toLowerCase().includes(input)
-      ) 
+      (project.titulo && project.titulo.toLowerCase().includes(input)) ||
+      (project.palavras_chave && project.palavras_chave.toLowerCase().includes(input)) ||
+      (project.tema && project.tema.toLowerCase().includes(input))
     );
   }) : [];
+  
 
   return (
     <>
