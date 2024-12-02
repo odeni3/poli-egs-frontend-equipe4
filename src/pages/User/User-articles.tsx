@@ -25,6 +25,7 @@ const columns = [
   { key: "excluir", label: "Excluir" },*/
 ];
 
+
 function Userarticles () {
   const [Input, setInput] = useState<string>("");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
