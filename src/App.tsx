@@ -23,14 +23,45 @@ function App() {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      navigate(`/projects/${input}`);
+      navigate(`/projetos/${input}`);
     }
   };
 
-  const handleNavigation = (input) => {
-    navigate(`/projects/${input}`);
+  const handleNavigation = async (input) => {
+    try {
+      // Requisição para obter os projetos
+      const response = await fetch("http://127.0.0.1:8000/projetos", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Erro ao buscar projetos.");
+      }
+  
+      const data = await response.json();
+      console.log(data.projetos)
+  
+      // Busca o projeto pelo nome
+      const foundProject = data.projetos.find(
+        (project) => project.titulo?.toLowerCase() === input.toLowerCase()
+      );
+  
+      if (foundProject) {
+        // Redireciona para a página do projeto
+        navigate(`/projetos/${foundProject.id}`);
+      } else {
+        // Exibe mensagem de erro caso o projeto não seja encontrado
+        alert("Projeto não encontrado. Verifique o nome e tente novamente.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao buscar projetos. Tente novamente mais tarde.");
+    }
   };
-
+  
   const handleButtonClick = (theme) => {
     setInput(theme);
     handleNavigation(theme);
@@ -95,7 +126,7 @@ function App() {
           ].map((theme, index) => (
             <button
               key={index}
-              onClick={() => handleButtonClick(theme.title)}
+              /*onClick={() => handleButtonClick(theme.title)}*/
               className="relative group overflow-hidden rounded-xl shadow-lg transform hover:scale-105 transition-transform"
             >
               <img
