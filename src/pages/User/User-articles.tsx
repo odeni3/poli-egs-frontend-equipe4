@@ -26,7 +26,6 @@ const columns = [
 ];
 
 function Userarticles () {
-
   const [Input, setInput] = useState<string>("");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
