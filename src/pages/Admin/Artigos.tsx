@@ -42,7 +42,8 @@ function ArticlesAdmin () {
     data: '',
     palavras_chave: '',
     id: '',
-    arquivo: '#'
+    arquivo: '#',
+    revisado: "",
   })
 
   const [file, setFile] = useState<File | undefined>();
@@ -81,6 +82,7 @@ function ArticlesAdmin () {
       equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
       data: NewArticle.data || "Data não informada",
       arquivo: NewArticle.arquivo || '#',
+      revisado: NewArticle.revisado || "Pendente",
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);

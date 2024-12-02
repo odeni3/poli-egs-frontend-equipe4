@@ -25,18 +25,20 @@ function Userprojects() {
   const [NewProject, setNewProject] = useState({
     titulo: "",
     descricao: "",
-    equipe: "",
+    equipe: [] as string[], // Agora é um array de strings
     cliente: "",
     pitch: "",
     tema: "",
     semestre: "",
     video_tecnico: "",
-    tecnologias_utilizadas: "",
-    palavras_chave: "",
+    tecnologias_utilizadas: [] as string[], // Agora é um array de strings
+    palavras_chave: [] as string[], // Agora é um array de strings
     id: "",
     link_repositorio: "",
     revisado: "",
     curtidas: 0,
+    user_curtidas_email: [] as string[],
+    comentarios: [] as string[],
   });
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -54,22 +56,46 @@ function Userprojects() {
       return;
     }
   
-    // Valores padrão para os campos não preenchidos
+    // Separando os campos de tecnologias, equipe e palavras-chave por vírgulas e transformando-os em arrays
+    const tecnologiasArray = typeof NewProject.tecnologias_utilizadas === 'string' && NewProject.tecnologias_utilizadas.trim() 
+      ? NewProject.tecnologias_utilizadas.split(',').map(item => item.trim()) 
+      : [];
+
+    const equipeArray = typeof NewProject.equipe === 'string' && NewProject.equipe.trim()
+      ? NewProject.equipe.split(',').map(item => item.trim())
+      : [];
+
+    const palavrasChaveArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
+      ? NewProject.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+    const userCurtidasEmailArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
+      ? NewProject.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+    const comentariosArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
+      ? NewProject.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+  
+    // Atualiza os dados do projeto com os arrays processados
     const NewProjectWithDefaults = {
       id: NewProject.id || "default-id",
       titulo: NewProject.titulo || "Título não informado",
       tema: NewProject.tema || "Tema não informado",
-      palavras_chave: NewProject.palavras_chave || "Sem palavras-chave",
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : ["Sem palavras-chave"],
       descricao: NewProject.descricao || "Sem descrição",
       cliente: NewProject.cliente || "Cliente não informado",
       semestre: NewProject.semestre || "Semestre não informado",
-      equipe: NewProject.equipe || "Equipe não informada",
+      equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
       link_repositorio: NewProject.link_repositorio || "Link não informado",
-      tecnologias_utilizadas: NewProject.tecnologias_utilizadas || "Tecnologias não informadas",
+      tecnologias_utilizadas: tecnologiasArray.length > 0 ? tecnologiasArray : ["Tecnologias não informadas"],
       video_tecnico: NewProject.video_tecnico || "Vídeo não informado",
       pitch: NewProject.pitch || "Pitch não informado",
-      revisado: NewProject.revisado || "Não revisado",
+      revisado: NewProject.revisado || "Pendente",
       curtidas: NewProject.curtidas || 0,
+      user_curtidas_email: userCurtidasEmailArray.length > 0 ? userCurtidasEmailArray : ["Sem curtidas"],
+      comentarios: comentariosArray.length > 0 ? comentariosArray : ["Sem comentários"],
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewProjectWithDefaults);
@@ -86,7 +112,7 @@ function Userprojects() {
         setOpen(false);
       })
       .catch(error => console.error('Erro ao adicionar projeto:', error));
-  };  
+  };
 
   const handleSubmitFile = async (id: string) => {
     if (selectedFile) {
