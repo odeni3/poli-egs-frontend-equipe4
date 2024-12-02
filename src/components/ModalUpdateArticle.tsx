@@ -25,18 +25,18 @@ export default function ModalUpdateArticle({ article, handleUpdate }: { article:
   
   const handleUpdateArticle = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
     try {
-      axios.put(`https://ecomp-egs.onrender.com/artigos/${UpdatedArticle.id}`, UpdatedArticle);
+      axios.put(`http://127.0.0.1:8000/artigos/${UpdatedArticle.id}`, UpdatedArticle);
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
         console.log("FormData:", formData.get('file'));
-        await axios.post(`https://ecomp-egs.onrender.com/upload_pdf_artigo/?id_projeto=${UpdatedArticle.id}`, formData, {
+        await axios.post(`http://127.0.0.1:8000/upload_pdf_artigo/?id_projeto=${UpdatedArticle.id}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
       } 
-      handleUpdate();
+      window.location.reload();
       setOpen(false);
     } catch (error) {
       console.error('Erro ao atualizar arquivo:', error);

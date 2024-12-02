@@ -12,14 +12,29 @@ interface ModalProps {
 }
 
 function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
-  axios.delete(`https://ecomp-egs.onrender.com/artigos/${id}`)
+  // Capturando o token do localStorage
+  const token = localStorage.getItem('authToken');
+  console.log(localStorage.getItem('authToken'));
+  
+  // Verificando se o token existe
+  if (!token) {
+    console.error('Token não encontrado. Usuário não está autenticado.');
+    return;
+  }
+
+  // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
+  axios.delete(`http://127.0.0.1:8000/artigos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Usando o token obtido
+    },
+  })
     .then(() => {
-      handleUpdate();
+      window.location.reload();
       setOpen(false);
     })
     .catch(error => {
-      console.error('Erro ao deletar artigo:', error);
-  });
+      console.error('Erro ao deletar projeto:', error);
+    });
 }
 
 export default function ModalDeleteArticle({ title, id, handleUpdate }: ModalProps) {

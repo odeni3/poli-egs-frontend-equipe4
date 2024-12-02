@@ -3,6 +3,7 @@ import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { SetStateAction, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import Nav from 'react-bootstrap/Nav';
 
 interface ModalProps {
   title?: string;
@@ -11,15 +12,31 @@ interface ModalProps {
 }
 
 function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
-  axios.delete(`https://ecomp-egs.onrender.com/delete_projeto/${id}`)
+  // Capturando o token do localStorage
+  const token = localStorage.getItem('authToken');
+  console.log(localStorage.getItem('authToken'));
+  
+  // Verificando se o token existe
+  if (!token) {
+    console.error('Token não encontrado. Usuário não está autenticado.');
+    return;
+  }
+
+  // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
+  axios.delete(`http://127.0.0.1:8000/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Usando o token obtido
+    },
+  })
     .then(() => {
-      handleUpdate();
+      window.location.reload();
       setOpen(false);
     })
     .catch(error => {
       console.error('Erro ao deletar projeto:', error);
-  });
+    });
 }
+
 
 export default function ModalDelete({ title, id, handleUpdate }: ModalProps) {
 

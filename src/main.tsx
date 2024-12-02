@@ -25,9 +25,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       {/* <AuthProvider>  */}
         <Routes>
           <Route path='/' element={<App />} />
-          <Route path='/projects/:slug?' element={<Projects />} />
-          <Route path='/projects/selected/:slug' element={<Project />} />
-          <Route path='/articles' element={<Articles />} />
+          <Route path='/projetos' element={<Projects />} />
+          <Route path='/projetos/:slug' element={<Project />} />
+          <Route path='/artigos' element={<Articles />} />
           <Route path='/logintest' element={<LoginTest />} />
           <Route path="/register" element={<Register />} />
           {/* <Route path='/login' element={<Login />} />  */}

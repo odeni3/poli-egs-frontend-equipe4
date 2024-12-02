@@ -12,7 +12,7 @@ const LoginTest = () => {
     e.preventDefault();
     try {
       // 1. Enviar a requisição para o login com email e senha na URL
-      const response = await fetch(`https://poli-egs-fastapi-1.onrender.com/login?email=${email}&password=${password}`, {
+      const response = await fetch(`http://127.0.0.1:8000/login?email=${email}&password=${password}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -31,11 +31,12 @@ const LoginTest = () => {
   
       // Armazenando o token no localStorage
       localStorage.setItem('authToken', data.idToken);
+      localStorage.setItem('email', data.email);
       const nomezinho = data.username;
       localStorage.setItem('userName', nomezinho)
   
       // 3. Fazer uma requisição para a rota /users com o token
-      const usersResponse = await fetch(`https://poli-egs-fastapi-1.onrender.com/users?id_token=${data.idToken}`);
+      const usersResponse = await fetch(`http://127.0.0.1:8000/users?id_token=${data.idToken}`);
   
       // Verificando a resposta da rota de usuários
       if (!usersResponse.ok) {

@@ -10,14 +10,17 @@ import { FaFileUpload } from "react-icons/fa";
 
 const columns = [
   { key: "titulo", label: "Titulo" },
-  { key: "editar", label: "Editar" },
-  { key: "excluir", label: "Excluir" },
+  /*{ key: "editar", label: "Editar" },*/
+  /*{ key: "excluir", label: "Excluir" },*/
 ];
 
-function Userprojects
-() {
+function Userprojects() {
   const [Input, setInput] = useState<string>("");
-  const [Project, setProject] = useState<ProjectInt[]>([]);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
+
+  const [Project, setProject] = useState([]);
   const [open, setOpen] = useState(false);
   const [NewProject, setNewProject] = useState({
     titulo: "",
@@ -31,77 +34,84 @@ function Userprojects
     tecnologias_utilizadas: "",
     palavras_chave: "",
     id: "",
-    link_repositorio: ""
+    link_repositorio: "",
+    revisado: "",
+    curtidas: 0,
   });
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
+  const handleUpdate = () => {
+    axios.get('http://127.0.0.1:8000/projetos/')
+      .then(response => setProject(response.data))
+      .catch(error => console.error('Erro ao atualizar projetos:', error));
   };
 
-  const handlePost = (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    axios.post(`https://ecomp-egs.onrender.com/projeto_add`, NewProject)
-      .then(() => {
-        return axios.get('https://ecomp-egs.onrender.com/projetos');
-      })
+  const handlePost = () => {
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+      alert('Token de autenticação não encontrado.');
+      return;
+    }
+  
+    // Valores padrão para os campos não preenchidos
+    const NewProjectWithDefaults = {
+      id: NewProject.id || "default-id",
+      titulo: NewProject.titulo || "Título não informado",
+      tema: NewProject.tema || "Tema não informado",
+      palavras_chave: NewProject.palavras_chave || "Sem palavras-chave",
+      descricao: NewProject.descricao || "Sem descrição",
+      cliente: NewProject.cliente || "Cliente não informado",
+      semestre: NewProject.semestre || "Semestre não informado",
+      equipe: NewProject.equipe || "Equipe não informada",
+      link_repositorio: NewProject.link_repositorio || "Link não informado",
+      tecnologias_utilizadas: NewProject.tecnologias_utilizadas || "Tecnologias não informadas",
+      video_tecnico: NewProject.video_tecnico || "Vídeo não informado",
+      pitch: NewProject.pitch || "Pitch não informado",
+      revisado: NewProject.revisado || "Não revisado",
+      curtidas: NewProject.curtidas || 0,
+    };
+  
+    console.log('Dados do novo projeto (com valores padrão, se necessário):', NewProjectWithDefaults);
+  
+    axios.post(`http://127.0.0.1:8000/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
       .then(response => {
-        setProject(response.data);
-        var c = 0;
-        while(c !== -1) {
-          if(response.data[c].titulo === NewProject.titulo) {
-            handleSubmitFile(response.data[c].id);
-            c = -1;
-          } else {
-            c++;
-          }
-        }
+        console.log('Projeto adicionado com sucesso:', response.data);
+        window.location.reload();
         setOpen(false);
       })
-      .catch(error => {
-        console.error('Erro ao adicionar projeto:', error);
-      });
-  };
-
-  const handleUpdate = () => {
-    axios.get('https://ecomp-egs.onrender.com/projetos')
-      .then(response => {
-        setProject(response.data);
-      })
-      .catch(error => {
-        console.error('Erro ao atualizar projetos:', error);
-      });
-  };
+      .catch(error => console.error('Erro ao adicionar projeto:', error));
+  };  
 
   const handleSubmitFile = async (id: string) => {
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
       try {
-        await axios.post(`https://ecomp-egs.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+        const response = await axios.post(`http://127.0.0.1:8000/upload_logo_projeto/?id_projeto=${id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
+        console.log(response);
       } catch (error) {
-        console.error('Error:', error);
+        console.log('Error:', error);
       }
-    } else {
-      console.log('Nenhum arquivo selecionado');
     }
   };
 
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/projetos').then(response => {
-      setProject(response.data);
-    });
+    axios.get('http://127.0.0.1:8000/projetos/')
+      .then(response => setProject(response.data.projetos))
+      .catch(error => console.error('Erro ao carregar projetos:', error));
   }, []);
 
   const filteredProject = Array.isArray(Project) ? Project.filter((project) => {
     const input = Input.toLowerCase();
-    return (
-      project.titulo?.toLowerCase().includes(input) ||
-      project.palavras_chave?.toLowerCase().includes(input) ||
-      project.tema?.toLowerCase().includes(input)
-    );
+    return project.titulo?.toLowerCase().includes(input) || project.palavras_chave?.toLowerCase().includes(input) || project.tema?.toLowerCase().includes(input);
   }) : [];
 
   return (

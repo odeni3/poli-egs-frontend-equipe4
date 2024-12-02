@@ -13,41 +13,26 @@ function Project() {
   const [Data, setData] = useState({});
   const [images, setImg] = useState();
   const [comentarios, setComentarios] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Verificação de login
-  const [likes, setLikes] = useState(0); // Estado para armazenar likes
 
   useEffect(() => {
-    // Simulação de verificação de login. Altere para verificar o estado real de login
-    const checkLoginStatus = () => {
-      const loggedInUser = false; // Troque isso pelo valor real
-      setIsLoggedIn(loggedInUser);
-    };
-
-    checkLoginStatus();
-
-    axios.get(`https://ecomp-egs.onrender.com/projetos/${slug}`).then((response) => {
-      setData(response.data[0]);
-      setLikes(response.data[0].curtidas || 0); // Defina a contagem inicial de likes, se disponível
+    // Requisição para obter os dados do projeto
+    axios.get(`http://127.0.0.1:8000/projetos/${slug}`).then((response) => {
+      console.log("Resposta completa da API:", response); // Verifique toda a resposta
+      console.log("Dados retornados:", response.data.titulo);
+      const projeto = response.data;
+      setData(projeto);
     });
-    axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${slug}`).then((response) => {
-      setImg(response.data["url"]);
+
+    // Requisição para obter a imagem do logo do projeto
+    axios.get(`http://127.0.0.1:8000/view_logo_projeto/${slug}`).then((response) => {
+        setImg(response.data["url"]);
     });
-    // Carrega os comentários específicos para o projeto atual usando o `id`
+
+    // Carregar os comentários (ainda com mockData)
     const comentariosDoProjeto = mockData.projetos[slug] || [];
     setComentarios(comentariosDoProjeto);
+
   }, [slug]);
-
-  const navigate = useNavigate();
-  const handleBackClick = () => navigate(-1);
-
-  const handleLikeClick = () => {
-    if (isLoggedIn) {
-      setLikes(likes + 1); // Incrementa a contagem de likes
-      // Aqui você pode fazer uma requisição para o backend para persistir a contagem de likes, se necessário.
-    } else {
-      alert("Você precisa estar logado para dar like."); // Mensagem se não estiver logado
-    }
-  };
 
   return (
     <>
@@ -91,12 +76,11 @@ function Project() {
               <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
                 {Data.descricao || "Descrição do projeto não disponível."}
               </p>
-              <button 
-                onClick={handleLikeClick} 
-                className="mt-4 inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 transition w-30 ml-auto">
+              <div 
+                className="mt-4 inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded w-30 ml-auto">
                 <HeartIcon className="h-6 w-6 mr-2" />
-                {likes} Likes
-              </button>
+                {Data.curtidas} Likes
+              </div>
             </div>
           </div>
         </section>
@@ -110,7 +94,7 @@ function Project() {
                 <h2 className="text-base font-semibold">Equipe</h2>
               </div>
               <ul className="px-4 py-2 text-gray-700">
-                {Data.equipe?.split(";").map((pessoa, index) => (
+                {Data.equipe?.map((pessoa, index) => (
                   <li key={index}>{pessoa}</li>
                 ))}
               </ul>
@@ -122,7 +106,7 @@ function Project() {
                 <h2 className="text-base font-semibold">Tecnologias Utilizadas</h2>
               </div>
               <ul className="px-4 py-2 text-gray-700">
-                {Data.tecnologias_utilizadas?.split(";").map((tech, index) => (
+                {Data.tecnologias_utilizadas?.map((tech, index) => (
                   <li key={index}>{tech}</li>
                 ))}
               </ul>

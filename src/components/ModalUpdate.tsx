@@ -8,26 +8,62 @@ import { FaFileUpload } from "react-icons/fa";
 
 export default function ModalUpdate({ project, handleUpdate }: { project: ProjectInt, handleUpdate: () => void }){
 
-    const [open, setOpen] = useState(false)
-    const handleShow = () => setOpen(true);
+  const [open, setOpen] = useState(false);
+  const handleShow = () => setOpen(true);
 
-    const [UpdatedProject, setUpdatedProject] = useState({
-      ...project
-    });
+  const [UpdatedProject, setUpdatedProject] = useState({
+    ...project
+  });
 
-    const handleUpdateProject = () => {
-      axios.put(`https://ecomp-egs.onrender.com/projeto_update/`, UpdatedProject)
-        .then(() => {
-          handleSubmitFile(UpdatedProject.id)
-          handleUpdate();
-          setOpen(false);
-        })
-        .catch(error => {
-          console.error('Erro ao atualizar projeto:', error);
-        });
+  const handleUpdateProject = () => {
+    // Capturando o token do localStorage
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token); // Verificando o token
+
+    if (!token) {
+      console.error('Token não encontrado. Usuário não está autenticado.');
+      return;
+    }
+
+    // Valores padrão para os campos não preenchidos
+    const UpdatedProjectWithDefaults = {
+      id: UpdatedProject.id || "default-id",
+      titulo: UpdatedProject.titulo || "Título não informado",
+      tema: UpdatedProject.tema || "Tema não informado",
+      palavras_chave: UpdatedProject.palavras_chave || "Sem palavras-chave",
+      descricao: UpdatedProject.descricao || "Sem descrição",
+      cliente: UpdatedProject.cliente || "Cliente não informado",
+      semestre: UpdatedProject.semestre || "Semestre não informado",
+      equipe: UpdatedProject.equipe || "Equipe não informada",
+      link_repositorio: UpdatedProject.link_repositorio || "Link não informado",
+      tecnologias_utilizadas: UpdatedProject.tecnologias_utilizadas || "Tecnologias não informadas",
+      video_tecnico: UpdatedProject.video_tecnico || "Vídeo não informado",
+      pitch: UpdatedProject.pitch || "Pitch não informado",
+      revisado: UpdatedProject.revisado || "Não revisado",
+      curtidas: UpdatedProject.curtidas || 0,
     };
 
-    const [selectedFile, setSelectedFile] = useState(null);
+    console.log('Dados do projeto atualizado (com valores padrão, se necessário):', UpdatedProjectWithDefaults);
+
+    // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
+    axios.put(`http://127.0.0.1:8000/projetos?id_token=${token}`, UpdatedProjectWithDefaults, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Usando o token no cabeçalho
+      },
+    })
+    .then(() => {
+      handleSubmitFile(UpdatedProject.id); // Enviar o arquivo se necessário
+      window.location.reload();
+      setOpen(false);
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar projeto:', error.response ? error.response.data : error.message);
+    });
+};
+
+
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleSubmitFile = async (id: string) => {
     if (selectedFile) {
@@ -35,10 +71,11 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
       formData.append('file', selectedFile);
 
       try {
-        const response = await axios.post(`https://ecomp-egs.onrender.com/upload_logo_projeto/?id_projeto=${id}`, formData, {
+        const response = await axios.post(`http://127.0.0.1:8000/upload_logo_projeto/?id_projeto=${id}`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Usando o token obtido
+          },
         });
         console.log(response);
       } catch (error) {
@@ -83,7 +120,7 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
                   <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedProject.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, equipe:e.target.value}))}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Organização Parceira</h3>
+                  <h3 className="text-lg font-semibold">Cliente</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" value={UpdatedProject.cliente} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, cliente:e.target.value}))}/>
                 </div>
                 <div>

@@ -25,7 +25,6 @@ const columns = [
   { key: "excluir", label: "Excluir" },
 ];
 
-
 function ArticlesAdmin () {
 
   const [Input, setInput] = useState<string>("");
@@ -54,34 +53,54 @@ function ArticlesAdmin () {
     setFile(target.files[0]);
   }
 
-  const handlePost = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    try {
-      const postResponse = await axios.post('https://ecomp-egs.onrender.com/artigos', NewArticle);
-      const newArticleId = postResponse.data.id; 
-      console.log(newArticleId)
-      if (!newArticleId) {
-        throw new Error('ID do novo artigo não retornado.');
-      }  
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        console.log("FormData:", formData.get('file'));
-        await axios.post(`https://ecomp-egs.onrender.com/upload_pdf_artigo/?id_projeto=${newArticleId}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-      }
-      const response = await axios.get('https://ecomp-egs.onrender.com/artigos');
-      setArticle(response.data);  
-      setOpen(false);
-    } catch (error) {
-      console.error('Erro ao adicionar artigo ou enviar arquivo:', error);
+  const handlePost = () => {
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+      alert('Token de autenticação não encontrado.');
+      return;
     }
+  
+    // Separando os campos de tecnologias, equipe e palavras-chave por vírgulas e transformando-os em arrays
+    const equipeArray = typeof NewArticle.equipe === 'string' && NewArticle.equipe.trim()
+      ? NewArticle.equipe.split(',').map(item => item.trim())
+      : [];
+
+    const palavrasChaveArray = typeof NewArticle.palavras_chave === 'string' && NewArticle.palavras_chave.trim()
+      ? NewArticle.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+  
+    // Atualiza os dados do projeto com os arrays processados
+    const NewArticleWithDefaults = {
+      id: NewArticle.id || "default-id",
+      titulo: NewArticle.titulo || "Título não informado",
+      tema: NewArticle.tema || "Tema não informado",
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : ["Sem palavras-chave"],
+      descricao: NewArticle.descricao || "Sem descrição",
+      equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
+      data: NewArticle.data || "Data não informada",
+      arquivo: NewArticle.arquivo || '#',
+    };
+  
+    console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
+  
+    axios.post(`http://127.0.0.1:8000/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Projeto adicionado com sucesso:', response.data);
+        window.location.reload();
+        setOpen(false);
+      })
+      .catch(error => console.error('Erro ao adicionar projeto:', error));
   };
 
   const handleUpdate = () => {
-    axios.get('https://ecomp-egs.onrender.com/artigos').then(response => {
+    axios.get('http://127.0.0.1:8000/artigos/').then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -89,21 +108,22 @@ function ArticlesAdmin () {
   }; 
   
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/artigos').then(function (response) {
+    axios.get('http://127.0.0.1:8000/artigos/').then(function (response) {
       setArticle(response.data)
+      console.log(Article);
+
+
     })
   }, []);
 
-  const filteredArticle = Article.filter((article:any) => {    
+  const filteredArticle = Array.isArray(Article.artigos) ? Article.artigos.filter((article) => {   
     const input = Input.toLowerCase();
     return (
-      (
-        article.titulo?.toLowerCase().includes(input) ||
-        article.palavras_chave?.toLowerCase().includes(input) ||
-        article.tema?.toLowerCase().includes(input)
-      ) 
+      article.titulo?.toLowerCase().includes(input) ||
+      article.palavras_chave?.toLowerCase().includes(input) ||
+      article.tema?.toLowerCase().includes(input)
     );
-  });
+  }) : [];
 
   return (
     <>

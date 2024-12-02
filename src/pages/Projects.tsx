@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import backgroundImage from '../images/mainpage.jpg'; 
+import backgroundImage from '../images/mainpage.jpg'; // Certifique-se de que o caminho esteja correto
 
 function Projects() {
   const { slug } = useParams();
@@ -20,16 +20,28 @@ function Projects() {
   const [images, setImages] = useState({});
 
   useEffect(() => {
-    axios.get('https://ecomp-egs.onrender.com/projetos').then((response) => {
-      setCards(response.data);
-    });
-    axios.get('https://ecomp-egs.onrender.com/temasProjeto').then((response) => {
-      setSelectedThemes(response.data.temas);
-    });
-    axios.get('https://ecomp-egs.onrender.com/semestreProjetos').then((response) => {
-      setSelectedSemesters(response.data.semestres);
-    });
+    axios.get('http://127.0.0.1:8000/projetos/')
+      .then((response) => {
+        const data = response.data.projetos;
+
+        // Atualiza os projetos no estado
+        setCards(data);
+
+        // Extrai temas únicos
+        const themes = data.map((project) => project.tema);
+        const uniqueThemes = [...new Set(themes)];
+        setSelectedThemes(uniqueThemes);
+
+        // Extrai semestres únicos
+        const semesters = data.map((project) => project.semestre);
+        const uniqueSemesters = [...new Set(semesters)];
+        setSelectedSemesters(uniqueSemesters);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar os projetos:', error);
+      });
   }, []);
+  
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
@@ -39,35 +51,41 @@ function Projects() {
     setInputMembers(event.target.value);
   };
 
-  const handleGetImage = async (id) => {
+  /*const handleGetImage = async (id) => {
     try {
-      const response = await axios.get(`https://ecomp-egs.onrender.com/view_logo_projeto/${id}`);
+      const response = await axios.get(`http://127.0.0.1:8000/view_logo_projeto/${id}`);
       setImages((prevImages) => ({
         ...prevImages,
         [id]: response.data.url,
       }));
     } catch (error) {
-      console.log('Error fetching images: ', error);
+      console.log('Erro ao buscar imagem, mas continuando: ', error);
+      // Apenas ignore o erro sem interromper o fluxo
     }
-  };
+  };*/
 
   const filteredCards = Array.isArray(cards)
-    ? cards.filter((project) => {
-        const searchInput = input.toLowerCase();
-        const searchMembers = inputMembers.toLowerCase();
-        const searchThemes = themes.toLowerCase();
-        const searchSemester = semester.toLowerCase();
-        handleGetImage(project.id);
-        return (
-          (project.titulo?.toLowerCase().includes(searchInput) ||
-            project.palavras_chave?.toLowerCase().includes(searchInput) ||
-            project.tema?.toLowerCase().includes(searchInput)) &&
-          project.equipe?.toLowerCase().includes(searchMembers) &&
-          project.tema?.toLowerCase().includes(searchThemes) &&
-          project.semestre?.toLowerCase().includes(searchSemester)
-        );
-      })
-    : [];
+  ? cards.filter((project) => {
+      const searchInput = input.toLowerCase();
+      const searchMembers = inputMembers.toLowerCase();
+      const searchThemes = themes.toLowerCase();
+      const searchSemester = semester.toLowerCase();
+
+      // Garantindo que project.palavras_chave seja tratado como uma string
+      const palavrasChave = Array.isArray(project.palavras_chave)
+        ? project.palavras_chave.join(' ').toLowerCase() // Converte o array para uma string
+        : '';
+
+      return (
+        (project.titulo?.toLowerCase().includes(searchInput) ||
+          palavrasChave.includes(searchInput) || // Usando palavras_chave como string
+          project.tema?.toLowerCase().includes(searchInput)) &&
+        (project.equipe ? project.equipe.toString().toLowerCase().includes(searchMembers) : '') &&
+        project.tema?.toLowerCase().includes(searchThemes) &&
+        project.semestre?.toLowerCase().includes(searchSemester)
+      );
+    })
+  : [];
 
   return (
     <>
@@ -265,7 +283,7 @@ function Projects() {
                       <h3 className="text-2xl font-bold text-blue-600 mb-2">{project.titulo}</h3>
                       <p className="text-gray-700 flex-grow">{project.descricao}</p>
                       <button
-                        onClick={() => navigate(`/projects/selected/${project.id}`)}
+                        onClick={() => navigate(`/projetos/${project.id}`)}
                         className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                       >
                         Ver mais

@@ -42,10 +42,10 @@ function Header() {
           <NavLink exact to="/" className="text-lg hover:text-gray-300" activeClassName="underline">
             Início
           </NavLink>
-          <NavLink to="/projects" className="text-lg hover:text-gray-300" activeClassName="underline">
+          <NavLink to="/projetos" className="text-lg hover:text-gray-300" activeClassName="underline">
             Projetos
           </NavLink>
-          <NavLink to="/Articles" className="text-lg hover:text-gray-300" activeClassName="underline">
+          <NavLink to="/artigos" className="text-lg hover:text-gray-300" activeClassName="underline">
             Artigos
           </NavLink>
           <NavLink to="/sobre" className="text-lg hover:text-gray-300" activeClassName="underline">
