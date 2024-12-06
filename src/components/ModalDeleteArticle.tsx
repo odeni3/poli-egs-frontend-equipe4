@@ -1,7 +1,6 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
-//import axios from 'axios';
 import { SetStateAction, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 
@@ -23,7 +22,7 @@ function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateA
   }
 
   // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
-  axios.delete(`http://127.0.0.1:8000/artigos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+  axios.delete(`https://poli-egs-fastapi-1.onrender.com/artigos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
     headers: {
       Authorization: `Bearer ${token}`, // Usando o token obtido
     },
@@ -33,7 +32,7 @@ function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateA
       setOpen(false);
     })
     .catch(error => {
-      console.error('Erro ao deletar projeto:', error);
+      console.error('Erro ao deletar artigo:', error);
     });
 }
 

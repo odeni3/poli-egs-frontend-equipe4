@@ -6,6 +6,7 @@ import ModalDeleteArticle from "../../components/ModalDeleteArticle";
 import ModalUpdateArticle from "../../components/ModalUpdateArticle";
 import { FaFileUpload } from "react-icons/fa";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 export interface ArticleInt {
   //key: string;
@@ -21,6 +22,7 @@ export interface ArticleInt {
 
 const columns = [
   { key: "titulo", label: "Titulo" },
+  { key: "revisar", label: "Status" },
   /*{ key: "editar", label: "Editar" },
   { key: "excluir", label: "Excluir" },*/
 ];
@@ -32,15 +34,22 @@ function Userarticles () {
     setInput(event.target.value);
   };
 
+  const userIsAdmin = localStorage.getItem('isAdmin') === 'true'; // Verificando se o usuário é admin no localStorage
+  
+  if (userIsAdmin) {
+    // Se não for admin, redireciona para a página de usuário
+    return <Navigate to="/admin-articles" />;
+  }
+
   const [Article, setArticle] = useState<ArticleInt[]>([]);
   const [open, setOpen] = useState(false)
   const [NewArticle, setNewArticle] = useState({
     titulo: '',
     descricao: '',
-    equipe: '',
+    equipe: [] as string[],
     tema: '',
     data: '',
-    palavras_chave: '',
+    palavras_chave: [] as string[],
     id: '',
     arquivo: '#',
     revisado: "",
@@ -77,17 +86,17 @@ function Userarticles () {
       id: NewArticle.id || "default-id",
       titulo: NewArticle.titulo || "Título não informado",
       tema: NewArticle.tema || "Tema não informado",
-      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : ["Sem palavras-chave"],
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
       descricao: NewArticle.descricao || "Sem descrição",
-      equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
-      data: NewArticle.data || "Data não informada",
+      equipe: equipeArray.length > 0 ? equipeArray : [],
+      data: NewArticle.data || "",
       arquivo: NewArticle.arquivo || '#',
       revisado: NewArticle.revisado || "Pendente",
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
   
-    axios.post(`http://127.0.0.1:8000/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -102,7 +111,7 @@ function Userarticles () {
   };
 
   const handleUpdate = () => {
-    axios.get('http://127.0.0.1:8000/artigos/').then(response => {
+    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -110,7 +119,7 @@ function Userarticles () {
   }; 
   
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/artigos/').then(function (response) {
+    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
       setArticle(response.data)
       console.log(Article);
 
@@ -184,6 +193,8 @@ function Userarticles () {
                         id={article.id}
                         handleUpdate={handleUpdate}
                       />
+                    ) : column.key === "revisar" ? (
+                      article.revisado
                     ) : (
                       article.titulo
                     )}

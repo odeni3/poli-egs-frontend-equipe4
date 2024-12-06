@@ -3,88 +3,95 @@ import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import axios from "axios";
 import { ProjectInt } from "../pages/Projects";
 import { useState } from "react";
-import { FaFileUpload } from "react-icons/fa";
 
 
-export default function ModalUpdate({ project, handleUpdate }: { project: ProjectInt, handleUpdate: () => void }){
+export default function ModalUpdate({ project }: { project: ProjectInt }){
 
   const [open, setOpen] = useState(false);
   const handleShow = () => setOpen(true);
 
   const [UpdatedProject, setUpdatedProject] = useState({
-    ...project
+    titulo: project.titulo || "",
+    descricao: project.descricao || "",
+    equipe: project.equipe.join(", ") || [], // Converte o array para string separada por vírgulas
+    cliente: project.cliente || "",
+    pitch: project.pitch || "",
+    tema: project.tema || "",
+    semestre: project.semestre || "",
+    video_tecnico: project.video_tecnico || "",
+    tecnologias_utilizadas: project.tecnologias_utilizadas.join(", ") || [],
+    palavras_chave: project.palavras_chave.join(", ") || [],
+    id: project.id || "",
+    link_repositorio: project.link_repositorio || "",
+    revisado: project.revisado || "",
+    curtidas: project.curtidas || 0,
+    user_curtidas_email: project.user_curtidas_email || [],
   });
-
+  
   const handleUpdateProject = () => {
     // Capturando o token do localStorage
     const token = localStorage.getItem('authToken');
+    
     console.log('Token:', token); // Verificando o token
+    console.log(project);
 
     if (!token) {
       console.error('Token não encontrado. Usuário não está autenticado.');
       return;
     }
 
+    // Separando os campos de tecnologias, equipe e palavras-chave por vírgulas e transformando-os em arrays
+    const tecnologiasArray = typeof UpdatedProject.tecnologias_utilizadas === 'string' && UpdatedProject.tecnologias_utilizadas.trim() 
+      ? UpdatedProject.tecnologias_utilizadas.split(',').map(item => item.trim()) 
+      : [];
+
+    const equipeArray = typeof UpdatedProject.equipe === 'string' && UpdatedProject.equipe.trim()
+      ? UpdatedProject.equipe.split(',').map(item => item.trim())
+      : [];
+
+    const palavrasChaveArray = typeof UpdatedProject.palavras_chave === 'string' && UpdatedProject.palavras_chave.trim()
+      ? UpdatedProject.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+
     // Valores padrão para os campos não preenchidos
     const UpdatedProjectWithDefaults = {
-      id: UpdatedProject.id || "default-id",
+      id: project.id,
       titulo: UpdatedProject.titulo || "Título não informado",
       tema: UpdatedProject.tema || "Tema não informado",
-      palavras_chave: UpdatedProject.palavras_chave || "Sem palavras-chave",
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
       descricao: UpdatedProject.descricao || "Sem descrição",
       cliente: UpdatedProject.cliente || "Cliente não informado",
       semestre: UpdatedProject.semestre || "Semestre não informado",
-      equipe: UpdatedProject.equipe || "Equipe não informada",
+      equipe: equipeArray.length > 0 ? equipeArray : [],
       link_repositorio: UpdatedProject.link_repositorio || "Link não informado",
-      tecnologias_utilizadas: UpdatedProject.tecnologias_utilizadas || "Tecnologias não informadas",
+      tecnologias_utilizadas: tecnologiasArray.length > 0 ? tecnologiasArray : [],
       video_tecnico: UpdatedProject.video_tecnico || "Vídeo não informado",
       pitch: UpdatedProject.pitch || "Pitch não informado",
-      revisado: UpdatedProject.revisado || "Não revisado",
-      curtidas: UpdatedProject.curtidas || 0,
+      revisado: project.revisado,
+      curtidas: project.curtidas,
+      user_curtidas_email: project.user_curtidas_email,
     };
 
     console.log('Dados do projeto atualizado (com valores padrão, se necessário):', UpdatedProjectWithDefaults);
 
     // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
-    axios.put(`http://127.0.0.1:8000/projetos?id_token=${token}`, UpdatedProjectWithDefaults, {
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/projetos/${project.id}?id_token=${token}`, UpdatedProjectWithDefaults, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // Usando o token no cabeçalho
       },
     })
     .then(() => {
-      handleSubmitFile(UpdatedProject.id); // Enviar o arquivo se necessário
+      console.log('Projeto alterado com sucesso:');
       window.location.reload();
       setOpen(false);
     })
     .catch(error => {
       console.error('Erro ao atualizar projeto:', error.response ? error.response.data : error.message);
+      console.error('Erro completo:', error.response);
     });
 };
-
-
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleSubmitFile = async (id: string) => {
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      try {
-        const response = await axios.post(`http://127.0.0.1:8000/upload_logo_projeto/?id_projeto=${id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Usando o token obtido
-          },
-        });
-        console.log(response);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    } else {
-      console.log('Nenhum arquivo selecionado');
-    }
-  };
 
     return(
         <>
@@ -154,27 +161,6 @@ export default function ModalUpdate({ project, handleUpdate }: { project: Projec
                 <div className="mb-10">
                   <h3 className="text-lg font-semibold">Descrição</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Descrição" value={UpdatedProject.descricao} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, descricao:e.target.value}))}/>
-                </div>
-                <div className="w-[15vw] relative">
-                  <input type="file" className="hidden" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
-                  <label
-                    htmlFor="logo"
-                    className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
-                      !selectedFile ? "bg-green-500" : "bg-[#D8DBE2]"
-                    } hover:opacity-60 select-none whitespace-nowrap`}
-                    style={{ 
-                      textOverflow: 'ellipsis', 
-                      overflow: 'hidden', 
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {selectedFile ? (
-                      <span>Modificar Logo</span>
-                    ) : (
-                      <span>Atualizar Logo</span>
-                    )}
-                    <FaFileUpload className="ml-2" />
-                  </label>
                 </div>
               </div>
             </form>

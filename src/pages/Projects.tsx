@@ -20,7 +20,7 @@ function Projects() {
   const [images, setImages] = useState({});
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/projetos/')
+    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
       .then((response) => {
         const data = response.data.projetos;
 
@@ -42,6 +42,12 @@ function Projects() {
       });
   }, []);
   
+  const resetFilters = () => {
+    setInput('');
+    setInputMembers('');
+    setThemes('');
+    setSemester('');
+  };
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
@@ -53,7 +59,7 @@ function Projects() {
 
   /*const handleGetImage = async (id) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/view_logo_projeto/${id}`);
+      const response = await axios.get(`https://poli-egs-fastapi-1.onrender.com/view_logo_projeto/${id}`);
       setImages((prevImages) => ({
         ...prevImages,
         [id]: response.data.url,
@@ -257,60 +263,62 @@ function Projects() {
 
               {/* Botão de Enviar */}
               <button
-                type="submit"
+                type="button" // alterado para 'button' em vez de 'submit'
+                onClick={resetFilters} // chamando a função para resetar os filtros
                 className="w-full h-12 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors"
               >
-                Aplicar Filtros
+                Remover Filtros
               </button>
             </form>
           </div>
 
           {/* Lista de Projetos */}
           <div className="w-full lg:w-3/4">
-            {filteredCards.length > 0 ? (
+            {filteredCards.filter(project => project.revisado === "Aprovado").length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {filteredCards.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
-                  >
-                    <img
-                      src={images[project.id] || backgroundImage}
-                      alt={project.titulo}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-6 flex flex-col flex-grow">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-2xl font-bold text-blue-600">{project.titulo}</h3>
-                        <div 
-                          className="flex items-center text-gray-600"
-                        >
-                          <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-6 w-6 mr-1 mt-1 mb-1" 
-                            viewBox="0 0 20 20" 
-                            fill="currentColor"
-                          >
-                            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                          </svg>
-                          <span>{project.curtidas || 0}</span>
+                {filteredCards
+                  .filter(project => project.revisado === "Aprovado") // Filtra apenas os projetos aprovados
+                  .map((project) => (
+                    <div
+                      key={project.id}
+                      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col"
+                    >
+                      <img
+                        src={images[project.id] || backgroundImage}
+                        alt={project.titulo}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-6 flex flex-col flex-grow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-2xl font-bold text-blue-600">{project.titulo}</h3>
+                          <div className="flex items-center text-gray-600">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6 mr-1 mt-1 mb-1"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                            </svg>
+                            <span>{project.curtidas || 0}</span>
+                          </div>
                         </div>
+                        <p className="text-gray-700 flex-grow">{project.descricao}</p>
+                        <button
+                          onClick={() => navigate(`/projetos/${project.id}/`)}
+                          className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Ver mais
+                        </button>
                       </div>
-                      <p className="text-gray-700 flex-grow">{project.descricao}</p>
-                      <button
-                        onClick={() => navigate(`/projetos/${project.id}/`)}
-                        className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-                      >
-                        Ver mais
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p className="text-center text-gray-600">Nenhum projeto encontrado.</p>
             )}
           </div>
+
         </div>
       </section>
 

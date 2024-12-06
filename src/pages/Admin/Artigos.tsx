@@ -6,23 +6,17 @@ import ModalDeleteArticle from "../../components/ModalDeleteArticle";
 import ModalUpdateArticle from "../../components/ModalUpdateArticle";
 import { FaFileUpload } from "react-icons/fa";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
-export interface ArticleInt {
-  //key: string;
-  titulo?: string;
-  descricao?: string;
-  equipe?: string;
-  tema?: string;
-  data?: string;
-  palavras_chave?: string;
-  id?: string,
-  arquivo?: string,
-}
+
 
 const columns = [
   { key: "titulo", label: "Titulo" },
   { key: "editar", label: "Editar" },
   { key: "excluir", label: "Excluir" },
+  { key: "revisar", label: "Status" },
+  { key: "botao", label: "" },
+  { key: "botao2", label: "" },
 ];
 
 function ArticlesAdmin () {
@@ -32,19 +26,26 @@ function ArticlesAdmin () {
     setInput(event.target.value);
   };
 
-  const [Article, setArticle] = useState<ArticleInt[]>([]);
+  const [Article, setArticle] = useState([]);
   const [open, setOpen] = useState(false)
   const [NewArticle, setNewArticle] = useState({
     titulo: '',
     descricao: '',
-    equipe: '',
+    equipe: [] as string[],
     tema: '',
     data: '',
-    palavras_chave: '',
+    palavras_chave: [] as string[],
     id: '',
     arquivo: '#',
     revisado: "",
   })
+
+  const userIsAdmin = localStorage.getItem('isAdmin') === 'true'; // Verificando se o usuário é admin no localStorage
+  
+  if (!userIsAdmin) {
+    // Se não for admin, redireciona para a página de usuário
+    return <Navigate to="/user-articles" />;
+  }
 
   const [file, setFile] = useState<File | undefined>();
   async function uploadPdf(e: React.FormEvent<HTMLInputElement>) {
@@ -52,6 +53,36 @@ function ArticlesAdmin () {
       files: FileList;
     };
     setFile(target.files[0]);
+  }
+
+  const handleApprove = (artigo) => {
+    const token = localStorage.getItem('authToken');
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Projeto Aprovado com sucesso:', response.data);
+        window.location.reload();
+      })
+        .catch(error => console.error('Erro ao aprovar projeto:', error));
+  }
+
+  const handleReprove = (artigo) => {
+    const token = localStorage.getItem('authToken');
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Projeto Reprovado com sucesso:', response.data);
+        window.location.reload();
+      })
+        .catch(error => console.error('Erro ao reprovar projeto:', error));
   }
 
   const handlePost = () => {
@@ -77,17 +108,17 @@ function ArticlesAdmin () {
       id: NewArticle.id || "default-id",
       titulo: NewArticle.titulo || "Título não informado",
       tema: NewArticle.tema || "Tema não informado",
-      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : ["Sem palavras-chave"],
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
       descricao: NewArticle.descricao || "Sem descrição",
-      equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
-      data: NewArticle.data || "Data não informada",
+      equipe: equipeArray.length > 0 ? equipeArray : [],
+      data: NewArticle.data || "",
       arquivo: NewArticle.arquivo || '#',
       revisado: NewArticle.revisado || "Pendente",
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
   
-    axios.post(`http://127.0.0.1:8000/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -102,7 +133,7 @@ function ArticlesAdmin () {
   };
 
   const handleUpdate = () => {
-    axios.get('http://127.0.0.1:8000/artigos/').then(response => {
+    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -110,7 +141,7 @@ function ArticlesAdmin () {
   }; 
   
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/artigos/').then(function (response) {
+    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
       setArticle(response.data)
       console.log(Article);
 
@@ -174,18 +205,66 @@ function ArticlesAdmin () {
                     }`}
                   >
                     {column.key === "editar" ? (
-                      <ModalUpdateArticle
-                        article={article}
-                        handleUpdate={handleUpdate}
-                      />
+                      <ModalUpdateArticle article={article} />
+
                     ) : column.key === "excluir" ? (
                       <ModalDeleteArticle
                         title={article.titulo}
                         id={article.id}
                         handleUpdate={handleUpdate}
                       />
+
+                    ) : column.key === "comentar" ? (
+                      <ModalComment projectId={article.id} />
+
+                    ) : column.key === "revisar" ? (
+                      article.revisado
+
+                    ) : column.key === "botao" &&
+                      (article.revisado === "Pendente") ? (
+                      <button
+                        type="button"
+                        className="px-3 py-2 bg-primary-color text-white rounded-xl hover:bg-blue-700 transition duration-300"
+                        onClick={() => handleApprove(article)}
+                      >
+                        Aprovar
+                      </button>
+                    
+                    ) : column.key === "botao2" &&
+                      (article.revisado === "Pendente") ? (
+                      <button
+                        type="button"
+                        className="px-3 py-2 bg-red-800 text-white rounded-xl hover:bg-red-700 transition duration-300"
+                        onClick={() => handleReprove(article)}
+                      >
+                        Reprovar
+                      </button>
+                    ) : column.key === "botao" &&
+                      (article.revisado === "Reprovado") ? (
+                        <button
+                          type="button"
+                          className="px-3 py-2 bg-primary-color text-white rounded-xl hover:bg-blue-700 transition duration-300"
+                          onClick={() => handleApprove(article)}
+                        >
+                          Aprovar
+                        </button>
+                    ) : column.key === "botao2" &&
+                      (article.revisado === "Aprovado") ? (
+                        <button
+                          type="button"
+                          className="px-3 py-2 bg-red-800 text-white rounded-xl hover:bg-red-700 transition duration-300"
+                          onClick={() => handleReprove(article)}
+                        >
+                          Reprovar
+                        </button>
+                    ) : column.key === "botao2" &&
+                        (article.revisado === "Reprovado" ) ? (
+                        <div> </div>
+                    ) : column.key === "botao" &&
+                        (article.revisado === "Aprovado" ) ? (
+                        <div> </div>
                     ) : (
-                      article.titulo
+                        article.titulo
                     )}
                   </td>
                 ))}

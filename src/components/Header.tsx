@@ -1,5 +1,3 @@
-// src/components/Header.js
-
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -7,20 +5,23 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="bg-primary-color text-light-color h-[6vh]">
-      <nav className="container flex items-center justify-between h-full">
+    <header className="bg-primary-color text-light-color shadow-md">
+      <nav className="container mx-auto flex items-center justify-between py-4 ml-[10%]">
         {/* Logo */}
-        <div className="flex items-center">
-          <NavLink to="/" className="flex items-center space-x-3">
-          <img 
+        <div className="flex items-center space-x-4">
+          <NavLink to="/" className="flex items-center">
+            <img 
               src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Logo-upe-site.png" 
               alt="Logo" 
-              className="h-12 w-12 object-contain"
+              className="h-10 w-15 object-contain"
             />
-            <span className="text-2xl font-bold">Observatório de Projetos</span>
+            <span className="ml-5 text-2xl font-semibold tracking-wide">
+              Observatório de Projetos
+            </span>
           </NavLink>
         </div>
 
+        {/* Menu button (mobile) */}
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -38,82 +39,61 @@ function Header() {
           </button>
         </div>
 
-        <div className={`flex-1 justify-center md:flex items-center space-x-8 ${isOpen ? 'block' : 'hidden'} md:block`}>
-          <NavLink exact to="/" className="text-lg hover:text-gray-300" activeClassName="underline">
-            Início
-          </NavLink>
-          <NavLink to="/projetos" className="text-lg hover:text-gray-300" activeClassName="underline">
-            Projetos
-          </NavLink>
-          <NavLink to="/artigos" className="text-lg hover:text-gray-300" activeClassName="underline">
-            Artigos
-          </NavLink>
-          <NavLink to="/sobre" className="text-lg hover:text-gray-300" activeClassName="underline">
-            Sobre
-          </NavLink>
-          <NavLink to="/faq" className="text-lg hover:text-gray-300" activeClassName="underline">
-            FAQ
-          </NavLink>
+        {/* Nav Links */}
+        <div className={`md:flex items-center space-x-6 ${isOpen ? 'block' : 'hidden'} md:block`}>
+          {['Início', 'Projetos', 'Artigos', 'Sobre', 'FAQ'].map((item, index) => (
+            <NavLink
+              key={index}
+              to={item === 'Início' ? '/' : `/${item.toLowerCase()}`}
+              className="text-lg font-medium hover:text-gray-300 transition duration-200"
+              activeClassName="underline"
+            >
+              {item}
+            </NavLink>
+          ))}
         </div>
 
-        <div className="hidden md:flex items-center space-x-6">
-          <NavLink to="/logintest" className="flex items-center hover:text-gray-300" activeClassName="underline">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        {/* Login */}
+        <div className="hidden md:flex items-center">
+          <NavLink
+            to="/logintest"
+            className="flex items-center px-4 py-2 bg-gray-100 text-primary-color rounded-full shadow-lg hover:bg-gray-400 transition duration-200"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A5.982 5.982 0 0112 15c1.657 0 3.156.672 4.242 1.758M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             Entrar
           </NavLink>
-          <NavLink to="/admin-projects" className="text-lg hover:text-gray-300" activeClassName="underline">
-            DA
-          </NavLink>
-          <NavLink to="/user-projects" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-            DU
-          </NavLink>
         </div>
       </nav>
 
+      {/* Dropdown Menu (mobile) */}
       {isOpen && (
-        <div className="md:hidden">
-          <ul className="px-4 pt-3 pb-5 space-y-2">
+        <div className="md:hidden bg-primary-color">
+          <ul className="space-y-4 px-6 py-4">
+            {['Início', 'Projetos', 'Artigos', 'Sobre', 'FAQ'].map((item, index) => (
+              <li key={index}>
+                <NavLink
+                  to={`/${item.toLowerCase()}`}
+                  className="block text-lg font-medium text-light-color hover:text-gray-300 transition duration-200"
+                  activeClassName="underline"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item}
+                </NavLink>
+              </li>
+            ))}
             <li>
-              <NavLink exact to="/" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                Início
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/projects" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                Projetos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/Articles" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                Artigos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/sobre" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                Sobre
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/faq" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                FAQ
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/logintest" className="flex items-center py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <NavLink
+                to="/logintest"
+                className="block text-lg font-medium text-light-color hover:text-gray-300 transition duration-200 flex items-center"
+                onClick={() => setIsOpen(false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A5.982 5.982 0 0112 15c1.657 0 3.156.672 4.242 1.758M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Entrar
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/admin-projects" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                DA
-              </NavLink>
-              <NavLink to="/user" className="block py-2 text-lg hover:text-gray-300" activeClassName="underline" onClick={() => setIsOpen(false)}>
-                DU
               </NavLink>
             </li>
           </ul>

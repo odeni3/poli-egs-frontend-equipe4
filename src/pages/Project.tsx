@@ -3,7 +3,6 @@ import { ArrowLeftIcon, CalendarIcon, Cog8ToothIcon, FolderIcon, UserGroupIcon, 
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
-import mockData from '../dados/mockData';
 import iconImage from '../images/avatar.png';
 import Header from '../components/Header';
 import backgroundImage from '../images/mainpage.jpg';
@@ -16,23 +15,20 @@ function Project() {
 
   useEffect(() => {
     // Requisição para obter os dados do projeto
-    axios.get(`http://127.0.0.1:8000/projetos/${slug}`).then((response) => {
-      console.log("Resposta completa da API:", response); // Verifique toda a resposta
-      console.log("Dados retornados:", response.data.titulo);
+    axios.get(`https://poli-egs-fastapi-1.onrender.com/projetos/${slug}`).then((response) => {
+      console.log("Resposta completa da API:", response);
+      console.log("Dados retornados:", response.data);
       const projeto = response.data;
       setData(projeto);
+      setComentarios(projeto.comentarios || []);  // Atualizando os comentários
     });
-
+  
     // Requisição para obter a imagem do logo do projeto
-    axios.get(`http://127.0.0.1:8000/view_logo_projeto/${slug}`).then((response) => {
-        setImg(response.data["url"]);
+    axios.get(`https://poli-egs-fastapi-1.onrender.com/view_logo_projeto/${slug}`).then((response) => {
+      setImg(response.data["url"]);
     });
-
-    // Carregar os comentários (ainda com mockData)
-    const comentariosDoProjeto = mockData.projetos[slug] || [];
-    setComentarios(comentariosDoProjeto);
-
-  }, [slug]);
+  
+  }, [slug]);  
 
   return (
     <>
@@ -150,19 +146,26 @@ function Project() {
           <hr className="border-t border-gray-300 my-4" />
           <h2 className="text-2xl font-semibold mb-4">Comentários</h2>
           <div className="flex flex-col gap-4">
-            {comentarios.map((comentario, index) => (
-              <div key={index} className="flex items-center border-b border-gray-200 py-2">
-                <img src={comentario.icone || iconImage} alt="Icone do usuario" className="w-8 h-8 rounded-full mr-3" />
-                <div className="flex-grow">
-                  <p className="font-medium">{comentario.usuario}</p>
-                  <p>{comentario.comentario}</p>
+            {comentarios.length > 0 ? (
+              comentarios.map((comentario, index) => (
+                <div key={index} className="flex items-center border-b border-gray-200 py-2">
+                  <img
+                    src={iconImage}
+                    alt="Ícone do usuário"
+                    className="w-8 h-8 rounded-full mr-3"
+                  />
+                  <div className="flex-grow">
+                    <p className="font-medium">{comentario.email}</p> {/* Exibindo o email do usuário */}
+                    <p>{comentario.comentario}</p> {/* Exibindo o comentário */}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>Não há comentários ainda.</p> // Caso não haja comentários
+            )}
           </div>
         </section>
       </main>
-
       <Footer />
     </>
   );

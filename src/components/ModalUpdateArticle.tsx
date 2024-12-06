@@ -2,45 +2,79 @@ import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headl
 import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { SetStateAction, useState } from "react";
 import { ArticleInt } from "../pages/Admin/Artigos";
-import { FaFileUpload } from "react-icons/fa";
 import axios from "axios";
 
 
-export default function ModalUpdateArticle({ article, handleUpdate }: { article: ArticleInt, handleUpdate: () => void }){
+export default function ModalUpdateArticle({ article }: { article: ArticleInt }){
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const handleShow = () => setOpen(true);
 
   const [UpdatedArticle, setUpdatedArticle] = useState({
-    ...article
+    id: article.id || "",
+    titulo: article.titulo || "",
+    tema: article.tema || "",
+    palavras_chave: article.palavras_chave.join(", ") || [],
+    descricao: article.descricao || "",
+    equipe: article.equipe.join(", ") || [], // Converte o array para string separada por vírgulas
+    data: article.data || "",
+    arquivo: article.arquivo || '#',
+    revisado: article.revisado || "Pendente",
   });
-
-  const [file, setFile] = useState<File | undefined>();
-  async function uploadPdf(e: React.FormEvent<HTMLInputElement>) {
-    const target = e.target as HTMLInputElement & {
-      files: FileList;
-    };
-    setFile(target.files[0]);
-  }
   
-  const handleUpdateArticle = async (setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
-    try {
-      axios.put(`http://127.0.0.1:8000/artigos/${UpdatedArticle.id}`, UpdatedArticle);
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        console.log("FormData:", formData.get('file'));
-        await axios.post(`http://127.0.0.1:8000/upload_pdf_artigo/?id_projeto=${UpdatedArticle.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-      } 
+  const handleUpdateArticle = () => {
+    // Capturando o token do localStorage
+    const token = localStorage.getItem('authToken');
+    
+    console.log('Token:', token); // Verificando o token
+    console.log(article);
+
+    if (!token) {
+      console.error('Token não encontrado. Usuário não está autenticado.');
+      return;
+    }
+
+    // Separando os campos de tecnologias, equipe e palavras-chave por vírgulas e transformando-os em arrays
+    const equipeArray = typeof UpdatedArticle.equipe === 'string' && UpdatedArticle.equipe.trim()
+      ? UpdatedArticle.equipe.split(',').map(item => item.trim())
+      : [];
+
+    const palavrasChaveArray = typeof UpdatedArticle.palavras_chave === 'string' && UpdatedArticle.palavras_chave.trim()
+      ? UpdatedArticle.palavras_chave.split(',').map(item => item.trim())
+      : [];
+
+
+    // Valores padrão para os campos não preenchidos
+    const UpdatedArticleWithDefaults = {
+      id: article.id || "",
+      titulo: UpdatedArticle.titulo || "",
+      tema: UpdatedArticle.tema || "",
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
+      descricao: UpdatedArticle.descricao || "",
+      equipe: equipeArray.length > 0 ? equipeArray : [],
+      data: UpdatedArticle.data || "",
+      arquivo: UpdatedArticle.arquivo || '#',
+      revisado: article.revisado || "Pendente",
+    };
+
+    console.log('Dados do Artigo atualizado (com valores padrão, se necessário):', UpdatedArticleWithDefaults);
+
+    // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigos/${article.id}?id_token=${token}`, UpdatedArticleWithDefaults, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Usando o token no cabeçalho
+      },
+    })
+    .then(() => {
+      console.log('Artigo alterado com sucesso:');
       window.location.reload();
       setOpen(false);
-    } catch (error) {
-      console.error('Erro ao atualizar arquivo:', error);
-    }
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar Artigo:', error.response ? error.response.data : error.message);
+      console.error('Erro completo:', error);
+    });
   };
 
   return(
@@ -86,34 +120,8 @@ export default function ModalUpdateArticle({ article, handleUpdate }: { article:
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Data de publicação</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" value={UpdatedArticle.data} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, data:e.target.value}))}/>
+                  <input type="date" name="titulo" id="titulo" placeholder="Ex: 2024.1" value={UpdatedArticle.data} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, data:e.target.value}))}/>
                 </div>
-                <div className="w-[15vw] relative">
-                  <input
-                    type="file"
-                    id="file-upload"
-                    className="hidden"
-                    onChange={uploadPdf}
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className={`absolute flex items-center px-3 py-2 rounded-md w-full text-dark-color text-xs font-semibold cursor-pointer ${
-                      !file ? "bg-green-500" : "bg-[#D8DBE2]"
-                    } hover:opacity-60 select-none whitespace-nowrap`}
-                    style={{ 
-                      textOverflow: 'ellipsis', 
-                      overflow: 'hidden', 
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {file ? (
-                      <span>{file.name}</span>
-                    ) : (
-                      <span>Atualizar PDF</span>
-                    )}
-                    <FaFileUpload className="ml-2" />
-                  </label>
-                </div>   
                 <div>
                   <h3 className="text-lg font-semibold">Equipe</h3>
                   <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedArticle.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, equipe:e.target.value}))}/>
@@ -124,7 +132,7 @@ export default function ModalUpdateArticle({ article, handleUpdate }: { article:
               <button
                 type="button"
                 className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
-                onClick={() => handleUpdateArticle(setOpen)}
+                onClick={handleUpdateArticle}
               >
                 Enviar
               </button>

@@ -12,7 +12,7 @@ const LoginTest = () => {
     e.preventDefault();
     try {
       // 1. Enviar a requisição para o login com email e senha na URL
-      const response = await fetch(`http://127.0.0.1:8000/login?email=${email}&password=${password}`, {
+      const response = await fetch(`https://poli-egs-fastapi-1.onrender.com/login?email=${email}&password=${password}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -32,32 +32,12 @@ const LoginTest = () => {
       // Armazenando o token no localStorage
       localStorage.setItem('authToken', data.idToken);
       localStorage.setItem('email', data.email);
+      localStorage.setItem('userId', data.user_id);
       const nomezinho = data.username;
-      localStorage.setItem('userName', nomezinho)
+      localStorage.setItem('userName', nomezinho);
+      localStorage.setItem('isAdmin', data.is_admin);
   
-      // 3. Fazer uma requisição para a rota /users com o token
-      const usersResponse = await fetch(`http://127.0.0.1:8000/users?id_token=${data.idToken}`);
-  
-      // Verificando a resposta da rota de usuários
-      if (!usersResponse.ok) {
-        const errorData = await usersResponse.json();
-        if (errorData.detail && errorData.detail === 'Access forbidden: Admins only.') {
-          // O usuário não é admin
-          setError('Acesso restrito: apenas administradores podem acessar a lista de usuários.');
-          navigate('/user-projects');  // Redirecionar para a página do usuário
-          return; // Não prossegue, pois não é admin
-        }
-        throw new Error('Erro ao acessar os usuários');
-      }
-  
-      // 4. Captura da lista de usuários, se a resposta for bem-sucedida
-      const usersData = await usersResponse.json();
-  
-      // Verifica se algum dos usuários é admin
-      const adminUser = usersData.usuários.find((user: any) => user.email === email && user.is_admin);
-      
-      // Se for admin, redireciona para a página de administração
-      if (adminUser) {
+      if (data.is_admin) {
         navigate('/admin-projects');
       } else {
         navigate('/user-projects');

@@ -36,6 +36,7 @@ const Register = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Registro bem-sucedido:', data);
+        alert('Registro realizado com sucesso!');
         navigate('/logintest');
       } else {
         setError("O endereço de e-mail já existe ou a senha possui menos de 6 caracteres.");

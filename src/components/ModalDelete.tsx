@@ -3,7 +3,6 @@ import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { SetStateAction, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import Nav from 'react-bootstrap/Nav';
 
 interface ModalProps {
   title?: string;
@@ -23,7 +22,7 @@ function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateA
   }
 
   // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
-  axios.delete(`http://127.0.0.1:8000/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+  axios.delete(`https://poli-egs-fastapi-1.onrender.com/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
     headers: {
       Authorization: `Bearer ${token}`, // Usando o token obtido
     },

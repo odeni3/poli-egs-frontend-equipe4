@@ -1,27 +1,29 @@
 import { Table } from "react-bootstrap";
 import HeaderAdmin from "../../components/HeaderAdmin";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import ModalDelete from "../../components/ModalDelete";
-import { ProjectInt } from "../Projects";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import ModalUpdate from "../../components/ModalUpdate";
+import ModalComment from "../../components/ModalComment";
+import ModalLikes from "../../components/ModalLikes";
 import { FaFileUpload } from "react-icons/fa";
-import Nav from 'react-bootstrap/Nav';
+import { Navigate } from "react-router-dom";
 
 const columns = [
   { key: "titulo", label: "Titulo" },
+  { key: "curtir", label: "Curtir"},
+  { key: "comentar", label: "Comentar" },
   { key: "editar", label: "Editar" },
   { key: "excluir", label: "Excluir" },
+  { key: "revisar", label: "Status" },
+  { key: "botao", label: "" },
+  { key: "botao2", label: "" },
 ];
 
 
 function ProjectsAdmin() {
   const [Input, setInput] = useState<string>("");
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-  };
-
   const [Project, setProject] = useState([]);
   const [open, setOpen] = useState(false);
   const [NewProject, setNewProject] = useState({
@@ -40,15 +42,51 @@ function ProjectsAdmin() {
     revisado: "",
     curtidas: 0,
     user_curtidas_email: [] as string[],
-    comentarios: [] as string[],
   });
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const userIsAdmin = localStorage.getItem('isAdmin') === 'true'; // Verificando se o usuário é admin no localStorage
+  
+  if (!userIsAdmin) {
+    // Se não for admin, redireciona para a página de usuário
+    return <Navigate to="/user-projects" />;
+  }
+
   const handleUpdate = () => {
-    axios.get('http://127.0.0.1:8000/projetos/')
+    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
       .then(response => setProject(response.data))
       .catch(error => console.error('Erro ao atualizar projetos:', error));
   };
+
+  const handleApprove = (project) => {
+    const token = localStorage.getItem('authToken');
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/projeto_revisado/${project.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Projeto Aprovado com sucesso:', response.data);
+        window.location.reload();
+      })
+        .catch(error => console.error('Erro ao aprovar projeto:', error));
+  }
+
+  const handleReprove = (project) => {
+    const token = localStorage.getItem('authToken');
+    axios.put(`https://poli-egs-fastapi-1.onrender.com/projeto_revisado/${project.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Projeto Reprovado com sucesso:', response.data);
+        window.location.reload();
+      })
+        .catch(error => console.error('Erro ao reprovar projeto:', error));
+  }
 
   const handlePost = () => {
     const token = localStorage.getItem('authToken');
@@ -71,38 +109,32 @@ function ProjectsAdmin() {
       ? NewProject.palavras_chave.split(',').map(item => item.trim())
       : [];
 
-    const userCurtidasEmailArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
+    const userCurtidasEmailArray = typeof NewProject.user_curtidas_email === 'string' && NewProject.user_curtidas_email.trim()
       ? NewProject.palavras_chave.split(',').map(item => item.trim())
       : [];
-
-    const comentariosArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
-      ? NewProject.palavras_chave.split(',').map(item => item.trim())
-      : [];
-
   
     // Atualiza os dados do projeto com os arrays processados
     const NewProjectWithDefaults = {
       id: NewProject.id || "default-id",
       titulo: NewProject.titulo || "Título não informado",
       tema: NewProject.tema || "Tema não informado",
-      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : ["Sem palavras-chave"],
+      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
       descricao: NewProject.descricao || "Sem descrição",
       cliente: NewProject.cliente || "Cliente não informado",
       semestre: NewProject.semestre || "Semestre não informado",
-      equipe: equipeArray.length > 0 ? equipeArray : ["Equipe não informada"],
+      equipe: equipeArray.length > 0 ? equipeArray : [],
       link_repositorio: NewProject.link_repositorio || "Link não informado",
-      tecnologias_utilizadas: tecnologiasArray.length > 0 ? tecnologiasArray : ["Tecnologias não informadas"],
+      tecnologias_utilizadas: tecnologiasArray.length > 0 ? tecnologiasArray : [],
       video_tecnico: NewProject.video_tecnico || "Vídeo não informado",
       pitch: NewProject.pitch || "Pitch não informado",
       revisado: NewProject.revisado || "Pendente",
       curtidas: NewProject.curtidas || 0,
-      user_curtidas_email: userCurtidasEmailArray.length > 0 ? userCurtidasEmailArray : ["Sem curtidas"],
-      comentarios: comentariosArray.length > 0 ? comentariosArray : ["Sem comentários"],
+      user_curtidas_email: userCurtidasEmailArray.length > 0 ? userCurtidasEmailArray : [],
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewProjectWithDefaults);
   
-    axios.post(`http://127.0.0.1:8000/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
+    axios.post(`https://poli-egs-fastapi-1.onrender.com/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -116,23 +148,8 @@ function ProjectsAdmin() {
       .catch(error => console.error('Erro ao adicionar projeto:', error));
   };
 
-  const handleSubmitFile = async (id: string) => {
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      try {
-        const response = await axios.post(`http://127.0.0.1:8000/upload_logo_projeto/?id_projeto=${id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        console.log(response);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    }
-  };
-
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/projetos/')
+    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
       .then(response => setProject(response.data.projetos))
       .catch(error => console.error('Erro ao carregar projetos:', error));
   }, []);
@@ -157,7 +174,6 @@ function ProjectsAdmin() {
           className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2] "
           placeholder="Pesquise por nome, tema, palavra-chave"
           value={Input}
-          onChange={handleInputChange}
         />
       </div>  
       <div className="px-[13vw] pt-10">
@@ -167,31 +183,87 @@ function ProjectsAdmin() {
               <th key={column.key} className={column.key === "titulo" ? "text-left" : "text-right "}>{column.label}</th>
             ))}
           </thead>    
-          <tbody >
+          <tbody>
             {filteredProject.map((project) => (
               <tr key={project.id} className="border border-light-color">
                 {columns.map((column) => (
-                  <td key={column.key} className={`items-center py-3 ${column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"}`}>
-                    {column.key == "editar" ? (
-                      <ModalUpdate
-                        project={project}
-                        handleUpdate={handleUpdate}
-                      />
-                    ) : column.key == "excluir" ? (
+                  <td
+                    key={column.key}
+                    className={`items-center py-3 ${
+                      column.key === "titulo" ? "text-left pl-3" : "text-right pr-3"
+                    }`}
+                  >
+                    {column.key === "editar" ? (
+                      <ModalUpdate project={project} />
+
+                    ) : column.key === "excluir" ? (
                       <ModalDelete
                         title={project.titulo}
                         id={project.id}
                         handleUpdate={handleUpdate}
                       />
+
+                    ) : column.key === "comentar" ? (
+                      <ModalComment projectId={project.id} />
+
+                    ) : column.key === "revisar" ? (
+                      project.revisado
+
+                    ) : column.key === "botao" &&
+                      (project.revisado === "Pendente") ? (
+                      <button
+                        type="button"
+                        className="px-3 py-2 bg-primary-color text-white rounded-xl hover:bg-blue-700 transition duration-300"
+                        onClick={() => handleApprove(project)}
+                      >
+                        Aprovar
+                      </button>
+                    
+                    ) : column.key === "botao2" &&
+                      (project.revisado === "Pendente") ? (
+                      <button
+                        type="button"
+                        className="px-3 py-2 bg-red-800 text-white rounded-xl hover:bg-red-700 transition duration-300"
+                        onClick={() => handleReprove(project)}
+                      >
+                        Reprovar
+                      </button>
+                    ) : column.key === "botao" &&
+                      (project.revisado === "Reprovado") ? (
+                        <button
+                          type="button"
+                          className="px-3 py-2 bg-primary-color text-white rounded-xl hover:bg-blue-700 transition duration-300"
+                          onClick={() => handleApprove(project)}
+                        >
+                          Aprovar
+                        </button>
+                    ) : column.key === "botao2" &&
+                      (project.revisado === "Aprovado") ? (
+                        <button
+                          type="button"
+                          className="px-3 py-2 bg-red-800 text-white rounded-xl hover:bg-red-700 transition duration-300"
+                          onClick={() => handleReprove(project)}
+                        >
+                          Reprovar
+                        </button>
+                    ) : column.key === "botao2" &&
+                        (project.revisado === "Reprovado" ) ? (
+                        <div> </div>
+                    ) : column.key === "botao" &&
+                        (project.revisado === "Aprovado" ) ? (
+                        <div> </div>
+                    ) : column.key === "curtir" ? (
+                        <ModalLikes projectId={project.id} />
+                    
                     ) : (
-                      project.titulo
-                    )
-                  }
+                        project.titulo
+                    )}
                   </td>
                 ))}
               </tr>
-            ))}   
-          </tbody>    
+            ))}
+          </tbody>
+
         </Table>
       </div>
       <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -284,7 +356,7 @@ function ProjectsAdmin() {
               <button
                 type="button"
                 className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
-                onClick={() => handlePost(setOpen)}
+                onClick={handlePost}
               >
                 Enviar
               </button>
