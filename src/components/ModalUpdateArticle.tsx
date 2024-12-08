@@ -116,7 +116,7 @@ export default function ModalUpdateArticle({ article }: { article: ArticleInt })
                 </div>                  
                 <div>
                   <h3 className="text-lg font-semibold">Descrição</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1;Tecnologia2;Tecnologia3" value={UpdatedArticle.descricao} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, descricao:e.target.value}))}/>
+                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1,Tecnologia2,Tecnologia3" value={UpdatedArticle.descricao} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, descricao:e.target.value}))}/>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Data de publicação</h3>
@@ -124,7 +124,7 @@ export default function ModalUpdateArticle({ article }: { article: ArticleInt })
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Equipe</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedArticle.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, equipe:e.target.value}))}/>
+                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1,Pessoa2,Pessoa3" value={UpdatedArticle.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedArticle({...UpdatedArticle, equipe:e.target.value}))}/>
                 </div>   
               </div>
             </form>

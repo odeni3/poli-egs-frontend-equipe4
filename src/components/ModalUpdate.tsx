@@ -124,7 +124,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Equipe</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1;Pessoa2;Pessoa3" value={UpdatedProject.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, equipe:e.target.value}))}/>
+                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1,Pessoa2,Pessoa3" value={UpdatedProject.equipe} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, equipe:e.target.value}))}/>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Cliente</h3>
@@ -140,7 +140,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Tecnologias Utilizadas</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1;Tecnologia2;Tecnologia3" value={UpdatedProject.tecnologias_utilizadas} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, tecnologias_utilizadas:e.target.value}))}/>
+                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1,Tecnologia2,Tecnologia3" value={UpdatedProject.tecnologias_utilizadas} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, tecnologias_utilizadas:e.target.value}))}/>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Link do Pitch</h3>
@@ -156,7 +156,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Palavras Chave</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Palavra1;Palavra2;Palavra3" value={UpdatedProject.palavras_chave} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, palavras_chave:e.target.value}))}/>
+                  <input type="text" name="titulo" id="titulo" placeholder="Palavra1,Palavra2,Palavra3" value={UpdatedProject.palavras_chave} className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setUpdatedProject({...UpdatedProject, palavras_chave:e.target.value}))}/>
                 </div>
                 <div className="mb-10">
                   <h3 className="text-lg font-semibold">Descrição</h3>

@@ -323,7 +323,7 @@ function ArticlesAdmin () {
                       type="text"
                       name="palavras"
                       id="palavras"
-                      placeholder="Ex: Palavra1;Palavra2"
+                      placeholder="Ex: Palavra1,Palavra2"
                       className="focus:outline-none border-b-2 w-[15vw]"
                       onChange={(e) => setNewArticle({ ...NewArticle, palavras_chave: e.target.value })}
                     />
@@ -377,7 +377,7 @@ function ArticlesAdmin () {
                       type="text"
                       name="equipe"
                       id="equipe"
-                      placeholder="Pessoa1;Pessoa2;Pessoa3"
+                      placeholder="Pessoa1,Pessoa2,Pessoa3"
                       className="focus:outline-none border-b-2 w-[15vw]"
                       onChange={(e) => setNewArticle({ ...NewArticle, equipe: e.target.value })}
                     />
