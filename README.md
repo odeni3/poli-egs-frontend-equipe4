@@ -36,3 +36,7 @@ Antes de iniciar o projeto, verifique se você possui os seguintes requisitos in
 
 - **Node.js** e **npm** (Node Package Manager)
 - **Git** para clonar o repositório
+
+build docker image: docker build -t my-vite-app .
+
+run docker container: docker run -p 8080:80 my-vite-app
