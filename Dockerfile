@@ -18,6 +18,6 @@ COPY . .
 # RUN npm run dev
 
 # Expose port 80
-EXPOSE 9090
+EXPOSE 3000
 CMD [ "npm", "run", "dev" ]
 

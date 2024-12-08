@@ -39,4 +39,4 @@ Antes de iniciar o projeto, verifique se você possui os seguintes requisitos in
 
 build docker image: docker build -t my-vite-app .
 
-run docker container: docker run -p 8080:80 my-vite-app
+run docker container: docker run -p 3000:3000 my-vite-app
