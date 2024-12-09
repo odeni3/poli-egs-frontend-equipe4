@@ -1,42 +1,69 @@
 # **ES_Front_2024.2 - Observatório de Projetos**
 
-Bem-vindo ao repositório de **Front-End** do **Observatório de Projetos** da **POLI-UPE**! Este projeto é parte da disciplina de Engenharia de Software do curso de Engenharia da Computação, criado para oferecer uma plataforma onde os projetos acadêmicos da **POLI-UPE** podem ser explorados e acessados de maneira centralizada.
+Bem-vindo ao repositório de **Front-End** do **Observatório de Projetos** da **POLI-UPE**! Este projeto faz parte da disciplina de Engenharia de Software do curso de Engenharia da Computação e foi projetado para oferecer uma plataforma colaborativa, onde projetos acadêmicos e artigos podem ser explorados, submetidos e gerenciados.
 
 ---
 
 ## 🌟 **Sobre o Projeto**
 
-O **Observatório de Projetos** foi desenvolvido para facilitar a visibilidade dos projetos acadêmicos da POLI-UPE, permitindo uma experiência de busca rápida e detalhada. Através de uma **interface intuitiva e responsiva**, usuários podem explorar projetos por **nome**, **tema** ou **palavra-chave** e obter informações relevantes de cada um.
+O **Observatório de Projetos** é uma aplicação web criada para centralizar os projetos acadêmicos e artigos da **POLI-UPE**, promovendo visibilidade e acesso fácil a conteúdos acadêmicos. Através de uma **interface intuitiva e moderna**, o usuário pode buscar, curtir, comentar e submeter projetos e artigos, enquanto administradores gerenciam e moderam o conteúdo.
 
 ---
 
 ## 🚀 **Funcionalidades**
 
-- **Busca por Projetos e Artigos**: Encontre projetos e artigos facilmente com filtros específicos para aprimorar sua pesquisa.
-- **Visualização Detalhada**: Tenha acesso a detalhes relevantes de cada projeto, como descrição, participantes, vídeos e temas abordados.
-- **Interface Amigável**: Design responsivo e interativo para uma experiência de navegação simples e agradável.
-- - **Submissão de Projetos**: Submeta projetos os quais serão analisados e TALVEZ aprovados pelos administradores.
+### 📂 **Aba de Projetos**
+- **Busca Avançada**: Localize projetos por nome, tema ou palavra-chave com filtros dinâmicos.
+- **Detalhes do Projeto**: Visualize informações completas, incluindo descrição, participantes, vídeos e palavras-chave.
+- **Curtidas e Comentários**: Interaja com os projetos por meio de curtidas e comentários.
+
+### 📑 **Aba de Artigos**
+- Explore artigos submetidos por alunos e professores, organizados por temas e relevância.
+
+### ❓ **FAQ e Sobre**
+- **FAQ**: Respostas às perguntas frequentes para facilitar a navegação e o uso da plataforma.
+- **Sobre**: Informações gerais sobre o Observatório e sua importância.
+
+### 🧑‍💻 **Sistema de Registro e Login**
+- **Registro**: Cadastro de novos usuários com autenticação segura.
+- **Login**: Diferencia usuários comuns e administradores, oferecendo acesso personalizado.
+
+### 📊 **Dashboard de Usuário**
+- **Submissão de Projetos e Artigos**: Submeta conteúdos para aprovação.
+- **Curtidas e Comentários**: Gerencie interações nos projetos.
+
+### 🔧 **Dashboard de Administrador**
+- **Aprovação/Reprovação**: Gerencie projetos e artigos submetidos.
+- **Edição de Conteúdo**: Edite informações de projetos ou artigos diretamente no painel.
+- **Gerenciamento de Curtidas e Comentários**: Monitore interações realizadas pelos usuários.
 
 ---
 
 ## 🛠 **Tecnologias Utilizadas**
 
-O front-end do projeto foi desenvolvido utilizando as seguintes tecnologias:
-
-- **React**: Biblioteca JavaScript para construção de interfaces dinâmicas e reativas.
-- **TypeScript**: Superset do JavaScript que adiciona tipagem estática, melhorando a segurança e manutenção do código.
-- **Vite**: Ferramenta moderna de build que acelera o desenvolvimento e otimiza a performance.
-- **Axios**: Cliente HTTP para realizar requisições assíncronas à API.
+- **React**: Para criação de interfaces reativas e interativas.
+- **TypeScript**: Tipagem estática para maior segurança no código.
+- **Vite**: Build tool para desenvolvimento rápido e eficiente.
+- **Axios**: Comunicação com a API através de requisições HTTP.
+- **TailwindCSS**: Framework para estilização responsiva.
 
 ---
 
 ## 📋 **Pré-requisitos**
 
-Antes de iniciar o projeto, verifique se você possui os seguintes requisitos instalados:
+Certifique-se de ter as ferramentas abaixo instaladas:
 
-- **Node.js** e **npm** (Node Package Manager)
+- **Node.js** (v16+ recomendado) e **npm** (Node Package Manager)
 - **Git** para clonar o repositório
+- **Docker** (opcional) para rodar o projeto em contêiner
 
-build docker image: docker build -t my-vite-app .
+---
 
-run docker container: docker run -p 3000:3000 my-vite-app
+## 🔧 **Instalação e Execução**
+
+### Passo 1: Clone o Repositório
+```bash```
+```git clone https://github.com/seu-usuario/ES_Front_2024.2.git```
+```cd ES_Front_2024.2```
+```npm install```
+```npm run dev```
