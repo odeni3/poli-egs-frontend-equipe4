@@ -12,7 +12,6 @@ function Logout() {
             await signOut(auth);
             navigate('/login');
         } catch (error) {
-            console.log("Error loggin out: ", error);
         }
     };
 

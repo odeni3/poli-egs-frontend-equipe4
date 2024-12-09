@@ -36,24 +36,19 @@ export default function ModalComment({ projectId }: { projectId: string }) {
         }
       )
       .then((response) => {
-        console.log("Comentário enviado com sucesso:", response.data);
+
         setComment(""); // Limpa o campo de texto
         handleClose(); // Fecha o modal ou qualquer outro fechamento de interface
       })
       .catch((error) => { 
         console.error("Erro ao enviar comentário:", error.response?.data || error.message);
-        console.log({
-            comentario: comment,
-            token: localStorage.getItem("authToken"),
-          });
-        console.log(projectId)
       });
   };
   const fetchProjectData = async () => {
     try {
       const response = await axios.get(`https://poli-egs-fastapi-1.onrender.com/projetos/${projectId}`);
       setProjectData(response.data); // Armazena os dados do projeto no estado
-      console.log("Dados do projeto:", response.data); // Exibe os dados no console
+
     } catch (error) {
       console.error("Erro ao obter os dados do projeto:", error);
     }

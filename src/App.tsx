@@ -42,7 +42,7 @@ function App() {
       }
   
       const data = await response.json();
-      console.log(data.projetos)
+
   
       // Busca o projeto pelo nome
       const foundProject = data.projetos.find(
@@ -70,11 +70,7 @@ function App() {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     emailjs.sendForm('service_7m2mxjm', 'template_p254d1l', form.current, 'A-3hcvqKw-tFCA2W3')
-      .then((res) => {
-        console.log(res.text);
-      }, (error) => {
-        console.log(error.text);
-      });
+    
   };
 
   return (

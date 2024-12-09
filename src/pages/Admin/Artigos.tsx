@@ -63,9 +63,7 @@ function ArticlesAdmin () {
         'Content-Type': 'application/json',
       },
     })
-      .then(response => {
-        console.log('Projeto Aprovado com sucesso:', response.data);
-        window.location.reload();
+      .then(response => {        window.location.reload();
       })
         .catch(error => console.error('Erro ao aprovar projeto:', error));
   }
@@ -79,7 +77,7 @@ function ArticlesAdmin () {
       },
     })
       .then(response => {
-        console.log('Projeto Reprovado com sucesso:', response.data);
+
         window.location.reload();
       })
         .catch(error => console.error('Erro ao reprovar projeto:', error));
@@ -116,8 +114,7 @@ function ArticlesAdmin () {
       revisado: NewArticle.revisado || "Pendente",
     };
   
-    console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
-  
+
     axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -125,7 +122,6 @@ function ArticlesAdmin () {
       },
     })
       .then(response => {
-        console.log('Projeto adicionado com sucesso:', response.data);
         window.location.reload();
         setOpen(false);
       })
@@ -143,7 +139,7 @@ function ArticlesAdmin () {
   useEffect(() => {
     axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
       setArticle(response.data)
-      console.log(Article);
+
 
 
     })

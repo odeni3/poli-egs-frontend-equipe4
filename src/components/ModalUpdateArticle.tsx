@@ -25,9 +25,7 @@ export default function ModalUpdateArticle({ article }: { article: ArticleInt })
   const handleUpdateArticle = () => {
     // Capturando o token do localStorage
     const token = localStorage.getItem('authToken');
-    
-    console.log('Token:', token); // Verificando o token
-    console.log(article);
+
 
     if (!token) {
       console.error('Token não encontrado. Usuário não está autenticado.');
@@ -57,7 +55,6 @@ export default function ModalUpdateArticle({ article }: { article: ArticleInt })
       revisado: article.revisado || "Pendente",
     };
 
-    console.log('Dados do Artigo atualizado (com valores padrão, se necessário):', UpdatedArticleWithDefaults);
 
     // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
     axios.put(`https://poli-egs-fastapi-1.onrender.com/artigos/${article.id}?id_token=${token}`, UpdatedArticleWithDefaults, {
@@ -67,7 +64,7 @@ export default function ModalUpdateArticle({ article }: { article: ArticleInt })
       },
     })
     .then(() => {
-      console.log('Artigo alterado com sucesso:');
+
       window.location.reload();
       setOpen(false);
     })

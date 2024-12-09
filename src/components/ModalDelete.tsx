@@ -13,7 +13,7 @@ interface ModalProps {
 function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }, handleUpdate: () => void) {
   // Capturando o token do localStorage
   const token = localStorage.getItem('authToken');
-  console.log(localStorage.getItem('authToken'));
+
   
   // Verificando se o token existe
   if (!token) {

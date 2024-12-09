@@ -99,7 +99,7 @@ function Userprojects() {
       user_curtidas_email: userCurtidasEmailArray.length > 0 ? userCurtidasEmailArray : [],
     };
   
-    console.log('Dados do novo projeto (com valores padrão, se necessário):', NewProjectWithDefaults);
+
   
     axios.post(`https://poli-egs-fastapi-1.onrender.com/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
       headers: {
@@ -108,7 +108,7 @@ function Userprojects() {
       },
     })
       .then(response => {
-        console.log('Projeto adicionado com sucesso:', response.data);
+
         window.location.reload();
         setOpen(false);
       })

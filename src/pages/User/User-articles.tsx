@@ -103,7 +103,7 @@ function Userarticles () {
       },
     })
       .then(response => {
-        console.log('Projeto adicionado com sucesso:', response.data);
+
         window.location.reload();
         setOpen(false);
       })
@@ -121,7 +121,7 @@ function Userarticles () {
   useEffect(() => {
     axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
       setArticle(response.data)
-      console.log(Article);
+
 
 
     })

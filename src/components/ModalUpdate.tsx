@@ -32,8 +32,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
     // Capturando o token do localStorage
     const token = localStorage.getItem('authToken');
     
-    console.log('Token:', token); // Verificando o token
-    console.log(project);
+
 
     if (!token) {
       console.error('Token não encontrado. Usuário não está autenticado.');
@@ -73,8 +72,6 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
       user_curtidas_email: project.user_curtidas_email,
     };
 
-    console.log('Dados do projeto atualizado (com valores padrão, se necessário):', UpdatedProjectWithDefaults);
-
     // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
     axios.put(`https://poli-egs-fastapi-1.onrender.com/projetos/${project.id}?id_token=${token}`, UpdatedProjectWithDefaults, {
       headers: {
@@ -83,7 +80,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
       },
     })
     .then(() => {
-      console.log('Projeto alterado com sucesso:');
+
       window.location.reload();
       setOpen(false);
     })
