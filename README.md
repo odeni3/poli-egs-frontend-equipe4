@@ -63,7 +63,10 @@ Certifique-se de ter as ferramentas abaixo instaladas:
 
 ### Passo 1: Clone o Repositório
 ```bash```
-```git clone https://github.com/seu-usuario/ES_Front_2024.2.git```
-```cd ES_Front_2024.2```
+```git clone https://github.com/odeni3/poli-egs-frontend-equipe4.git```
+```cd poli-egs-frontend-equipe4```
 ```npm install```
 ```npm run dev```
+
+![image](https://github.com/user-attachments/assets/44568fd9-6047-4b84-8a4b-d3f7ed63f996)
+
