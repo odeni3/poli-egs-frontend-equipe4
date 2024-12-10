@@ -62,10 +62,11 @@ Certifique-se de ter as ferramentas abaixo instaladas:
 
 ## 🔧 **Instalação e Execução**
 
-### Passo 1: Clone o Repositório
+### Passo 1: Clone o Repositório e abra a pasta
 ```bash```
 ```git clone https://github.com/odeni3/poli-egs-frontend-equipe4.git```
 ```cd poli-egs-frontend-equipe4```
+### Passo 2: Instale as dependência e execute localmente
 ```npm install```
 ```npm run dev```
 
