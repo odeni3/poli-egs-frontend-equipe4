@@ -96,7 +96,7 @@ function Userarticles () {
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
   
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ function Userarticles () {
   };
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -119,7 +119,7 @@ function Userarticles () {
   }; 
   
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(function (response) {
       setArticle(response.data)
 
 

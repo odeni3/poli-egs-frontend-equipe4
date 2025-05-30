@@ -23,14 +23,14 @@ function App() {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      navigate(`/projetos/${input}`);
+      handleNavigation(input);
     }
   };
 
   const handleNavigation = async (input) => {
     try {
       // Requisição para obter os projetos
-      const response = await fetch("https://poli-egs-fastapi-1.onrender.com/projetos", {
+      const response = await fetch(`${import.meta.env.VITE_url_backend}/projetos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,8 +53,8 @@ function App() {
         // Redireciona para a página do projeto
         navigate(`/projetos/${foundProject.id}`);
       } else {
-        // Exibe mensagem de erro caso o projeto não seja encontrado
-        alert("Projeto não encontrado. Verifique o nome e tente novamente.");
+        // Redireciona para a página de Projects com o termo de busca
+        navigate(`/projetos?search=${encodeURIComponent(input)}`);
       }
     } catch (error) {
       console.error(error);
@@ -64,7 +64,7 @@ function App() {
   
   const handleButtonClick = (theme) => {
     setInput(theme);
-    handleNavigation(theme);
+    navigate(`/projetos`,{state: {themes: theme}});
   };
 
   const handleFormSubmit = (event) => {
@@ -122,7 +122,7 @@ function App() {
           ].map((theme, index) => (
             <button
               key={index}
-              /*onClick={() => handleButtonClick(theme.title)}*/
+              onClick={() => handleButtonClick(theme.title)}
               className="relative group overflow-hidden rounded-xl shadow-lg transform hover:scale-105 transition-transform"
             >
               <img
@@ -170,13 +170,13 @@ function App() {
               </div>
             </div>
             <div className="mb-6">
-              <label htmlFor="user_occupation" className="block text-gray-700 font-semibold mb-2">Ocupação</label>
+              <label htmlFor="user_occupation" className="block text-gray-700 font-semibold mb-2">Tema</label>
               <input
                 type="text"
                 id="user_occupation"
                 name="user_occupation"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Sua ocupação"
+                placeholder="Tema"
               />
             </div>
             <div className="mb-6">

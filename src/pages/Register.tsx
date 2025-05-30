@@ -20,7 +20,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`https://poli-egs-fastapi-1.onrender.com/register`, {
+      const response = await fetch(`${import.meta.env.VITE_url_backend}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

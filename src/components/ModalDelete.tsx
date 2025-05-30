@@ -22,7 +22,7 @@ function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateA
   }
 
   // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
-  axios.delete(`https://poli-egs-fastapi-1.onrender.com/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+  axios.delete(`${import.meta.env.VITE_url_backend}/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
     headers: {
       Authorization: `Bearer ${token}`, // Usando o token obtido
     },

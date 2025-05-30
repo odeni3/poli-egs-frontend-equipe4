@@ -2,7 +2,7 @@
 
 Bem-vindo ao repositório de **Front-End** do **Observatório de Projetos** da **POLI-UPE**! Este projeto faz parte da disciplina de Engenharia de Software do curso de Engenharia da Computação e foi projetado para oferecer uma plataforma colaborativa, onde projetos acadêmicos e artigos podem ser explorados, submetidos e gerenciados.
 
-Link deploy produção: https://poli-egs-frontend-equipe4.onrender.com/
+Link deploy produção: https://poli-egs-frontend-equipe-2.onrender.com/
 ---
 
 ## 🌟 **Sobre o Projeto**

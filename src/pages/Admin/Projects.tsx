@@ -53,14 +53,14 @@ function ProjectsAdmin() {
   }
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/`)
       .then(response => setProject(response.data))
       .catch(error => console.error('Erro ao atualizar projetos:', error));
   };
 
   const handleApprove = (project) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/projeto_revisado/${project.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/projeto_revisado/${project.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ function ProjectsAdmin() {
 
   const handleReprove = (project) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/projeto_revisado/${project.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/projeto_revisado/${project.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ function ProjectsAdmin() {
     };
   
   
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ function ProjectsAdmin() {
   };
 
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/`)
       .then(response => setProject(response.data.projetos))
       .catch(error => console.error('Erro ao carregar projetos:', error));
   }, []);

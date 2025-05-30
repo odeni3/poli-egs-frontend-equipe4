@@ -57,7 +57,7 @@ function ArticlesAdmin () {
 
   const handleApprove = (artigo) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/artigo_revisado/${artigo.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ function ArticlesAdmin () {
 
   const handleReprove = (artigo) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/artigo_revisado/${artigo.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ function ArticlesAdmin () {
     };
   
 
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ function ArticlesAdmin () {
   };
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -137,7 +137,7 @@ function ArticlesAdmin () {
   }; 
   
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(function (response) {
       setArticle(response.data)
 
 

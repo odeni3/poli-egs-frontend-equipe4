@@ -10,7 +10,7 @@ function Articles() {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/')
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`)
       .then((response) => {
         setArticles(response.data.artigos || []);
       })
@@ -23,7 +23,7 @@ function Articles() {
 
   const handleDownload = async (id) => {
     try {
-      const response = await axios.get(`https://poli-egs-fastapi-1.onrender.com/view_pdf_artigo/${id}`);
+      const response = await axios.get(`${import.meta.env.VITE_url_backend}/view_pdf_artigo/${id}`);
       const url = response.data.url;
       if (url) {
         const link = document.createElement('a');
