@@ -22,7 +22,7 @@ function handleOptionDelete(id: string | undefined, setOpen: { (value: SetStateA
   }
 
   // Fazendo a requisição de deletar projeto com o token no cabeçalho de autorização
-  axios.delete(`https://poli-egs-fastapi-1.onrender.com/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
+  axios.delete(`${import.meta.env.VITE_url_backend}/projetos/${id}/?id_token=${localStorage.getItem('authToken')}`, {
     headers: {
       Authorization: `Bearer ${token}`, // Usando o token obtido
     },
@@ -71,7 +71,7 @@ export default function ModalDelete({ title, id, handleUpdate }: ModalProps) {
                 </div>
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                    Tem certeja que deseja excluir: {title} ?
+                    Tem certeza que deseja excluir: {title} ?
                   </DialogTitle>
                 </div>
               </div>

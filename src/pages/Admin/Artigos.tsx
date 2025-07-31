@@ -38,6 +38,7 @@ function ArticlesAdmin () {
     id: '',
     arquivo: '#',
     revisado: "",
+    resumo: '',
   })
 
   const userIsAdmin = localStorage.getItem('isAdmin') === 'true'; // Verificando se o usuário é admin no localStorage
@@ -57,7 +58,7 @@ function ArticlesAdmin () {
 
   const handleApprove = (artigo) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/artigo_revisado/${artigo.id}/?novo_revisado=Aprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ function ArticlesAdmin () {
 
   const handleReprove = (artigo) => {
     const token = localStorage.getItem('authToken');
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/artigo_revisado/${artigo.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
+    axios.put(`${import.meta.env.VITE_url_backend}/artigo_revisado/${artigo.id}/?novo_revisado=Reprovado&id_token=${token}`, null,{
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -81,6 +82,21 @@ function ArticlesAdmin () {
         window.location.reload();
       })
         .catch(error => console.error('Erro ao reprovar projeto:', error));
+  }
+
+  const handlePdfUpload = (id: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    axios.post(`${import.meta.env.VITE_url_backend}/upload_pdf_artigo/${id}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+      window.location.reload();
+      setOpen(false);
+    })
+    .catch(error => console.log('Erro ao fazer upload do PDF:', error))
   }
 
   const handlePost = () => {
@@ -112,24 +128,24 @@ function ArticlesAdmin () {
       data: NewArticle.data || "",
       arquivo: NewArticle.arquivo || '#',
       revisado: NewArticle.revisado || "Pendente",
+      resumo: NewArticle.resumo || "Resumo ausente",
     };
   
 
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
-      .then(response => {
-        window.location.reload();
-        setOpen(false);
-      })
-      .catch(error => console.error('Erro ao adicionar projeto:', error));
+    .then(response => {
+      handlePdfUpload(response.data.artigo.id);
+    })
+    .catch(error => console.error('Erro ao adicionar projeto:', error));
   };
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -137,7 +153,7 @@ function ArticlesAdmin () {
   }; 
   
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(function (response) {
       setArticle(response.data)
 
 
@@ -149,7 +165,7 @@ function ArticlesAdmin () {
     const input = Input.toLowerCase();
     return (
       article.titulo?.toLowerCase().includes(input) ||
-      article.palavras_chave?.toLowerCase().includes(input) ||
+      article.palavras_chave?.some(p => p.toLowerCase().includes(input)) ||
       article.tema?.toLowerCase().includes(input)
     );
   }) : [];
@@ -173,7 +189,7 @@ function ArticlesAdmin () {
           name="searchbar"
           id="searchbar"
           className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2]"
-          placeholder="Pesquise por nome, tema, palavra-chave"
+          placeholder="Pesquise por título, área de pesquisa, palavra-chave"
           value={Input}
           onChange={handleInputChange}
         />
@@ -333,6 +349,17 @@ function ArticlesAdmin () {
                       placeholder="Descrição"
                       className="focus:outline-none border-b-2 w-[15vw]"
                       onChange={(e) => setNewArticle({ ...NewArticle, descricao: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Resumo</h3>
+                    <input
+                        type="text"
+                        name="resumo"
+                        id="resumo"
+                        placeholder="Resumo"
+                        className="focus:outline-none border-b-2 w-[15vw]"
+                        onChange={(e) => setNewArticle({ ...NewArticle, resumo: e.target.value })}
                     />
                   </div>
                   <div>

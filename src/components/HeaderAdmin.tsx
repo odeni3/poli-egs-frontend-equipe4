@@ -13,6 +13,8 @@ function HeaderAdmin() {
         <div className="flex-1 flex justify-center space-x-8">
           <Nav.Link href="/admin-projects">Projetos</Nav.Link>
           <Nav.Link href="/admin-articles">Artigos</Nav.Link>
+            <Nav.Link href="/admin-produtos">Produtos</Nav.Link>
+
         </div>
       </Nav>
       <div className="text-white text-lg ml-auto flex items-center space-x-2 px-4 py-2 bg-blue-1000 transition duration-300">

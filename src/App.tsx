@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import emailjs from '@emailjs/browser';
 import backgroundImage from './images/mainpage.jpg';
+import axios from "axios";
 
 function App() {
   const navigate = useNavigate();
@@ -23,14 +24,14 @@ function App() {
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      navigate(`/projetos/${input}`);
+      handleNavigation(input);
     }
   };
 
   const handleNavigation = async (input) => {
     try {
       // Requisição para obter os projetos
-      const response = await fetch("https://poli-egs-fastapi-1.onrender.com/projetos", {
+      const response = await fetch(`${import.meta.env.VITE_url_backend}/projetos`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,8 +54,8 @@ function App() {
         // Redireciona para a página do projeto
         navigate(`/projetos/${foundProject.id}`);
       } else {
-        // Exibe mensagem de erro caso o projeto não seja encontrado
-        alert("Projeto não encontrado. Verifique o nome e tente novamente.");
+        // Redireciona para a página de Projects com o termo de busca
+        navigate(`/projetos?search=${encodeURIComponent(input)}`);
       }
     } catch (error) {
       console.error(error);
@@ -64,14 +65,36 @@ function App() {
   
   const handleButtonClick = (theme) => {
     setInput(theme);
-    handleNavigation(theme);
+    navigate(`/projetos`,{state: {themes: theme}});
   };
 
-  const handleFormSubmit = (event) => {
+  /*const handleFormSubmit = (event) => {
     event.preventDefault();
     emailjs.sendForm('service_7m2mxjm', 'template_p254d1l', form.current, 'A-3hcvqKw-tFCA2W3')
-    
-  };
+  };*/
+
+  const handleQuestionSubmit = (event) => {
+    event.preventDefault();
+
+    const QuestionForm = form.current
+    const NewQuestion = {
+      id: 'default_id',
+      titulo: QuestionForm?.question_title.value,
+      mensagem: QuestionForm?.question_message.value,
+      autor: QuestionForm?.user_name.value,
+      email: QuestionForm?.user_email.value,
+      visualizacoes: [],
+      postado: false,
+      resposta: 'Não respondido',
+      data_de_envio: new Date(),
+      data_de_postagem: new Date(0)
+    }
+
+    axios.post(`${import.meta.env.VITE_url_backend}/duvidas_add`, NewQuestion)
+    .then(response => console.log(`Upload realizado com sucesso! ${response.data.duvida}`))
+    .catch(error => console.log(error))
+
+  }
 
   return (
     <>
@@ -111,18 +134,18 @@ function App() {
         <h2 className="text-4xl font-bold text-center mb-12">Temas em Destaque</h2>
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { image: IA, title: 'Inteligência Artificial' },
-            { image: CD, title: 'Ciência de Dados' },
-            { image: FIN, title: 'Finanças' },
-            { image: DT, title: 'Dívida Técnica' },
-            { image: GESTAO, title: 'Gestão' },
-            { image: LGPD, title: 'LGPD' },
-            { image: SAUDE, title: 'Saúde' },
-            { image: EDUCACAO, title: 'Educação' },
+            { image: IA, title: 'Inteligência Artificial', key_words: "Inteligência Artificial, IA, machine learning, aprendizado de máquina, redes neurais, algoritmo inteligente" },
+            { image: CD, title: 'Ciência de Dados', key_words: "Ciência de dados, Data Science, Análise de dados, Mineração de dados" },
+            { image: FIN, title: 'Finanças', key_words: "Finanças, Financeiro, Economia, Investimentos, Fintech" },
+            { image: DT, title: 'Dívida Técnica', key_words: "Dívida Técnica, Código legado, Refatoração, Débito técnico, Manutenção de código" },
+            { image: GESTAO, title: 'Gestão', key_words: "Gestão, Gerenciamento, Planejamento, Administração, Liderança, Indicadores Chave de Desempenho" },
+            { image: LGPD, title: 'LGPD', key_words: "LGPD, Lei Geral de Proteção de Dados, Dados Pessoais, Proteção de Dados, Vazamento de dados, Segurança da Informação, Anonimização" },
+            { image: SAUDE, title: 'Saúde', key_words: "Saúde, Sistema de Saúde, Paciente, Exame, Diagnóstico, Atendimento médico, Hospital, Hospitalar" },
+            { image: EDUCACAO, title: 'Educação', key_words: "Educação, Ensino, Professor, Aprendizagem, EAD, Pedagógico, Educacional, Alfabetização" }
           ].map((theme, index) => (
             <button
               key={index}
-              /*onClick={() => handleButtonClick(theme.title)}*/
+              onClick={() => handleButtonClick(theme.key_words)}
               className="relative group overflow-hidden rounded-xl shadow-lg transform hover:scale-105 transition-transform"
             >
               <img
@@ -144,7 +167,7 @@ function App() {
             <h2 className="text-4xl font-bold">Entre em Contato</h2>
             <p className="text-gray-600 mt-4">Tem alguma dúvida ou sugestão? Envie uma mensagem para nós!</p>
           </div>
-          <form ref={form} onSubmit={handleFormSubmit} className="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl shadow-md">
+          <form ref={form} onSubmit={handleQuestionSubmit} className="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl shadow-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label htmlFor="user_name" className="block text-gray-700 font-semibold mb-2">Nome</label>
@@ -170,20 +193,21 @@ function App() {
               </div>
             </div>
             <div className="mb-6">
-              <label htmlFor="user_occupation" className="block text-gray-700 font-semibold mb-2">Ocupação</label>
+              <label htmlFor="user_occupation" className="block text-gray-700 font-semibold mb-2">Tema</label>
               <input
                 type="text"
-                id="user_occupation"
-                name="user_occupation"
+                id="question_title"
+                name="question_title"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Sua ocupação"
+                placeholder="Tema"
+                required
               />
             </div>
             <div className="mb-6">
               <label htmlFor="user_message" className="block text-gray-700 font-semibold mb-2">Mensagem</label>
               <textarea
-                id="user_message"
-                name="user_message"
+                id="question_message"
+                name="question_message"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Escreva sua mensagem aqui"
                 required

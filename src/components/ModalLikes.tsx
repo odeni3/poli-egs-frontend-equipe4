@@ -21,18 +21,18 @@ export default function ModalLikes({ projectId }: { projectId: string }) {
     }
   
     // Requisição POST para curtir o projeto
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/projetos/${projectId}/curtir?id_token=${token}`)
+    axios.post(`${import.meta.env.VITE_url_backend}/projetos/${projectId}/curtir?id_token=${token}`)
       .then((response) => {
 
   
-        if (response.data.msg === 'Projeto ja curtido!') {
-          // O usuário já havia curtido antes de tentar curtir novamente
-          alert("Você já curtiu este projeto. Curtida não contabilizada.");
+        if (response.data.msg === 'Projeto descurtido com sucesso!') {
+          // se o usuário já havia curtido antes de tentar curtir novamente, o projeto é descurtido
+            setIsLiked(false);
         } else if (response.data.msg === 'Projeto curtido com sucesso!') {
           // Curtida realizada com sucesso
-          setLikes(response.data.curtidas); // Atualiza o número de curtidas
-          setIsLiked(true); // Marca como curtido
+            setIsLiked(true); // Marca como curtido
         }
+        setLikes(response.data.curtidas); // Atualiza o número de curtidas
       })
       .catch((error) => {
         console.error("Erro ao curtir o projeto:", error.response?.data || error.message);
@@ -42,9 +42,10 @@ export default function ModalLikes({ projectId }: { projectId: string }) {
 
   const fetchProjectLikes = async () => {
     try {
-      const response = await axios.get(`https://poli-egs-fastapi-1.onrender.com/projetos/${projectId}`);
+      const response = await axios.get(`${import.meta.env.VITE_url_backend}/projetos/${projectId}`);
+      const email = localStorage.getItem('email')
       setLikes(response.data.curtidas); // Armazena o número de curtidas no estado
-
+      if (email) setIsLiked(response.data.user_curtidas_email.includes(email))
     } catch (error) {
       console.error("Erro ao obter as curtidas do projeto:", error);
     }
@@ -52,9 +53,7 @@ export default function ModalLikes({ projectId }: { projectId: string }) {
 
   // Buscar dados do projeto ao abrir o modal
   React.useEffect(() => {
-    if (open) {
       fetchProjectLikes();
-    }
   }, [open]);
 
   return (
@@ -98,9 +97,16 @@ export default function ModalLikes({ projectId }: { projectId: string }) {
                         </div>
                         <div className="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                             {isLiked ? (
-                                <div className="text-center ml-2 mt-2 text-red-500 font-medium mb- sm:mb-0 text-xm">
+                                /*<div className="text-center ml-2 mt-2 text-red-500 font-medium mb- sm:mb-0 text-xm">
                                     Curtido com sucesso!
-                                </div>
+                                </div>*/
+                                <button
+                                    type="button"
+                                    onClick={handleLike}
+                                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-blue-700 transition sm:ml-3 sm:w-auto"
+                                >
+                                    Descurtir Projeto
+                                </button>
                             ) : (
                                 <button
                                     type="button"

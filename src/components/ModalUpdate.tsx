@@ -73,7 +73,7 @@ export default function ModalUpdate({ project }: { project: ProjectInt }){
     };
 
     // Fazendo a requisição de update do projeto com o token no cabeçalho de autorização
-    axios.put(`https://poli-egs-fastapi-1.onrender.com/projetos/${project.id}?id_token=${token}`, UpdatedProjectWithDefaults, {
+    axios.put(`${import.meta.env.VITE_url_backend}/projetos/${project.id}?id_token=${token}`, UpdatedProjectWithDefaults, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // Usando o token no cabeçalho

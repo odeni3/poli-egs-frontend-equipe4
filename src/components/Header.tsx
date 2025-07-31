@@ -41,7 +41,7 @@ function Header() {
 
         {/* Nav Links */}
         <div className={`md:flex items-center space-x-6 ${isOpen ? 'block' : 'hidden'} md:block`}>
-          {['Início', 'Projetos', 'Artigos', 'Sobre', 'FAQ'].map((item, index) => (
+          {['Início', 'Projetos', 'Artigos','Produtos', 'Sobre', 'FAQ'].map((item, index) => (
             <NavLink
               key={index}
               to={item === 'Início' ? '/' : `/${item.toLowerCase()}`}
@@ -72,7 +72,7 @@ function Header() {
       {isOpen && (
         <div className="md:hidden bg-primary-color">
           <ul className="space-y-4 px-6 py-4">
-            {['Início', 'Projetos', 'Artigos', 'Sobre', 'FAQ'].map((item, index) => (
+            {['Início', 'Projetos', 'Artigos','Produtos', 'Sobre', 'FAQ'].map((item, index) => (
               <li key={index}>
                 <NavLink
                   to={`/${item.toLowerCase()}`}

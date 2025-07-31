@@ -12,7 +12,7 @@ const LoginTest = () => {
     e.preventDefault();
     try {
       // 1. Enviar a requisição para o login com email e senha na URL
-      const response = await fetch(`https://poli-egs-fastapi-1.onrender.com/login?email=${email}&password=${password}`, {
+      const response = await fetch(`${import.meta.env.VITE_url_backend}/login?email=${email}&password=${password}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

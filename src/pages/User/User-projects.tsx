@@ -23,6 +23,7 @@ function Userprojects() {
   const [Input, setInput] = useState<string>("");
   const [Project, setProject] = useState([]);
   const [open, setOpen] = useState(false);
+  const [formValid, setFormValid] = useState(false);
   const [NewProject, setNewProject] = useState({
     titulo: "",
     descricao: "",
@@ -48,12 +49,70 @@ function Userprojects() {
     // Se não for admin, redireciona para a página de usuário
     return <Navigate to="/admin-projects" />;
   }
+  
+  const validateFormWithData = (projectData) => {
+    const requiredFields = [
+      'titulo',
+      'cliente',
+      'semestre',
+      'pitch',
+      'link_repositorio',
+      'descricao',
+      'equipe',
+      'tema',
+      'tecnologias_utilizadas',
+      'video_tecnico',
+      'palavras_chave'
+    ];
+
+    return requiredFields.every(field => {
+      const value = projectData[field];
+    
+      if (typeof value === 'string') {
+        return value.trim() !== '';
+      } else if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return false;
+    });
+  };
+
+  const validateForm = () => {
+    return validateFormWithData(NewProject);
+  };
+    
+  // Função para atualizar o NewProject e verificar a validação
+  const handleChangeProject = (field, value) => {
+    // Primeira atualização do estado
+    const updatedProject = {...NewProject, [field]: value};
+    setNewProject(updatedProject);
+  
+    // Validação imediata com o estado atualizado
+    const isValid = validateFormWithData(updatedProject);
+    setFormValid(isValid);
+  };
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/`)
       .then(response => setProject(response.data))
       .catch(error => console.error('Erro ao atualizar projetos:', error));
   };
+  
+  const handleLogoUpload = (id: string) => {
+    const token = localStorage.getItem('authToken')
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    axios.post(`${import.meta.env.VITE_url_backend}/upload_logo_projeto/${id}/?id_token=${token}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+      window.location.reload();
+      setOpen(false);
+    })
+    .catch(error => console.log('Erro ao fazer upload da logo:', error))
+  }
 
   const handlePost = () => {
     const token = localStorage.getItem('authToken');
@@ -63,67 +122,100 @@ function Userprojects() {
       return;
     }
   
-    // Separando os campos de tecnologias, equipe e palavras-chave por vírgulas e transformando-os em arrays
-    const tecnologiasArray = typeof NewProject.tecnologias_utilizadas === 'string' && NewProject.tecnologias_utilizadas.trim() 
-      ? NewProject.tecnologias_utilizadas.split(',').map(item => item.trim()) 
-      : [];
-
-    const equipeArray = typeof NewProject.equipe === 'string' && NewProject.equipe.trim()
-      ? NewProject.equipe.split(',').map(item => item.trim())
-      : [];
-
-    const palavrasChaveArray = typeof NewProject.palavras_chave === 'string' && NewProject.palavras_chave.trim()
-      ? NewProject.palavras_chave.split(',').map(item => item.trim())
-      : [];
-
-    const userCurtidasEmailArray = typeof NewProject.user_curtidas_email === 'string' && NewProject.user_curtidas_email.trim()
-      ? NewProject.palavras_chave.split(',').map(item => item.trim())
-      : [];
+     // Verificar novamente se todos os campos obrigatórios estão preenchidos
+    if (!validateForm()) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
   
+    // Função auxiliar para converter string em array
+    const stringToArray = (value) => {
+      return typeof value === 'string' && value.trim() 
+        ? value.split(',').map(item => item.trim()) 
+        : [];
+    };
+
+    // Conversão usando a função auxiliar
+    const tecnologiasArray = stringToArray(NewProject.tecnologias_utilizadas);
+    const equipeArray = stringToArray(NewProject.equipe);
+    const palavrasChaveArray = stringToArray(NewProject.palavras_chave);
+    const userCurtidasEmailArray = stringToArray(NewProject.user_curtidas_email); // Corrigido
+
     // Atualiza os dados do projeto com os arrays processados
     const NewProjectWithDefaults = {
       id: NewProject.id || "default-id",
-      titulo: NewProject.titulo || "Título não informado",
-      tema: NewProject.tema || "Tema não informado",
-      palavras_chave: palavrasChaveArray.length > 0 ? palavrasChaveArray : [],
-      descricao: NewProject.descricao || "Sem descrição",
-      cliente: NewProject.cliente || "Cliente não informado",
-      semestre: NewProject.semestre || "Semestre não informado",
-      equipe: equipeArray.length > 0 ? equipeArray : [],
-      link_repositorio: NewProject.link_repositorio || "Link não informado",
-      tecnologias_utilizadas: tecnologiasArray.length > 0 ? tecnologiasArray : [],
-      video_tecnico: NewProject.video_tecnico || "Vídeo não informado",
-      pitch: NewProject.pitch || "Pitch não informado",
+      titulo: NewProject.titulo,
+      tema: NewProject.tema,
+      palavras_chave: palavrasChaveArray,
+      descricao: NewProject.descricao,
+      cliente: NewProject.cliente,
+      semestre: NewProject.semestre,
+      equipe: equipeArray,
+      link_repositorio: NewProject.link_repositorio,
+      tecnologias_utilizadas: tecnologiasArray,
+      video_tecnico: NewProject.video_tecnico,
+      pitch: NewProject.pitch,
       revisado: NewProject.revisado || "Pendente",
       curtidas: NewProject.curtidas || 0,
-      user_curtidas_email: userCurtidasEmailArray.length > 0 ? userCurtidasEmailArray : [],
+      user_curtidas_email: userCurtidasEmailArray,
     };
   
 
   
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/projeto_add?id_token=${token}`, NewProjectWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
-      .then(response => {
-
+    .then(response => {
+        alert('Projeto cadastrado com sucesso!');
         window.location.reload();
         setOpen(false);
       })
-      .catch(error => console.error('Erro ao adicionar projeto:', error));
+      .catch(error => {
+        console.error('Erro ao adicionar projeto:', error);
+        alert(`Erro ao cadastrar projeto: ${error.response?.data?.message || 'Verifique sua conexão'}`);
+      });
   };
+  
+  useEffect(() => {
+    if (open) {
+      // Quando o modal é aberto, verifica a validade do formulário
+      setFormValid(validateForm());
+    } else {
+      // Quando o modal é fechado, reset do NewProject para o estado inicial
+      setNewProject({
+        titulo: "",
+        descricao: "",
+        equipe: [],
+        cliente: "",
+        pitch: "",
+        tema: "",
+        semestre: "",
+        video_tecnico: "",
+        tecnologias_utilizadas: [],
+        palavras_chave: [],
+        id: "",
+        link_repositorio: "",
+        revisado: "",
+        curtidas: 0,
+        user_curtidas_email: [],
+      });
+    }
+  }, [open]);
 
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/`)
       .then(response => setProject(response.data.projetos))
       .catch(error => console.error('Erro ao carregar projetos:', error));
   }, []);
 
   const filteredProject = Array.isArray(Project) ? Project.filter((project) => {
     const input = Input.toLowerCase();
-    return project.titulo?.toLowerCase().includes(input) || project.palavras_chave?.toLowerCase().includes(input) || project.tema?.toLowerCase().includes(input);
+    return project.titulo?.toLowerCase().includes(input) ||
+        project.palavras_chave?.some(p => p.toLowerCase().includes(input)) ||
+        project.tema?.toLowerCase().includes(input);
   }) : [];
 
   return (
@@ -139,8 +231,9 @@ function Userprojects() {
           name="searchbar" 
           id="searchbar" 
           className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2] "
-          placeholder="Pesquise por nome, tema, palavra-chave"
+          placeholder="Pesquise por título, tema, palavra-chave"
           value={Input}
+          onChange={(e) => setInput(e.target.value)}
         />
       </div>  
       <div className="px-[13vw] pt-10">
@@ -205,48 +298,48 @@ function Userprojects() {
             <form action="POST">
               <div className="grid grid-cols-2 justify-start pt-4 px-6 gap-y-[2vh]">
                 <div>
-                  <h3 className="text-lg font-semibold">Titulo</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Titulo" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, titulo:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Titulo <span className="text-red-500">*</span></h3>
+                  <input type="text" name="titulo" id="titulo" placeholder="Titulo" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('titulo', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Equipe</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Pessoa1,Pessoa2,Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, equipe:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Equipe <span className="text-red-500">*</span></h3>
+                  <input type="text" name="equipe" id="equipe" placeholder="Pessoa1,Pessoa2,Pessoa3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('equipe', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Organização Parceira</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Ex: POLI/UPE" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, cliente:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Organização Parceira <span className="text-red-500">*</span></h3>
+                  <input type="text" name="cliente" id="cliente" placeholder="Ex: POLI/UPE" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('cliente', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Tema</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Ex: Engenharia de Software" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, tema:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Tema <span className="text-red-500">*</span></h3>
+                  <input type="text" name="tema" id="tema" placeholder="Ex: Engenharia de Software" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('tema', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Semestre</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Ex: 2024.1" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, semestre:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Semestre <span className="text-red-500">*</span></h3>
+                  <input type="text" name="semestre" id="semestre" placeholder="Ex: 2024.1" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('semestre', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Tecnologias Utilizadas</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Tecnologia1,Tecnologia2,Tecnologia3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, tecnologias_utilizadas:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Tecnologias Utilizadas <span className="text-red-500">*</span></h3>
+                  <input type="text" name="tecnologias" id="tecnologias" placeholder="Tecnologia1,Tecnologia2,Tecnologia3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('tecnologias_utilizadas', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Link do Pitch</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Pitch" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, pitch:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Link do Pitch <span className="text-red-500">*</span></h3>
+                  <input type="text" name="pitch" id="pitch" placeholder="Pitch" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('pitch', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Link do Vídeo Técnico</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Vídeo Técnico" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, video_tecnico:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Link do Vídeo Técnico <span className="text-red-500">*</span></h3>
+                  <input type="text" name="video" id="video" placeholder="Vídeo Técnico" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('video_tecnico', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Repositório</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Repositório" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, link_repositorio:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Repositório <span className="text-red-500">*</span></h3>
+                  <input type="text" name="repositorio" id="repositorio" placeholder="Repositório" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('link_repositorio', e.target.value)}/>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">Palavras Chave</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Palavra1,Palavra2,Palavra3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, palavras_chave:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Palavras Chave <span className="text-red-500">*</span></h3>
+                  <input type="text" name="palavras" id="palavras" placeholder="Palavra1,Palavra2,Palavra3" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('palavras_chave', e.target.value)}/>
                 </div>
                 <div className="mb-10">
-                  <h3 className="text-lg font-semibold">Descrição</h3>
-                  <input type="text" name="titulo" id="titulo" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => (setNewProject({...NewProject, descricao:e.target.value}))}/>
+                  <h3 className="text-lg font-semibold">Descrição <span className="text-red-500">*</span></h3>
+                  <input type="text" name="descricao" id="descricao" placeholder="Descrição" className="focus:outline-none border-b-2 w-[15vw]" onChange={(e) => handleChangeProject('descricao', e.target.value)}/>
                 </div>
                 <div className="w-[15vw] relative">
                   <input type="file" className="hidden" name="logo" id="logo" onChange={(e: any) => setSelectedFile(e.target.files[0])}/>
@@ -274,8 +367,13 @@ function Userprojects() {
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
                 type="button"
-                className="inline-flex w-full justify-center rounded-md bg-primary-color px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-400 sm:ml-3 sm:w-auto"
+                className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto ${
+                  formValid 
+                    ? "bg-primary-color hover:bg-blue-700" 
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
                 onClick={handlePost}
+                disabled={!formValid}
               >
                 Enviar
               </button>

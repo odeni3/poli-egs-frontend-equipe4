@@ -15,7 +15,7 @@ function Project() {
 
   useEffect(() => {
     // Requisição para obter os dados do projeto
-    axios.get(`https://poli-egs-fastapi-1.onrender.com/projetos/${slug}`).then((response) => {
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/${slug}`).then((response) => {
       console.log("Resposta completa da API:", response);
       console.log("Dados retornados:", response.data);
       const projeto = response.data;
@@ -24,7 +24,7 @@ function Project() {
     });
   
     // Requisição para obter a imagem do logo do projeto
-    axios.get(`https://poli-egs-fastapi-1.onrender.com/view_logo_projeto/${slug}`).then((response) => {
+    axios.get(`${import.meta.env.VITE_url_backend}/view_logo_projeto/${slug}`).then((response) => {
       setImg(response.data["url"]);
     });
   
@@ -65,7 +65,7 @@ function Project() {
           <div className="flex flex-col md:flex-row items-center gap-5 bg-white shadow-lg rounded-lg p-6 md:p-8 max-w-4xl w-full">
             <div className="flex-shrink-0">
               <div className="h-32 w-32 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-gray-200 shadow-md flex items-center justify-center">
-                <img className="w-full h-full object-cover" src={iconImage} alt="Project Thumbnail" />
+                <img className="w-full h-full object-cover" src={images || iconImage} alt="Project Thumbnail" />
               </div>
             </div>
             <div className="flex flex-col justify-center text-center md:text-left">
@@ -155,7 +155,8 @@ function Project() {
                     className="w-8 h-8 rounded-full mr-3"
                   />
                   <div className="flex-grow">
-                    <p className="font-medium">{comentario.email}</p> {/* Exibindo o email do usuário */}
+                    <p className="font-medium">{comentario.username}</p> {/* Exibindo o email do usuário */}
+                    <p>{comentario.data}</p> {/* Exibindo data */}
                     <p>{comentario.comentario}</p> {/* Exibindo o comentário */}
                   </div>
                 </div>

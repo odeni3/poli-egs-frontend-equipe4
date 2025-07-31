@@ -18,9 +18,13 @@ const Register = () => {
       alert("As senhas não coincidem!");
       return;
     }
-
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(poli\.br|ecomp\.poli\.br|upe\.br)$/;
+    if (!emailRegex.test(email)) {
+    alert("Apenas e-mails dos domínios @poli.br, @ecomp.poli.br ou @upe.br são permitidos.");
+    return;
+  }
     try {
-      const response = await fetch(`https://poli-egs-fastapi-1.onrender.com/register`, {
+      const response = await fetch(`${import.meta.env.VITE_url_backend}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

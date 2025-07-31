@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Listbox } from '@headlessui/react';
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import backgroundImage from '../images/mainpage.jpg'; // Certifique-se de que o caminho esteja correto
@@ -10,7 +10,10 @@ import backgroundImage from '../images/mainpage.jpg'; // Certifique-se de que o 
 function Projects() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [input, setInput] = useState(slug || '');
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const [input, setInput] = useState(searchQuery || slug || "");
   const [inputMembers, setInputMembers] = useState('');
   const [themes, setThemes] = useState('');
   const [semester, setSemester] = useState('');
@@ -20,7 +23,9 @@ function Projects() {
   const [images, setImages] = useState({});
 
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/projetos/')
+    setInput(searchQuery);
+    setThemes(location.state?.themes ? location.state?.themes : "")
+    axios.get(`${import.meta.env.VITE_url_backend}/projetos/`)
       .then((response) => {
         const data = response.data.projetos;
 
@@ -40,7 +45,7 @@ function Projects() {
       .catch((error) => {
         console.error('Erro ao buscar os projetos:', error);
       });
-  }, []);
+  }, [searchQuery]);
   
   const resetFilters = () => {
     setInput('');
@@ -74,20 +79,23 @@ function Projects() {
   ? cards.filter((project) => {
       const searchInput = input.toLowerCase();
       const searchMembers = inputMembers.toLowerCase();
-      const searchThemes = themes.toLowerCase();
+      const searchThemes = themes.toLowerCase().split(/, | e /);
       const searchSemester = semester.toLowerCase();
+      const projectThemes = project.tema?.toLowerCase().split(/, | e /)
 
       // Garantindo que project.palavras_chave seja tratado como uma string
       const palavrasChave = Array.isArray(project.palavras_chave)
         ? project.palavras_chave.join(' ').toLowerCase() // Converte o array para uma string
         : '';
+      
+      const checker = (arr, target) => target.every(e => arr.includes(e));
 
       return (
         (project.titulo?.toLowerCase().includes(searchInput) ||
           palavrasChave.includes(searchInput) || // Usando palavras_chave como string
           project.tema?.toLowerCase().includes(searchInput)) &&
         (project.equipe ? project.equipe.toString().toLowerCase().includes(searchMembers) : '') &&
-        project.tema?.toLowerCase().includes(searchThemes) &&
+        (themes == '' ? true : checker(searchThemes, projectThemes)) &&
         project.semestre?.toLowerCase().includes(searchSemester)
       );
     })

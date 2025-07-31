@@ -18,6 +18,7 @@ export interface ArticleInt {
   palavras_chave?: string;
   id?: string,
   arquivo?: string,
+  resumo?: string,
 }
 
 const columns = [
@@ -53,6 +54,7 @@ function Userarticles () {
     id: '',
     arquivo: '#',
     revisado: "",
+    resumo: '',
   })
 
   const [file, setFile] = useState<File | undefined>();
@@ -61,6 +63,21 @@ function Userarticles () {
       files: FileList;
     };
     setFile(target.files[0]);
+  }
+
+  const handlePdfUpload = (id: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    axios.post(`${import.meta.env.VITE_url_backend}/upload_pdf_artigo/${id}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+      window.location.reload();
+      setOpen(false);
+    })
+    .catch(error => console.log('Erro ao fazer upload do PDF:', error))
   }
 
   const handlePost = () => {
@@ -92,26 +109,25 @@ function Userarticles () {
       data: NewArticle.data || "",
       arquivo: NewArticle.arquivo || '#',
       revisado: NewArticle.revisado || "Pendente",
+      resumo: NewArticle.resumo || "Resumo ausente",
     };
   
     console.log('Dados do novo projeto (com valores padrão, se necessário):', NewArticleWithDefaults);
   
-    axios.post(`https://poli-egs-fastapi-1.onrender.com/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
+    axios.post(`${import.meta.env.VITE_url_backend}/artigos_add?id_token=${token}`, NewArticleWithDefaults, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
-      .then(response => {
-
-        window.location.reload();
-        setOpen(false);
-      })
-      .catch(error => console.error('Erro ao adicionar projeto:', error));
+    .then(response => {
+      handlePdfUpload(response.data.artigo.id);
+    })
+    .catch(error => console.error('Erro ao adicionar projeto:', error));
   };
 
   const handleUpdate = () => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(response => {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(response => {
       setArticle(response.data);
     }).catch(error => {
       console.error('Erro ao atualizar artigo', error);
@@ -119,7 +135,7 @@ function Userarticles () {
   }; 
   
   useEffect(() => {
-    axios.get('https://poli-egs-fastapi-1.onrender.com/artigos/').then(function (response) {
+    axios.get(`${import.meta.env.VITE_url_backend}/artigos/`).then(function (response) {
       setArticle(response.data)
 
 
@@ -131,7 +147,7 @@ function Userarticles () {
     const input = Input.toLowerCase();
     return (
       article.titulo?.toLowerCase().includes(input) ||
-      article.palavras_chave?.toLowerCase().includes(input) ||
+      article.palavras_chave?.some(p => p.toLowerCase().includes(input)) ||
       article.tema?.toLowerCase().includes(input)
     );
   }) : [];
@@ -155,7 +171,7 @@ function Userarticles () {
           name="searchbar"
           id="searchbar"
           className="rounded-full w-full h-[5vh] border border-light-color indent-2 bg-[#D8DBE2]"
-          placeholder="Pesquise por nome, tema, palavra-chave"
+          placeholder="Pesquise por título, área de pesquisa, palavra-chave"
           value={Input}
           onChange={handleInputChange}
         />
@@ -269,6 +285,17 @@ function Userarticles () {
                       placeholder="Descrição"
                       className="focus:outline-none border-b-2 w-[15vw]"
                       onChange={(e) => setNewArticle({ ...NewArticle, descricao: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Resumo</h3>
+                    <input
+                      type="text"
+                      name="resumo"
+                      id="resumo"
+                      placeholder="Resumo"
+                      className="focus:outline-none border-b-2 w-[15vw]"
+                      onChange={(e) => setNewArticle({ ...NewArticle, resumo: e.target.value })}
                     />
                   </div>
                   <div>
